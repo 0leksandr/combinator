@@ -18,7 +18,7 @@ namespace Combinator {
             friend class Iterator<element, Container, Combination>;
         public:
             virtual Combination& operator[](position index) const = 0;
-            position size() const {
+            [[nodiscard]] position size() const {
                 Assert(_size > 0);
                 return _size;
             }
@@ -28,7 +28,7 @@ namespace Combinator {
             Combinator(const Container elements, const position size):
                     elements(elements),
                     _size(size) {}
-            position nrElements() const {
+            [[nodiscard]] position nrElements() const {
                 return elements.size();
             }
             Combinator(const Combinator<element, Container, Combination>& other):
@@ -280,7 +280,7 @@ namespace Combinator {
                         delete[] positions;
                     }
                     position* const positions;
-                    virtual position estimate(position index) const = 0;
+                    [[nodiscard]] virtual position estimate(position index) const = 0;
                     virtual void go(position index) = 0;
                 protected:
                     const OrderedCombinator<element, Container, Combination>* const combinator;
@@ -297,7 +297,7 @@ namespace Combinator {
                         this->combinator->first(this->positions);
                     }
                     position location;
-                    position estimate(const position index) const override {
+                    [[nodiscard]] position estimate(const position index) const override {
                         if (index > location)
                             return index - location;
                         else if (index < location)
@@ -344,7 +344,7 @@ namespace Combinator {
                                 guardians.push_back(patrol);
                         }
                     }
-                    position estimate(const position index) const override {
+                    [[nodiscard]] position estimate(const position index) const override {
                         return guardian(index).estimate(index);
                     }
                     void go(const position index) override {
@@ -371,7 +371,7 @@ namespace Combinator {
                             OrderIterator(combinator) {
                         avgEstimation = avgNrSteps();
                     }
-                    position estimate(position index) const override {
+                    [[nodiscard]] position estimate(position index) const override {
                         return avgEstimation; // TODO: test
                     }
                     void go(position index) override {
@@ -419,7 +419,7 @@ namespace Combinator {
                             value += this->positions[_position - 1] + 1;
                         this->positions[_position] = value;
                     }
-                    position avgNrSteps() const {
+                    [[nodiscard]] position avgNrSteps() const {
                         float totalAvgNrSteps(0.f);
                         position prevValue(0);
                         for (position c = 0; c < this->combinator->length; c++) {
@@ -433,7 +433,7 @@ namespace Combinator {
                         }
                         return (position)totalAvgNrSteps;
                     }
-                    float avgNrSteps(
+                    [[nodiscard]] float avgNrSteps(
                             const position _position,
                             const position minValue
                     ) const {
@@ -498,21 +498,21 @@ namespace Combinator {
                 } while (prevValue != value);
                 iterator.positions[_position] = value;
             }
-            position nPerM(const position n, const position m) const {
+            [[nodiscard]] position nPerM(const position n, const position m) const {
                 return nPerM0(n, m);
             }
-            position nPerM0(const position n, const position m) const {
+            [[nodiscard]] position nPerM0(const position n, const position m) const {
                 if (m > 1)
                     return n * nPerM0(n - 1, m - 1);
                 return n;
             }
-            position nPerM1(position n, position m) const {
+            [[nodiscard]] position nPerM1(position n, position m) const {
                 position res(n);
                 while (m --> 1)
                     res *= --n;
                 return res;
             }
-            position nPerM2(position n, position m) const {
+            [[nodiscard]] position nPerM2(position n, position m) const {
                 position res(n);
                 while (--m > 0)
                     res *= --n;
