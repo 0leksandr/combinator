@@ -1,0 +1,9 @@
+#ifndef COMBINATOR_COMBINATOR_H
+#define COMBINATOR_COMBINATOR_H
+
+
+class Combinator {
+};
+
+
+#endif //COMBINATOR_COMBINATOR_H
