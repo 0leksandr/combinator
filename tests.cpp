@@ -8,8 +8,7 @@ using namespace Combinator;
 
 void testOrdered() {
 	std::vector<double> vec;
-	for (unsigned c = 0; c < 4; c++)
-		vec.push_back(c + 1);
+	for (unsigned c = 0; c < 4; c++) vec.push_back(c + 1);
 
 	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
 	OrderedCombinator<double, std::vector<double>, std::vector<double>> combinations(

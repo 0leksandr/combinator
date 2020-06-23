@@ -28,12 +28,12 @@ namespace Combinator {
             Combinator(const Container elements, const position size):
                     elements(elements),
                     _size(size) {}
-            [[nodiscard]] position nrElements() const {
-                return elements.size();
-            }
             Combinator(const Combinator<element, Container, Combination>& other):
                     elements(other.elements),
                     _size(other._size) {}
+			[[nodiscard]] position nrElements() const {
+				return elements.size();
+			}
     };
 
     template<class element, class Container, class Combination>
@@ -54,14 +54,13 @@ namespace Combinator {
                     Combinator<element, Container, Combination>(elements, size),
                     length(length),
                     current(this, 0) {}
-            void first(position* const positions) const {
-                for (position c = 0; c < this->length; c++)
-                    positions[c] = c;
-            }
             FixedCombinator(const FixedCombinator<element, Container, Combination>& other):
                     Combinator<element, Container, Combination>(other),
                     length(other.length),
                     current(this, 0) {}
+			void first(position* const positions) const {
+				for (position c = 0; c < this->length; c++) positions[c] = c;
+			}
     };
 
     template<class element, class Container, class Combination = Container>
@@ -198,14 +197,17 @@ namespace Combinator {
                             this->nPerM(elements.size(), length)
                     ),
                     iterators() {}
-            ~OrderedCombinator() {
-                for (OrderIterator* iterator : iterators) delete iterator;
-            }
+			OrderedCombinator(const OrderedCombinator<element, Container, Combination>& other):
+					FixedCombinator<element, Container, Combination>(other),
+					iterators() {}
+			~OrderedCombinator() {
+				for (auto* iterator : iterators) delete iterator;
+			}
             Combination& operator[](position index) const override {
                 if (iterators.empty()) initIterators();
                 auto estimated((position)-1);
                 OrderIterator* chosen(nullptr);
-                for (OrderIterator* iterator : iterators) {
+                for (auto* iterator : iterators) {
                     position myBet = iterator->estimate(index);
                     if (myBet < estimated) {
                         chosen = iterator;
@@ -219,9 +221,6 @@ namespace Combinator {
 				}
                 return *this->current;
             }
-            OrderedCombinator(const OrderedCombinator<element, Container, Combination>& other):
-                    FixedCombinator<element, Container, Combination>(other),
-                    iterators() {}
         protected:
             void next(Iterator<element, Container, Combination>& iterator) const override {
                 next(iterator.positions);
@@ -243,8 +242,7 @@ namespace Combinator {
             void decrement(position* const positions, const position _position) const {
                 --positions[_position];
                 if (_position > 0 && positions[_position] == positions[_position - 1]) {
-                    for (position c = _position; c < this->length; c++)
-                        positions[c] = maxPosition(c);
+                    for (position c = _position; c < this->length; c++) positions[c] = maxPosition(c);
                     decrement(positions, _position - 1);
                 }
             }
@@ -269,6 +267,7 @@ namespace Combinator {
 
             class OrderIterator {
                 public:
+					position* const positions;
                     explicit OrderIterator(const OrderedCombinator<
                             element,
                             Container,
@@ -279,7 +278,6 @@ namespace Combinator {
                     ~OrderIterator() {
                         delete[] positions;
                     }
-                    position* const positions;
                     [[nodiscard]] virtual position estimate(position index) const = 0;
                     virtual void go(position index) = 0;
                 protected:
@@ -287,6 +285,7 @@ namespace Combinator {
             };
             class Walker : public OrderIterator {
                 public:
+					position location;
                     explicit Walker(const OrderedCombinator<
                             element,
                             Container,
@@ -296,26 +295,21 @@ namespace Combinator {
                             location(0) {
                         this->combinator->first(this->positions);
                     }
-                    position location;
+					Walker(const Walker& other):
+							OrderIterator(other.combinator),
+							location(other.location) {
+						for (position c = 0; c < this->combinator->length; c++) {
+							this->positions[c] = other.positions[c];
+						}
+					}
                     [[nodiscard]] position estimate(const position index) const override {
-                        if (index > location)
-                            return index - location;
-                        else if (index < location)
-                            return location - index;
-                        else
-                            return 0;
+                        if (index > location) return index - location;
+                        if (index < location) return location - index;
+						return 0;
                     }
                     void go(const position index) override {
-                        while (location < index)
-                            forward();
-                        while (location > index)
-                            back();
-                    }
-                    Walker(const Walker& other):
-                            OrderIterator(other.combinator),
-                            location(other.location) {
-                        for (position c = 0; c < this->combinator->length; c++)
-                            this->positions[c] = other.positions[c];
+                        while (location < index) forward();
+                        while (location > index) back();
                     }
                     void forward() {
                         this->combinator->next(this->positions);
@@ -340,8 +334,9 @@ namespace Combinator {
                         Walker patrol(this->combinator);
                         while (patrol.location < this->combinator->size() - 1) {
                             patrol.forward();
-                            if ((patrol.location + reactionTime / 2) % reactionTime == 0)
-                                guardians.push_back(patrol);
+                            if ((patrol.location + reactionTime / 2) % reactionTime == 0) {
+								guardians.push_back(patrol);
+							}
                         }
                     }
                     [[nodiscard]] position estimate(const position index) const override {
@@ -354,7 +349,7 @@ namespace Combinator {
                             this->positions[c] = envoy.positions[c];
                     }
                 private:
-                    std::vector<Walker> guardians; // TODO: use array?
+                    std::vector<Walker> guardians;
                     const position nrElements;
                     position reactionTime;
                     Walker guardian(const position index) const {
@@ -488,11 +483,13 @@ namespace Combinator {
                 auto prevValue((position)-1);
                 do {
                     position add(0); // TODO: move up?
-                    for (position c = 0; c < _position; c++)
-                        if (
-                                prevValue + 1 < iterator.positions[c] + 1
-                                && iterator.positions[c] <= value)
-                            ++add;
+                    for (position c = 0; c < _position; c++) {
+						if ((prevValue + 1 < iterator.positions[c] + 1) &&
+							(iterator.positions[c] <= value)
+						) {
+							++add;
+						}
+					}
                     prevValue = value;
                     value += add;
                 } while (prevValue != value);
