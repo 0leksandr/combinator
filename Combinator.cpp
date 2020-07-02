@@ -84,9 +84,10 @@ namespace Combinator {
                     const position index
             ):
                     combinator(combinator),
+                    request(&combinator->request),
                     index(index),
                     positions(new position[combinator->request.length]),
-                    converter(combinator),
+                    converter(&combinator->request),
                     combination(converter.construct(&combination)) {
                 combinator->first(positions);
             }
@@ -103,10 +104,10 @@ namespace Combinator {
             }
             Combination& operator*() {
                 converter.prepare(combination);
-                for (position c = 0; c < combinator->request.length; c++)
+                for (position c = 0; c < request->length; c++)
                     combination[c] = converter.getElement(
                             &combination,
-                            combinator->request.elements[positions[c]]
+                            request->elements[positions[c]]
                     );
                 return combination;
             }
@@ -115,17 +116,14 @@ namespace Combinator {
             position* const positions;
         private:
             const FixedCombinator<element, Container, Combination>* const combinator;
+            const FixedRequest<Container>* const request;
             const Converter converter;
             Combination combination;
 
             class Converter {
                 public:
-                    explicit Converter(const FixedCombinator<
-                            element,
-                            Container,
-                            Combination
-                    >* const combinator):
-                            combinator(combinator) {}
+                    explicit Converter(const FixedRequest<Combination>* const request) :
+                            request(request) {}
                     std::vector<element> construct(std::vector<element>*) const {
                         std::vector<element> vec;
                         initVector(vec);
@@ -133,16 +131,16 @@ namespace Combinator {
                     }
 //                    template<class _element>
 //                    simpleArray<_element> construct(simpleArray<_element>*) const {
-//                        return simpleArray<_element>(combinator->length);
+//                        return simpleArray<_element>(request->length);
 //                    }
                     template<class _element, unsigned long size>
                     std::array<_element, size> construct(std::array<_element, size>*) const {
-                        Assert(size == combinator->request.length);
+                        Assert(size == request->length);
                         return std::array<_element, size>();
                     }
                     template<class _element>
                     _element* construct(_element**) const {
-                        return new _element[combinator->request.length];
+                        return new _element[request->length];
                     }
                     template<class C>
                     C construct(C*) const {
@@ -150,7 +148,7 @@ namespace Combinator {
                     }
 
                     void prepare(std::vector<element>& _combination) const {
-                        if (_combination.size() != combinator->request.length) {
+                        if (_combination.size() != request->length) {
                             _combination.clear();
                             initVector(_combination);
                         }
@@ -180,11 +178,11 @@ namespace Combinator {
                     template<class C>
                     void destruct(C& _combination) const {}
                 private:
-                    const FixedCombinator<element, Container, Combination>* const combinator;
+                    const FixedRequest<Combination>* const request;
                     void initVector(std::vector<element>& vec) const {
-                        vec.reserve(combinator->request.length);
-                        for (position c = 0; c < combinator->request.length; c++) {
-							vec.push_back(combinator->request.elements[c]);
+                        vec.reserve(request->length);
+                        for (position c = 0; c < request->length; c++) {
+							vec.push_back(request->elements[c]);
 						}
                     }
             };
