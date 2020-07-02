@@ -6,60 +6,65 @@
 #include <boost/assert.hpp>
 
 namespace Combinator {
-    typedef unsigned long position;
+    typedef unsigned long position; // TODO: Position
 
-    template<class element, class Container, class Combination>
-    class Iterator;
+    template<class element, class Container, class Combination> // TODO: Element
+    class ForwardIterator;
 
 	#define Assert BOOST_ASSERT
 
-    template<class element, class Container, class Combination>
-    class Combinator {
-            friend class Iterator<element, Container, Combination>;
-        public:
-            virtual Combination& operator[](position index) const = 0;
-            [[nodiscard]] position size() const {
-                Assert(_size > 0);
-                return _size;
-            }
-        protected:
-            const Container elements;
-            const position _size;
-            Combinator(const Container elements, const position size):
-                    elements(elements),
-                    _size(size) {}
-            Combinator(const Combinator<element, Container, Combination>& other):
-                    elements(other.elements),
-                    _size(other._size) {}
-			[[nodiscard]] position nrElements() const {
-				return elements.size();
-			}
+//	template<class element>
+//	class Container {
+//		public:
+//			virtual element operator[](position _position) const = 0;
+//	};
+
+    template<class Container>
+    class FixedRequest {
+    	public:
+			const Container elements;
+			const position length;
+
+			FixedRequest(
+					const Container elements,
+					const position length
+			) : elements(elements), length(length) {}
     };
 
     template<class element, class Container, class Combination>
-    class FixedCombinator : public Combinator<element, Container, Combination> {
-            friend class Iterator<element, Container, Combination>;
+    class FixedCombinator {
+            friend class ForwardIterator<element, Container, Combination>;
         public:
-            Iterator<element, Container, Combination> begin() const {
-                return Iterator<element, Container, Combination>(this, 0);
+			virtual Combination& operator[](position index) const = 0;
+			[[nodiscard]] position size() const {
+						Assert(_size > 0);
+				return _size;
+			}
+            ForwardIterator<element, Container, Combination> begin() const {
+                return ForwardIterator<element, Container, Combination>(this, 0);
             }
-            Iterator<element, Container, Combination> end() const {
-                return Iterator<element, Container, Combination>(this, this->size());
+            ForwardIterator<element, Container, Combination> end() const {
+                return ForwardIterator<element, Container, Combination>(this, this->size());
             }
         protected:
-            const position length;
-            mutable Iterator<element, Container, Combination> current;
-            virtual void next(Iterator<element, Container, Combination>& iterator) const = 0;
-            FixedCombinator(Container elements, const position length, const position size):
-                    Combinator<element, Container, Combination>(elements, size),
-                    length(length),
+    		const FixedRequest<Combination> request;
+			const position _size;
+            mutable ForwardIterator<element, Container, Combination> current;
+
+            virtual void next(ForwardIterator<element, Container, Combination>& iterator) const = 0;
+            FixedCombinator(Container elements, const position length, const position size) :
+					request(elements, length),
+					_size(size),
                     current(this, 0) {}
-            FixedCombinator(const FixedCombinator<element, Container, Combination>& other):
-                    Combinator<element, Container, Combination>(other),
-                    length(other.length),
+            FixedCombinator(const FixedCombinator<element, Container, Combination>& other) :
+					request(other.request),
+					_size(other._size),
                     current(this, 0) {}
+			[[nodiscard]] position nrElements() const {
+				return request.elements.size();
+			}
 			void first(position* const positions) const {
-				for (position c = 0; c < this->length; c++) positions[c] = c;
+				for (position c = 0; c < this->request.length; c++) positions[c] = c;
 			}
     };
 
@@ -69,23 +74,23 @@ namespace Combinator {
     class ShuffledCombinator;
 
     template<class element, class Container, class Combination>
-    class Iterator {
+    class ForwardIterator {
             friend class OrderedCombinator<element, Container, Combination>;
             friend class ShuffledCombinator<element, Container, Combination>;
             class Converter;
         public:
-            Iterator(
+            ForwardIterator(
                     const FixedCombinator<element, Container, Combination>* const combinator,
                     const position index
             ):
                     combinator(combinator),
                     index(index),
-                    positions(new position[combinator->length]),
+                    positions(new position[combinator->request.length]),
                     converter(combinator),
                     combination(converter.construct(&combination)) {
                 combinator->first(positions);
             }
-            ~Iterator() {
+            ~ForwardIterator() {
                 delete[] positions;
                 converter.destruct(combination);
             }
@@ -93,15 +98,15 @@ namespace Combinator {
                 combinator->next(*this);
                 index++;
             }
-            bool operator!=(const Iterator<element, Container, Combination>& other) const {
+            bool operator!=(const ForwardIterator<element, Container, Combination>& other) const {
                 return index != other.index;
             }
             Combination& operator*() {
                 converter.prepare(combination);
-                for (position c = 0; c < combinator->length; c++)
+                for (position c = 0; c < combinator->request.length; c++)
                     combination[c] = converter.getElement(
                             &combination,
-                            combinator->elements[positions[c]]
+                            combinator->request.elements[positions[c]]
                     );
                 return combination;
             }
@@ -132,12 +137,12 @@ namespace Combinator {
 //                    }
                     template<class _element, unsigned long size>
                     std::array<_element, size> construct(std::array<_element, size>*) const {
-                        Assert(size == combinator->length);
+                        Assert(size == combinator->request.length);
                         return std::array<_element, size>();
                     }
                     template<class _element>
                     _element* construct(_element**) const {
-                        return new _element[combinator->length];
+                        return new _element[combinator->request.length];
                     }
                     template<class C>
                     C construct(C*) const {
@@ -145,7 +150,7 @@ namespace Combinator {
                     }
 
                     void prepare(std::vector<element>& _combination) const {
-                        if (_combination.size() != combinator->length) {
+                        if (_combination.size() != combinator->request.length) {
                             _combination.clear();
                             initVector(_combination);
                         }
@@ -177,9 +182,10 @@ namespace Combinator {
                 private:
                     const FixedCombinator<element, Container, Combination>* const combinator;
                     void initVector(std::vector<element>& vec) const {
-                        vec.reserve(combinator->length);
-                        for (position c = 0; c < combinator->length; c++)
-                            vec.push_back(combinator->elements[c]);
+                        vec.reserve(combinator->request.length);
+                        for (position c = 0; c < combinator->request.length; c++) {
+							vec.push_back(combinator->request.elements[c]);
+						}
                     }
             };
     };
@@ -216,13 +222,13 @@ namespace Combinator {
                 }
                 Assert(chosen != nullptr);
                 chosen->go(index);
-                for (position c = 0; c < this->length; c++) {
+                for (position c = 0; c < this->request.length; c++) {
 					this->current.positions[c] = chosen->positions[c];
 				}
                 return *this->current;
             }
         protected:
-            void next(Iterator<element, Container, Combination>& iterator) const override {
+            void next(ForwardIterator<element, Container, Combination>& iterator) const override {
                 next(iterator.positions);
             }
         private:
@@ -242,18 +248,18 @@ namespace Combinator {
             void decrement(position* const positions, const position _position) const {
                 --positions[_position];
                 if (_position > 0 && positions[_position] == positions[_position - 1]) {
-                    for (position c = _position; c < this->length; c++) positions[c] = maxPosition(c);
+                    for (position c = _position; c < this->request.length; c++) positions[c] = maxPosition(c);
                     decrement(positions, _position - 1);
                 }
             }
             void next(position* const positions) const {
-                increment(positions, this->length - 1);
+                increment(positions, this->request.length - 1);
             }
             void previous(position* const positions) const {
-                decrement(positions, this->length - 1);
+                decrement(positions, this->request.length - 1);
             }
             position maxPosition(const position _position) const { // TODO: inline?
-                return this->nrElements() + _position - this->length;
+                return this->nrElements() + _position - this->request.length;
             }
             template<typename Float = float>
             position nPerM(const position n, const position m) const {
@@ -273,7 +279,7 @@ namespace Combinator {
                             Container,
                             Combination
                     >* const combinator):
-                            positions(new position[combinator->length]),
+                            positions(new position[combinator->request.length]),
                             combinator(combinator) {}
                     ~OrderIterator() {
                         delete[] positions;
@@ -298,7 +304,7 @@ namespace Combinator {
 					Walker(const Walker& other):
 							OrderIterator(other.combinator),
 							location(other.location) {
-						for (position c = 0; c < this->combinator->length; c++) {
+						for (position c = 0; c < this->combinator->request.length; c++) {
 							this->positions[c] = other.positions[c];
 						}
 					}
@@ -345,7 +351,7 @@ namespace Combinator {
                     void go(const position index) override {
                         Walker envoy = guardian(index);
                         envoy.go(index);
-                        for (position c = 0; c < this->combinator->length; c++)
+                        for (position c = 0; c < this->combinator->request.length; c++)
                             this->positions[c] = envoy.positions[c];
                     }
                 private:
@@ -371,7 +377,7 @@ namespace Combinator {
                     }
                     void go(position index) override {
                         position nrElements(this->combinator->nrElements());
-                        for (position c = 0; c < this->combinator->length; c++) {
+                        for (position c = 0; c < this->combinator->request.length; c++) {
                             step _step = getStep(c, nrElements, index);
                             nrElements -= _step.x + 1;
                             index -= _step.beginningOfX;
@@ -393,14 +399,14 @@ namespace Combinator {
                             const position nrElements,
                             const position index
                     ) const {
-                        if (_position == this->combinator->length - 1)
+                        if (_position == this->combinator->request.length - 1)
                             return step(index, index);
                         step res(0, 0);
                         position lastNPerM(0);
                         while (res.beginningOfX <= index) { // TODO: optimize
                             res.beginningOfX += lastNPerM = this->combinator->nPerM(
                                     nrElements - res.x - 1,
-                                    this->combinator->length - _position - 1
+                                    this->combinator->request.length - _position - 1
                             );
                             res.x++;
                         }
@@ -417,7 +423,7 @@ namespace Combinator {
                     [[nodiscard]] position avgNrSteps() const {
                         float totalAvgNrSteps(0.f);
                         position prevValue(0);
-                        for (position c = 0; c < this->combinator->length; c++) {
+                        for (position c = 0; c < this->combinator->request.length; c++) {
                             float nrSteps = avgNrSteps(c, prevValue);
                             prevValue = getStep(
                                     c,
@@ -436,11 +442,11 @@ namespace Combinator {
                         position maxValue = this->combinator->nrElements()
                                             + _position
                                             + 1
-                                            - this->combinator->length;
+                                            - this->combinator->request.length;
                         for (position c = minValue; c < maxValue; c++)
                             sum += this->combinator->nPerM(
                                     this->combinator->nrElements() - c - 1,
-                                    this->combinator->length - _position - 1
+                                    this->combinator->request.length - _position - 1
                             );
                         return sum / float(maxValue - minValue + 1);
                     }
@@ -461,22 +467,22 @@ namespace Combinator {
                 return *this->current;
             }
         protected:
-            void next(Iterator<element, Container, Combination>& iterator) const override {
+            void next(ForwardIterator<element, Container, Combination>& iterator) const override {
                 move(iterator, iterator.index + 1);
             }
         private:
             void move(
-                    const Iterator<element, Container, Combination>& iterator,
+                    const ForwardIterator<element, Container, Combination>& iterator,
                     position index
             ) const {
                 position nrElements(this->nrElements());
-                for (position c = 0; c < this->length; c++) {
+                for (position c = 0; c < this->request.length; c++) {
                     insertUnique(iterator, c, index % nrElements);
                     index /= nrElements--;
                 }
             }
             void insertUnique(
-                    const Iterator<element, Container, Combination>& iterator,
+                    const ForwardIterator<element, Container, Combination>& iterator,
                     const position _position,
                     position value
             ) const {
