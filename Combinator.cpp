@@ -5,9 +5,8 @@
 #include <array>
 #include <boost/assert.hpp>
 
-// TODO: MultiChoiceCombinator
 // TODO: UnorderedCombinator from variadic list of collections
-// TODO: ShuffledCombinator::begin return some Walker
+// TODO: ShuffledCombinator::begin and MultiChoiceCombinator::begin return some Walker
 // TODO: remove Container from main template
 
 namespace Combinator {
@@ -110,9 +109,7 @@ namespace Combinator {
                     request(request),
                     positions(new Position[request->length]),
                     converter(request),
-                    combination(converter.construct(&combination)) {
-				for (Position c = 0; c < request->length; c++) positions[c] = c;
-            }
+                    combination(converter.construct(&combination)) {}
             ~ForwardIterator() {
                 delete[] positions;
                 converter.destruct(combination);
@@ -156,11 +153,21 @@ namespace Combinator {
 					BackwardsIterator<Container, Combination>(request) {}
 			virtual void go(Position index) = 0;
 	};
+
 	template<class Container, class Combination>
-	class OrderIterator : public RandomAccessIterator<Container, Combination> {
+	class UniqueElementsIterator : public RandomAccessIterator<Container, Combination> {
+		public:
+			explicit UniqueElementsIterator(const FixedRequest<Container>* const request) :
+					RandomAccessIterator<Container, Combination>(request) {
+				for (Position c = 0; c < request->length; c++) this->positions[c] = c;
+			}
+	};
+
+	template<class Container, class Combination>
+	class OrderIterator : public UniqueElementsIterator<Container, Combination> {
 		public:
 			explicit OrderIterator(const FixedRequest<Container>* const request) :
-					RandomAccessIterator<Container, Combination>(request),
+					UniqueElementsIterator<Container, Combination>(request),
 					_size(nPerM(request->elements.size(), request->length)) {}
 			void operator++() override {
 				increment(this->request->length - 1);
@@ -397,10 +404,10 @@ namespace Combinator {
 	};
 
 	template<class Container, class Combination>
-	class ShuffleIterator : public RandomAccessIterator<Container, Combination> {
+	class ShuffleIterator : public UniqueElementsIterator<Container, Combination> {
 		public:
 			explicit ShuffleIterator(const FixedRequest<Container>* const request) :
-					RandomAccessIterator<Container, Combination>(request),
+					UniqueElementsIterator<Container, Combination>(request),
 					_size(nPerM(request->elements.size(), request->length)) {}
 			void go(Position index) override {
 				this->index = index;
@@ -457,6 +464,41 @@ namespace Combinator {
 			static Position nPerM2(Position n, Position m) {
 				Position res(n);
 				while (--m > 0) res *= --n;
+				return res;
+			}
+	};
+
+	template<class Container, class Combination>
+	class MultiChoiceIterator : public RandomAccessIterator<Container, Combination> {
+		public:
+			explicit MultiChoiceIterator(const FixedRequest<Container>* const request) :
+					RandomAccessIterator<Container, Combination>(request),
+					_size(pow(request->elements.size(), request->length)) {
+				for (int c = 0; c < request->length; ++c) this->positions[c] = 0;
+			}
+			void go(Position index) override {
+				this->index = index;
+				const Position nrElements(this->nrElements());
+				for (Position c = 0; c < this->request->length; c++) {
+					this->positions[c] = index % nrElements;
+					index /= nrElements;
+				}
+			}
+			void operator++() override {
+				go(this->index + 1);
+			}
+			void operator--() override {
+				go(this->index - 1);
+			}
+			[[nodiscard]] Position size() const override {
+				return _size;
+			}
+		private:
+			const Position _size;
+
+			static Position pow(const Position a, const Position b) {
+				Position res(1);
+				for (int c = 0; c < b; ++c) res *= a;
 				return res;
 			}
 	};
@@ -539,4 +581,21 @@ namespace Combinator {
 							ShuffleIterator<Container, Combination>
 					>(elements, length) {}
     };
+
+	template<class Container, class Combination = Container>
+	class MultiChoiceCombinator : public FixedCombinator<
+			Container,
+			Combination,
+			MultiChoiceIterator<Container, Combination>,
+			MultiChoiceIterator<Container, Combination>
+	> {
+		public:
+			MultiChoiceCombinator(const Container& elements, const Position length):
+					FixedCombinator<
+							Container,
+							Combination,
+							MultiChoiceIterator<Container, Combination>,
+							MultiChoiceIterator<Container, Combination>
+					>(elements, length) {}
+	};
 }

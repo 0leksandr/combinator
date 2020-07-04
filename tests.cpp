@@ -143,6 +143,7 @@ void tests() {
 	testOrdered<std::array<double, 2>>();
 	testShuffled<std::vector<double>>();
 	testShuffled<std::array<double, 2>>();
+
 	test<
 	        std::vector<double>,
 			std::vector<double>,
@@ -154,6 +155,12 @@ void tests() {
 			ShuffledCombinator<std::vector<double>>
 	>({1, 2, 3, 4}, 2, 12, false, true);
 	test<
+			std::vector<double>,
+			std::vector<double>,
+			MultiChoiceCombinator<std::vector<double>>
+	>({1, 2, 3, 4}, 2, 16, false, false);
+
+	test<
 			std::array<double, 8>,
 			std::array<double, 3>,
 			OrderedCombinator<std::array<double, 8>, std::array<double, 3>>
@@ -163,4 +170,9 @@ void tests() {
 			std::array<double, 3>,
 			ShuffledCombinator<std::array<double, 8>, std::array<double, 3>>
 	>({1, 2, 3, 4, 5, 6, 7, 8}, 3, 336, false, true);
+	test<
+			std::array<double, 8>,
+			std::array<double, 3>,
+			MultiChoiceCombinator<std::array<double, 8>, std::array<double, 3>>
+	>({1, 2, 3, 4, 5, 6, 7, 8}, 3, 512, false, false);
 }
