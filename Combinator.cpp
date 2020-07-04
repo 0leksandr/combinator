@@ -10,25 +10,31 @@ namespace Combinator {
 
 	#define Assert BOOST_ASSERT
 
-////	template<class Element>
-////	class Collection {
-////		public:
-////			virtual Element operator[](size_t position) const = 0;
-////			[[nodiscard]] virtual size_t size() const = 0;
-////	};
-//	template<class Element, class Collection>
-//	class Container {
+//	template<class Element>
+//	class Collection {
 //		public:
-//			explicit Container(const Collection& real) : real(real) {}
-//			Element operator[](Position position) const {
-//				return real[position];
-//			}
-//			[[nodiscard]] Position size() const {
-//				return real.size();
-//			}
-//		private:
-//			const Collection real; // TODO: link/reference
+//			virtual Element operator[](size_t position) const = 0;
+//			[[nodiscard]] virtual size_t size() const = 0;
 //	};
+	template<class Element>
+	class Container {
+		public:
+			explicit Container(const std::vector<Element>& vec) : elements(vec) {}
+			template<size_t size>
+			explicit Container(const std::array<Element, size>& arr) : elements(arr) {}
+//			template<class C>
+//			explicit Container(const C* const real) {
+//				throw std::runtime_error("Unsupported collection type");
+//			}
+			Element operator[](Position position) const {
+				return elements[position];
+			}
+			[[nodiscard]] Position size() const {
+				return elements.size();
+			}
+		private:
+			const std::vector<Element> elements;
+	};
 
     template<class Container>
     class FixedRequest {
@@ -472,7 +478,7 @@ namespace Combinator {
 			}
 	};
 
-	template<class Element, class Container, class Combination, class ForwardIterator, class RandomAccessIterator>
+	template<class Element, class Collection, class Combination, class ForwardIterator, class RandomAccessIterator>
 	class FixedCombinator {
 		public:
 			Combination& operator[](Position index) const {
@@ -489,14 +495,14 @@ namespace Combinator {
 				return current->size();
 			}
 		protected:
-			FixedCombinator(const Container& elements, const Position length) :
-					request(elements, length),
+			FixedCombinator(const Collection& elements, const Position length) :
+					request(Container<Element>(elements), length),
 					current(newIterator()),
 					_end(size()) {}
 			FixedCombinator(
 					const FixedCombinator<
 							Element,
-							Container,
+							Collection,
 							Combination,
 							ForwardIterator,
 							RandomAccessIterator
@@ -509,7 +515,7 @@ namespace Combinator {
 				delete current;
 			}
 		private:
-			const FixedRequest<Container> request;
+			const FixedRequest<Container<Element>> request;
 			mutable RandomAccessIterator* current;
 			const IndexedIterator _end;
 
@@ -518,41 +524,41 @@ namespace Combinator {
 			}
 	};
 
-	template<class Element, class Container, class Combination>
+	template<class Element, class Collection, class Combination>
 	class OrderedCombinator : public FixedCombinator<
 	        Element,
-	        Container,
+			Collection,
 	        Combination,
-	        Walker<Element, Container, Combination>,
-			ComboIterator<Element, Container, Combination>
+	        Walker<Element, Container<Element>, Combination>,
+			ComboIterator<Element, Container<Element>, Combination>
 	> {
 		public:
-			OrderedCombinator(const Container& elements, const Position length) :
+			OrderedCombinator(const Collection& elements, const Position length) :
 					FixedCombinator<
 					        Element,
-					        Container,
+							Collection,
 					        Combination,
-					        Walker<Element, Container, Combination>,
-							ComboIterator<Element, Container, Combination>
+					        Walker<Element, Container<Element>, Combination>,
+							ComboIterator<Element, Container<Element>, Combination>
 					>(elements, length) {}
 	};
 
-    template<class Element, class Container, class Combination>
+    template<class Element, class Collection, class Combination>
     class ShuffledCombinator : public FixedCombinator<
             Element,
-            Container,
+			Collection,
             Combination,
-            ShuffleIterator<Element, Container, Combination>,
-			ShuffleIterator<Element, Container, Combination>
+            ShuffleIterator<Element, Container<Element>, Combination>,
+			ShuffleIterator<Element, Container<Element>, Combination>
 	> {
         public:
-			ShuffledCombinator(const Container& elements, const Position length):
+			ShuffledCombinator(const Collection& elements, const Position length):
 					FixedCombinator<
 					        Element,
-					        Container,
+							Collection,
 					        Combination,
-					        ShuffleIterator<Element, Container, Combination>,
-							ShuffleIterator<Element, Container, Combination>
+					        ShuffleIterator<Element, Container<Element>, Combination>,
+							ShuffleIterator<Element, Container<Element>, Combination>
 					>(elements, length) {}
     };
 }
