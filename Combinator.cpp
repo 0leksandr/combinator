@@ -167,7 +167,6 @@ namespace Combinator {
 			explicit OrderIterator(const FixedRequest<Container>* const request) :
 					RandomAccessIterator<Element, Container, Combination>(request),
 					_size(nPerM(request->elements.size(), request->length)) {}
-			[[nodiscard]] virtual Position estimate(Position index) const = 0; // TODO: not public?
 			void operator++() override {
 				increment(this->request->length - 1);
 				++this->index;
@@ -217,12 +216,19 @@ namespace Combinator {
 			}
 	};
 	template<class Element, class Container, class Combination>
-	class Walker : public OrderIterator<Element, Container, Combination> {
+	class CandidateOrderIterator : public OrderIterator<Element, Container, Combination> {
+		public:
+			explicit CandidateOrderIterator(const FixedRequest<Container>* const request) :
+					OrderIterator<Element, Container, Combination>(request) {}
+			[[nodiscard]] virtual Position estimate(Position index) const = 0;
+	};
+	template<class Element, class Container, class Combination>
+	class Walker : public CandidateOrderIterator<Element, Container, Combination> {
 		public:
 			explicit Walker(const FixedRequest<Container>* const request) :
-					OrderIterator<Element, Container, Combination>(request) {}
+					CandidateOrderIterator<Element, Container, Combination>(request) {}
 			Walker(const Walker& other) :
-					OrderIterator<Element, Container, Combination>(other.request) {
+					CandidateOrderIterator<Element, Container, Combination>(other.request) {
 				this->index = other.index;
 				for (Position c = 0; c < this->request->length; c++) {
 					this->positions[c] = other.positions[c];
@@ -242,10 +248,10 @@ namespace Combinator {
 			}
 	};
 	template<class Element, class Container, class Combination>
-	class Hunter : public OrderIterator<Element, Container, Combination> {
+	class Hunter : public CandidateOrderIterator<Element, Container, Combination> {
 		public:
 			explicit Hunter(const FixedRequest<Container>* const request) :
-					OrderIterator<Element, Container, Combination>(request) {
+					CandidateOrderIterator<Element, Container, Combination>(request) {
 				const Position nrGuardians = (Position)sqrt(this->size()) + 1;
 				reactionTime = this->size() / nrGuardians; // TODO: check
 				Walker<Element, Container, Combination> patrol(request);
@@ -276,10 +282,10 @@ namespace Combinator {
 			}
 	};
 	template<class Element, class Container, class Combination>
-	class Mathematician : public OrderIterator<Element, Container, Combination> {
+	class Mathematician : public CandidateOrderIterator<Element, Container, Combination> {
 		public:
 			explicit Mathematician(const FixedRequest<Container>* const request) :
-					OrderIterator<Element, Container, Combination>(request) {
+					CandidateOrderIterator<Element, Container, Combination>(request) {
 				avgEstimation = avgNrSteps();
 			}
 			[[nodiscard]] Position estimate(Position index) const override {
@@ -298,10 +304,9 @@ namespace Combinator {
 		private:
 			Position avgEstimation;
 			struct Step {
-				Step(
-						const Position x,
-						const Position beggingOfX
-				): x(x), beginningOfX(beggingOfX) {}
+				Step(const Position x,const Position beggingOfX) :
+						x(x),
+						beginningOfX(beggingOfX) {}
 				Position x;
 				Position beginningOfX;
 			};
@@ -362,7 +367,7 @@ namespace Combinator {
 	template<class Element, class Container, class Combination>
 	class ComboIterator : public OrderIterator<Element, Container, Combination> {
 		private:
-			mutable std::vector<OrderIterator<Element, Container, Combination>*> iterators; // TODO: why mutable?
+			mutable std::vector<CandidateOrderIterator<Element, Container, Combination>*> iterators; // TODO: why mutable?
 		public:
 			explicit ComboIterator(const FixedRequest<Container>* const request) :
 					OrderIterator<Element, Container, Combination>(request),
@@ -389,9 +394,6 @@ namespace Combinator {
 					this->positions[c] = chosen->getPosition(c);
 				}
 				this->index = index;
-			}
-			[[nodiscard]] Position estimate(Position index) const { // TODO: remove
-				return 0;
 			}
 	};
 
