@@ -83,8 +83,6 @@ namespace Combinator {
 
     template<class element, class Container, class Combination>
     class ForwardIterator {
-            friend class OrderedCombinator<element, Container, Combination>;
-            friend class ShuffledCombinator<element, Container, Combination>;
             class Converter;
         public:
             ForwardIterator(
