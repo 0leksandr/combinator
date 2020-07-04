@@ -8,11 +8,6 @@
 namespace Combinator {
     typedef unsigned long Position;
 
-    template<class Element, class Container, class Combination>
-    class ForwardIterator;
-	template<class Element, class Container, class Combination>
-	class RandomAccessIterator;
-
 	#define Assert BOOST_ASSERT
 
 //	template<class Element>
@@ -50,7 +45,7 @@ namespace Combinator {
 			// }
 			template<class element, unsigned long size>
 			std::array<element, size> construct(std::array<element, size>*) const {
-				Assert(size == request->length); // TODO: remove?
+				Assert(size == request->length);
 				return std::array<element, size>();
 			}
 			template<class element>
@@ -102,53 +97,6 @@ namespace Combinator {
 				}
 			}
 	};
-
-    template<class Element, class Container, class Combination, class ForwardIterator>
-    class FixedCombinator {
-        public:
-//			virtual RandomAccessIterator<Element, Container, Combination>* newIterator() const = 0;
-//			FixedCombinator(Container elements, const Position length) :
-//					request(elements, length),
-//					current(newIterator()) {}
-
-			Combination& operator[](Position index) const {
-				current->go(index);
-				return **current;
-			}
-            ForwardIterator begin() const {
-                return ForwardIterator(&request, 0);
-            }
-            ForwardIterator end() const {
-                return ForwardIterator(&request, this->size()); // TODO: keep as private const
-            }
-			Position size() const {
-				return current->size();
-			}
-        protected:
-    		const FixedRequest<Combination> request;
-            mutable RandomAccessIterator<Element, Container, Combination>* current;
-
-            explicit FixedCombinator(const FixedRequest<Combination> request) :
-					request(request),
-                    current(newIterator()) {}
-            FixedCombinator( // TODO: remove?
-            		const FixedCombinator<Element, Container, Combination, ForwardIterator>& other
-			) :
-					request(other.request),
-                    current(newIterator()) {}
-			~FixedCombinator() {
-            	delete current;
-            }
-    	private:
-			RandomAccessIterator<Element, Container, Combination>* newIterator() const { // TODO: remove?
-				return new ForwardIterator(&request, 0);
-            }
-    };
-
-    template<class Element, class Container, class Combination = Container>
-    class OrderedCombinator;
-    template<class Element, class Container, class Combination = Container>
-    class ShuffledCombinator;
 
     template<class Element, class Container, class Combination>
     class ForwardIterator {
@@ -466,15 +414,6 @@ namespace Combinator {
 			}
 	};
 
-    template<class Element, class Container, class Combination>
-    class OrderedCombinator : public FixedCombinator<Element, Container, Combination, ComboIterator<Element, Container, Combination>> {
-        public:
-			OrderedCombinator(Container elements, const Position length) :
-					FixedCombinator<Element, Container, Combination, ComboIterator<Element, Container, Combination>>(
-							FixedRequest<Combination>(elements, length)
-					) {}
-    };
-
 	template<class Element, class Container, class Combination>
 	class ShuffleIterator : public RandomAccessIterator<Element, Container, Combination> {
 		public:
@@ -541,6 +480,57 @@ namespace Combinator {
 				while (--m > 0) res *= --n;
 				return res;
 			}
+	};
+
+	template<class Element, class Container, class Combination, class ForwardIterator>
+	class FixedCombinator {
+		public:
+//			virtual RandomAccessIterator<Element, Container, Combination>* newIterator() const = 0;
+//			FixedCombinator(Container elements, const Position length) :
+//					request(elements, length),
+//					current(newIterator()) {}
+
+			Combination& operator[](Position index) const {
+				current->go(index);
+				return **current;
+			}
+			ForwardIterator begin() const {
+				return ForwardIterator(&request, 0);
+			}
+			ForwardIterator end() const {
+				return ForwardIterator(&request, this->size()); // TODO: keep as private const
+			}
+			Position size() const {
+				return current->size();
+			}
+		protected:
+			const FixedRequest<Combination> request;
+			mutable RandomAccessIterator<Element, Container, Combination>* current;
+
+			explicit FixedCombinator(const FixedRequest<Combination> request) :
+					request(request),
+					current(newIterator()) {}
+			FixedCombinator( // TODO: remove?
+					const FixedCombinator<Element, Container, Combination, ForwardIterator>& other
+			) :
+					request(other.request),
+					current(newIterator()) {}
+			~FixedCombinator() {
+				delete current;
+			}
+		private:
+			RandomAccessIterator<Element, Container, Combination>* newIterator() const { // TODO: remove?
+				return new ForwardIterator(&request, 0);
+			}
+	};
+
+	template<class Element, class Container, class Combination>
+	class OrderedCombinator : public FixedCombinator<Element, Container, Combination, ComboIterator<Element, Container, Combination>> {
+		public:
+			OrderedCombinator(Container elements, const Position length) :
+					FixedCombinator<Element, Container, Combination, ComboIterator<Element, Container, Combination>>(
+							FixedRequest<Combination>(elements, length)
+					) {}
 	};
 
     template<class Element, class Container, class Combination>
