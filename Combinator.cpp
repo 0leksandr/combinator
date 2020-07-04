@@ -139,7 +139,7 @@ namespace Combinator {
 			const FixedRequest<Container>* const request;
             Position* const positions;
 
-			[[nodiscard]] Position nrElements() const { // TODO: remove?
+			[[nodiscard]] Position nrElements() const {
 				return request->elements.size();
 			}
         private:
@@ -176,13 +176,13 @@ namespace Combinator {
 				decrement(this->request->length - 1);
 				--this->index;
 			}
+			[[nodiscard]] Position size() const override {
+				return _size;
+			}
 			[[nodiscard]] Position getPosition(const Position position) const { // TODO: for ComboIterator and Hunter. Refactor
 				return this->positions[position];
 			}
 		protected:
-			[[nodiscard]] Position size() const override {
-				return _size;
-			}
 			template<typename Float = float>
 			static Position nPerM(const Position n, const Position m) {
 				Float res(1.);
@@ -460,7 +460,7 @@ namespace Combinator {
 			}
 	};
 
-	template<class Element, class Container, class Combination, class ForwardIterator>
+	template<class Element, class Container, class Combination, class ForwardIterator, class RandomAccessIterator>
 	class FixedCombinator {
 		public:
 			Combination& operator[](Position index) const {
@@ -478,14 +478,20 @@ namespace Combinator {
 			}
 		protected:
 			const FixedRequest<Combination> request;
-			mutable RandomAccessIterator<Element, Container, Combination>* current;
+			mutable RandomAccessIterator* current;
 
 			explicit FixedCombinator(const FixedRequest<Combination> request) :
 					request(request),
 					current(newIterator()),
 					_end(size()) {}
 			FixedCombinator( // TODO: remove?
-					const FixedCombinator<Element, Container, Combination, ForwardIterator>& other
+					const FixedCombinator<
+					        Element,
+					        Container,
+					        Combination,
+					        ForwardIterator,
+					        RandomAccessIterator
+					>& other
 			) :
 					request(other.request),
 					current(newIterator()),
@@ -496,26 +502,46 @@ namespace Combinator {
 		private:
 			const IndexedIterator _end;
 
-			RandomAccessIterator<Element, Container, Combination>* newIterator() const { // TODO: remove?
-				return new ForwardIterator(&request);
+			RandomAccessIterator* newIterator() const { // TODO: static
+				return new RandomAccessIterator(&request);
 			}
 	};
 
 	template<class Element, class Container, class Combination>
-	class OrderedCombinator : public FixedCombinator<Element, Container, Combination, ComboIterator<Element, Container, Combination>> {
+	class OrderedCombinator : public FixedCombinator<
+	        Element,
+	        Container,
+	        Combination,
+	        Walker<Element, Container, Combination>,
+			ComboIterator<Element, Container, Combination>
+	> {
 		public:
 			OrderedCombinator(Container elements, const Position length) :
-					FixedCombinator<Element, Container, Combination, ComboIterator<Element, Container, Combination>>(
-							FixedRequest<Combination>(elements, length)
-					) {}
+					FixedCombinator<
+					        Element,
+					        Container,
+					        Combination,
+					        Walker<Element, Container, Combination>,
+							ComboIterator<Element, Container, Combination>
+					>(FixedRequest<Combination>(elements, length)) {}
 	};
 
     template<class Element, class Container, class Combination>
-    class ShuffledCombinator : public FixedCombinator<Element, Container, Combination, ShuffleIterator<Element, Container, Combination>> {
+    class ShuffledCombinator : public FixedCombinator<
+            Element,
+            Container,
+            Combination,
+            ShuffleIterator<Element, Container, Combination>,
+			ShuffleIterator<Element, Container, Combination>
+	> {
         public:
 			ShuffledCombinator(Container elements, const Position length):
-					FixedCombinator<Element, Container, Combination, ShuffleIterator<Element, Container, Combination>>(
-							FixedRequest<Combination>(elements, length)
-					) {}
+					FixedCombinator<
+					        Element,
+					        Container,
+					        Combination,
+					        ShuffleIterator<Element, Container, Combination>,
+							ShuffleIterator<Element, Container, Combination>
+					>(FixedRequest<Combination>(elements, length)) {}
     };
 }
