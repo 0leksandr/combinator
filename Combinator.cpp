@@ -489,11 +489,8 @@ namespace Combinator {
 				return current->size();
 			}
 		protected:
-			const FixedRequest<Container> request;
-			mutable RandomAccessIterator* current;
-
-			explicit FixedCombinator(const FixedRequest<Container> request) :
-					request(request),
+			FixedCombinator(const Container& elements, const Position length) :
+					request(elements, length),
 					current(newIterator()),
 					_end(size()) {}
 			FixedCombinator(
@@ -512,6 +509,8 @@ namespace Combinator {
 				delete current;
 			}
 		private:
+			const FixedRequest<Container> request;
+			mutable RandomAccessIterator* current;
 			const IndexedIterator _end;
 
 			RandomAccessIterator* newIterator() const {
@@ -528,14 +527,14 @@ namespace Combinator {
 			ComboIterator<Element, Container, Combination>
 	> {
 		public:
-			OrderedCombinator(Container elements, const Position length) :
+			OrderedCombinator(const Container& elements, const Position length) :
 					FixedCombinator<
 					        Element,
 					        Container,
 					        Combination,
 					        Walker<Element, Container, Combination>,
 							ComboIterator<Element, Container, Combination>
-					>(FixedRequest<Container>(elements, length)) {}
+					>(elements, length) {}
 	};
 
     template<class Element, class Container, class Combination>
@@ -547,13 +546,13 @@ namespace Combinator {
 			ShuffleIterator<Element, Container, Combination>
 	> {
         public:
-			ShuffledCombinator(Container elements, const Position length):
+			ShuffledCombinator(const Container& elements, const Position length):
 					FixedCombinator<
 					        Element,
 					        Container,
 					        Combination,
 					        ShuffleIterator<Element, Container, Combination>,
 							ShuffleIterator<Element, Container, Combination>
-					>(FixedRequest<Container>(elements, length)) {}
+					>(elements, length) {}
     };
 }
