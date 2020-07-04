@@ -39,10 +39,6 @@ namespace Combinator {
 				initVector(vec);
 				return vec;
 			}
-			// template<class element>
-			// simpleArray<element> construct(simpleArray<element>*) const {
-			// 	return simpleArray<element>(request->length);
-			// }
 			template<class element, unsigned long size>
 			std::array<element, size> construct(std::array<element, size>*) const {
 				Assert(size == request->length);
@@ -66,9 +62,6 @@ namespace Combinator {
 			template<class C>
 			void prepare(C& combination) const {}
 
-			// Element* getElement(simpleArray<Element*>*, Element& element) const {
-			// 	return &element;
-			// }
 			template<size_t size>
 			Element* getElement(std::array<Element*, size>*, Element& element) const {
 				return &element;
@@ -178,9 +171,6 @@ namespace Combinator {
 			[[nodiscard]] Position size() const override {
 				return _size;
 			}
-			[[nodiscard]] Position getPosition(const Position position) const { // TODO: for ComboIterator and Hunter. Refactor
-				return this->positions[position];
-			}
 		protected:
 			template<typename Float = float>
 			static Position nPerM(const Position n, const Position m) {
@@ -211,7 +201,7 @@ namespace Combinator {
 					decrement(position - 1);
 				}
 			}
-			[[nodiscard]] Position maxPosition(const Position position) const { // TODO: inline?
+			[[nodiscard]] Position maxPosition(const Position position) const {
 				return this->nrElements() + position - this->request->length;
 			}
 	};
@@ -221,6 +211,9 @@ namespace Combinator {
 			explicit CandidateOrderIterator(const FixedRequest<Container>* const request) :
 					OrderIterator<Element, Container, Combination>(request) {}
 			[[nodiscard]] virtual Position estimate(Position index) const = 0;
+			[[nodiscard]] Position getPosition(const Position position) const {
+				return this->positions[position];
+			}
 	};
 	template<class Element, class Container, class Combination>
 	class Walker : public CandidateOrderIterator<Element, Container, Combination> {
@@ -240,8 +233,11 @@ namespace Combinator {
 				return 0;
 			}
 			void go(const Position index) override {
-				while (this->index < index) this->operator++();
-				while (this->index > index) this->operator--();
+				#pragma clang diagnostic push
+				#pragma ide diagnostic ignored "bugprone-infinite-loop"
+					while (this->index < index) this->operator++();
+					while (this->index > index) this->operator--();
+				#pragma clang diagnostic pop
 			}
 			[[nodiscard]] Position getIndex() const {
 				return this->index;
@@ -263,13 +259,13 @@ namespace Combinator {
 				}
 			}
 			[[nodiscard]] Position estimate(const Position index) const override {
-				return guardian(index).estimate(index);
+				return guardian(index)->estimate(index);
 			}
 			void go(const Position index) override {
-				Walker<Element, Container, Combination> envoy = guardian(index);
-				envoy.go(index);
+				auto envoy = guardian(index);
+				envoy->go(index);
 				for (Position c = 0; c < this->request->length; c++) {
-					this->positions[c] = envoy.getPosition(c);
+					this->positions[c] = envoy->getPosition(c);
 				}
 				this->index = index;
 			}
@@ -277,8 +273,8 @@ namespace Combinator {
 			std::vector<Walker<Element, Container, Combination>> guardians;
 			Position reactionTime;
 
-			Walker<Element, Container, Combination> guardian(const Position index) const { // TODO: link/reference
-				return guardians[index / reactionTime];
+			Walker<Element, Container, Combination>* guardian(const Position index) const {
+				return (Walker<Element, Container, Combination>*)&guardians[index / reactionTime];
 			}
 	};
 	template<class Element, class Container, class Combination>
@@ -367,11 +363,12 @@ namespace Combinator {
 	template<class Element, class Container, class Combination>
 	class ComboIterator : public OrderIterator<Element, Container, Combination> {
 		private:
-			mutable std::vector<CandidateOrderIterator<Element, Container, Combination>*> iterators; // TODO: why mutable?
+			std::vector<CandidateOrderIterator<Element, Container, Combination>*> iterators;
 		public:
 			explicit ComboIterator(const FixedRequest<Container>* const request) :
 					OrderIterator<Element, Container, Combination>(request),
 					iterators() {
+				iterators.push_back(new Walker<Element, Container, Combination>(request));
 				iterators.push_back(new Hunter<Element, Container, Combination>(request));
 				iterators.push_back(new Mathematician<Element, Container, Combination>(request));
 			}
@@ -380,7 +377,7 @@ namespace Combinator {
 			}
 			void go(Position index) override {
 				auto estimated((Position)-1);
-				OrderIterator<Element, Container, Combination>* chosen(nullptr);
+				CandidateOrderIterator<Element, Container, Combination>* chosen(nullptr);
 				for (auto* iterator : iterators) {
 					Position myBet = iterator->estimate(index);
 					if (myBet < estimated) {
@@ -405,7 +402,7 @@ namespace Combinator {
 					_size(nPerM(request->elements.size(), request->length)) {}
 			void go(Position index) override {
 				this->index = index;
-				Position nrElements(this->nrElements()); // TODO: remove?
+				Position nrElements(this->nrElements());
 				for (Position c = 0; c < this->request->length; c++) {
 					insertUnique(c, index % nrElements);
 					index /= nrElements--;
@@ -486,7 +483,7 @@ namespace Combinator {
 					request(request),
 					current(newIterator()),
 					_end(size()) {}
-			FixedCombinator( // TODO: remove?
+			FixedCombinator(
 					const FixedCombinator<
 					        Element,
 					        Container,
@@ -504,7 +501,7 @@ namespace Combinator {
 		private:
 			const IndexedIterator _end;
 
-			RandomAccessIterator* newIterator() const { // TODO: static
+			RandomAccessIterator* newIterator() const {
 				return new RandomAccessIterator(&request);
 			}
 	};
