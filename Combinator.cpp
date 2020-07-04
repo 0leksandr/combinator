@@ -6,15 +6,28 @@
 #include <boost/assert.hpp>
 
 namespace Combinator {
-    typedef unsigned long Position;
+    typedef size_t Position;
 
 	#define Assert BOOST_ASSERT
 
-//	template<class Element>
+////	template<class Element>
+////	class Collection {
+////		public:
+////			virtual Element operator[](size_t position) const = 0;
+////			[[nodiscard]] virtual size_t size() const = 0;
+////	};
+//	template<class Element, class Collection>
 //	class Container {
 //		public:
-//			virtual Element operator[](Position position) const = 0;
-//			[[nodiscard]] virtual size_t size() const = 0;
+//			explicit Container(const Collection& real) : real(real) {}
+//			Element operator[](Position position) const {
+//				return real[position];
+//			}
+//			[[nodiscard]] Position size() const {
+//				return real.size();
+//			}
+//		private:
+//			const Collection real; // TODO: link/reference
 //	};
 
     template<class Container>
@@ -29,10 +42,10 @@ namespace Combinator {
 			) : elements(elements), length(length) {}
     };
 
-	template<class Element, class Combination>
+	template<class Element, class Container>
 	class Converter {
 		public:
-			explicit Converter(const FixedRequest<Combination>* const request) :
+			explicit Converter(const FixedRequest<Container>* const request) :
 					request(request) {}
 			std::vector<Element> construct(std::vector<Element>*) const {
 				std::vector<Element> vec;
@@ -81,7 +94,7 @@ namespace Combinator {
 			template<class C>
 			void destruct(C& combination) const {}
 		private:
-			const FixedRequest<Combination>* const request;
+			const FixedRequest<Container>* const request;
 
 			void initVector(std::vector<Element>& vec) const {
 				vec.reserve(request->length);
@@ -136,7 +149,7 @@ namespace Combinator {
 				return request->elements.size();
 			}
         private:
-            const Converter<Element, Combination> converter;
+            const Converter<Element, Container> converter;
             Combination combination;
     };
 	template<class Element, class Container, class Combination>
@@ -476,20 +489,20 @@ namespace Combinator {
 				return current->size();
 			}
 		protected:
-			const FixedRequest<Combination> request;
+			const FixedRequest<Container> request;
 			mutable RandomAccessIterator* current;
 
-			explicit FixedCombinator(const FixedRequest<Combination> request) :
+			explicit FixedCombinator(const FixedRequest<Container> request) :
 					request(request),
 					current(newIterator()),
 					_end(size()) {}
 			FixedCombinator(
 					const FixedCombinator<
-					        Element,
-					        Container,
-					        Combination,
-					        ForwardIterator,
-					        RandomAccessIterator
+							Element,
+							Container,
+							Combination,
+							ForwardIterator,
+							RandomAccessIterator
 					>& other
 			) :
 					request(other.request),
@@ -522,7 +535,7 @@ namespace Combinator {
 					        Combination,
 					        Walker<Element, Container, Combination>,
 							ComboIterator<Element, Container, Combination>
-					>(FixedRequest<Combination>(elements, length)) {}
+					>(FixedRequest<Container>(elements, length)) {}
 	};
 
     template<class Element, class Container, class Combination>
@@ -541,6 +554,6 @@ namespace Combinator {
 					        Combination,
 					        ShuffleIterator<Element, Container, Combination>,
 							ShuffleIterator<Element, Container, Combination>
-					>(FixedRequest<Combination>(elements, length)) {}
+					>(FixedRequest<Container>(elements, length)) {}
     };
 }

@@ -6,9 +6,9 @@
 
 using namespace Combinator;
 
-void testOrdered() {
+template<class Combination> void testOrdered() {
 	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
-	OrderedCombinator<double, std::vector<double>, std::vector<double>> combinations(
+	OrderedCombinator<double, std::vector<double>, Combination> combinations(
 			std::vector<double>({1, 2, 3, 4}),
 			NR_ELEMENTS_IN_COMBINATION
 	);
@@ -35,9 +35,9 @@ void testOrdered() {
 	}
 	myPrint("Test passed\n");
 }
-void testShuffled() {
+template<class Combination> void testShuffled() {
 	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
-	ShuffledCombinator<double, std::vector<double>, std::vector<double>> combinations(
+	ShuffledCombinator<double, std::vector<double>, Combination> combinations(
 			std::vector<double>({1, 2, 3, 4}),
 			NR_ELEMENTS_IN_COMBINATION
 	);
@@ -71,6 +71,8 @@ void testShuffled() {
 	myPrint("Test passed\n");
 }
 void tests() {
-	testOrdered();
-	testShuffled();
+	testOrdered<std::vector<double>>();
+	testOrdered<std::array<double, 2>>();
+	testShuffled<std::vector<double>>();
+	testShuffled<std::array<double, 2>>();
 }
