@@ -98,31 +98,34 @@ namespace Combinator {
 			}
 	};
 
+	class IndexedIterator {
+		public:
+			explicit IndexedIterator(const Position index) : index(index) {}
+			bool operator!=(const IndexedIterator& other) const {
+				return this->index != other.index;
+			}
+		protected:
+			Position index;
+	};
     template<class Element, class Container, class Combination>
-    class ForwardIterator {
+    class ForwardIterator : public IndexedIterator {
         public:
-            ForwardIterator(
-					const FixedRequest<Container>* const request,
-                    const Position index // TODO: do not pass to constructor
-            ):
+            explicit ForwardIterator(const FixedRequest<Container>* const request) :
+					IndexedIterator(0),
                     request(request),
-                    index(index),
                     positions(new Position[request->length]),
                     converter(request),
                     combination(converter.construct(&combination)) {
-                first(); // TODO: so, index is ignored?
+				for (Position c = 0; c < request->length; c++) positions[c] = c;
             }
             ~ForwardIterator() {
                 delete[] positions;
                 converter.destruct(combination);
             }
 
-			[[nodiscard]] virtual Position size() const = 0; // TODO: static
+			[[nodiscard]] virtual Position size() const = 0;
 
             virtual void operator++() = 0;
-            bool operator!=(const ForwardIterator<Element, Container, Combination>& other) const {
-                return index != other.index;
-            }
             Combination& operator*() {
                 converter.prepare(combination);
                 for (Position c = 0; c < request->length; c++)
@@ -134,14 +137,10 @@ namespace Combinator {
             }
         protected:
 			const FixedRequest<Container>* const request;
-            Position index;
             Position* const positions;
 
 			[[nodiscard]] Position nrElements() const { // TODO: remove?
 				return request->elements.size();
-			}
-			void first() {
-				for (Position c = 0; c < this->request->length; c++) positions[c] = c;
 			}
         private:
             const Converter<Element, Combination> converter;
@@ -150,30 +149,23 @@ namespace Combinator {
 	template<class Element, class Container, class Combination>
 	class BackwardsIterator : public ForwardIterator<Element, Container, Combination> {
 		public:
-			BackwardsIterator(
-					const FixedRequest<Container>* const request,
-					const Position index
-			) : ForwardIterator<Element, Container, Combination>(request, index) {}
+			explicit BackwardsIterator(const FixedRequest<Container>* const request) :
+					ForwardIterator<Element, Container, Combination>(request) {}
 		protected:
 			virtual void operator--() = 0;
 	};
 	template<class Element, class Container, class Combination>
 	class RandomAccessIterator : public BackwardsIterator<Element, Container, Combination> {
 		public:
-			RandomAccessIterator(
-					const FixedRequest<Container>* const request,
-					const Position index
-			) : BackwardsIterator<Element, Container, Combination>(request, index) {}
+			explicit RandomAccessIterator(const FixedRequest<Container>* const request) :
+					BackwardsIterator<Element, Container, Combination>(request) {}
 			virtual void go(Position index) = 0;
 	};
 	template<class Element, class Container, class Combination>
 	class OrderIterator : public RandomAccessIterator<Element, Container, Combination> {
 		public:
-			OrderIterator(
-					const FixedRequest<Container>* const request,
-					const Position index
-			) :
-					RandomAccessIterator<Element, Container, Combination>(request, index),
+			explicit OrderIterator(const FixedRequest<Container>* const request) :
+					RandomAccessIterator<Element, Container, Combination>(request),
 					_size(nPerM(request->elements.size(), request->length)) {}
 			[[nodiscard]] virtual Position estimate(Position index) const = 0; // TODO: not public?
 			void operator++() override {
@@ -227,13 +219,11 @@ namespace Combinator {
 	template<class Element, class Container, class Combination>
 	class Walker : public OrderIterator<Element, Container, Combination> {
 		public:
-			explicit Walker(
-					const FixedRequest<Container>* const request,
-					const Position index
-			) :
-					OrderIterator<Element, Container, Combination>(request, index) {}
+			explicit Walker(const FixedRequest<Container>* const request) :
+					OrderIterator<Element, Container, Combination>(request) {}
 			Walker(const Walker& other) :
-					OrderIterator<Element, Container, Combination>(other.request, other.index) {
+					OrderIterator<Element, Container, Combination>(other.request) {
+				this->index = other.index;
 				for (Position c = 0; c < this->request->length; c++) {
 					this->positions[c] = other.positions[c];
 				}
@@ -254,14 +244,11 @@ namespace Combinator {
 	template<class Element, class Container, class Combination>
 	class Hunter : public OrderIterator<Element, Container, Combination> {
 		public:
-			explicit Hunter(
-					const FixedRequest<Container>* const request,
-					const Position index
-			) :
-					OrderIterator<Element, Container, Combination>(request, index) {
+			explicit Hunter(const FixedRequest<Container>* const request) :
+					OrderIterator<Element, Container, Combination>(request) {
 				const Position nrGuardians = (Position)sqrt(this->size()) + 1;
 				reactionTime = this->size() / nrGuardians; // TODO: check
-				Walker<Element, Container, Combination> patrol(request, index);
+				Walker<Element, Container, Combination> patrol(request);
 				while (patrol.getIndex() < this->size() - 1) {
 					patrol.operator++();
 					if ((patrol.getIndex() + reactionTime / 2) % reactionTime == 0) {
@@ -291,11 +278,8 @@ namespace Combinator {
 	template<class Element, class Container, class Combination>
 	class Mathematician : public OrderIterator<Element, Container, Combination> {
 		public:
-			explicit Mathematician(
-					const FixedRequest<Container>* const request,
-					const Position index
-			) :
-					OrderIterator<Element, Container, Combination>(request, index) {
+			explicit Mathematician(const FixedRequest<Container>* const request) :
+					OrderIterator<Element, Container, Combination>(request) {
 				avgEstimation = avgNrSteps();
 			}
 			[[nodiscard]] Position estimate(Position index) const override {
@@ -380,14 +364,11 @@ namespace Combinator {
 		private:
 			mutable std::vector<OrderIterator<Element, Container, Combination>*> iterators; // TODO: why mutable?
 		public:
-			ComboIterator(
-					const FixedRequest<Container>* const request,
-					const Position index
-			) :
-					OrderIterator<Element, Container, Combination>(request, index),
+			explicit ComboIterator(const FixedRequest<Container>* const request) :
+					OrderIterator<Element, Container, Combination>(request),
 					iterators() {
-				iterators.push_back(new Hunter<Element, Container, Combination>(request, index));
-				iterators.push_back(new Mathematician<Element, Container, Combination>(request, index));
+				iterators.push_back(new Hunter<Element, Container, Combination>(request));
+				iterators.push_back(new Mathematician<Element, Container, Combination>(request));
 			}
 			~ComboIterator() {
 				for (auto* iterator : iterators) delete iterator;
@@ -417,11 +398,8 @@ namespace Combinator {
 	template<class Element, class Container, class Combination>
 	class ShuffleIterator : public RandomAccessIterator<Element, Container, Combination> {
 		public:
-			ShuffleIterator(
-					const FixedRequest<Container>* const request,
-					const Position index
-			) :
-					RandomAccessIterator<Element, Container, Combination>(request, index),
+			explicit ShuffleIterator(const FixedRequest<Container>* const request) :
+					RandomAccessIterator<Element, Container, Combination>(request),
 					_size(nPerM(request->elements.size(), request->length)) {}
 			void go(Position index) override {
 				this->index = index;
@@ -485,20 +463,15 @@ namespace Combinator {
 	template<class Element, class Container, class Combination, class ForwardIterator>
 	class FixedCombinator {
 		public:
-//			virtual RandomAccessIterator<Element, Container, Combination>* newIterator() const = 0;
-//			FixedCombinator(Container elements, const Position length) :
-//					request(elements, length),
-//					current(newIterator()) {}
-
 			Combination& operator[](Position index) const {
 				current->go(index);
 				return **current;
 			}
 			ForwardIterator begin() const {
-				return ForwardIterator(&request, 0);
+				return ForwardIterator(&request);
 			}
-			ForwardIterator end() const {
-				return ForwardIterator(&request, this->size()); // TODO: keep as private const
+			IndexedIterator end() const {
+				return _end;
 			}
 			Position size() const {
 				return current->size();
@@ -509,18 +482,22 @@ namespace Combinator {
 
 			explicit FixedCombinator(const FixedRequest<Combination> request) :
 					request(request),
-					current(newIterator()) {}
+					current(newIterator()),
+					_end(size()) {}
 			FixedCombinator( // TODO: remove?
 					const FixedCombinator<Element, Container, Combination, ForwardIterator>& other
 			) :
 					request(other.request),
-					current(newIterator()) {}
+					current(newIterator()),
+					_end(other._end) {}
 			~FixedCombinator() {
 				delete current;
 			}
 		private:
+			const IndexedIterator _end;
+
 			RandomAccessIterator<Element, Container, Combination>* newIterator() const { // TODO: remove?
-				return new ForwardIterator(&request, 0);
+				return new ForwardIterator(&request);
 			}
 	};
 
