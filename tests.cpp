@@ -25,7 +25,7 @@ void testOrdered() {
 			{3., 4.},
 	};
 	Assert(combinations.size() == NR_COMBINATIONS);
-	position c(0);
+	unsigned c(0);
 	for (auto combination : combinations) {
 		Assert(combination.size() == NR_ELEMENTS_IN_COMBINATION);
 		Assert(combinations[c].size() == NR_ELEMENTS_IN_COMBINATION);
@@ -64,7 +64,7 @@ void testShuffled() {
 			{4., 3.},
 	};
 	Assert(combinations.size() == NR_COMBINATIONS);
-	position c(0);
+	unsigned c(0);
 	for (auto combination : combinations) {
 		Assert(combination.size() == NR_ELEMENTS_IN_COMBINATION);
 		Assert(combinations[c].size() == NR_ELEMENTS_IN_COMBINATION);
