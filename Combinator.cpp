@@ -8,7 +8,7 @@
 // TODO: MultiChoiceCombinator
 // TODO: UnorderedCombinator from variadic list of collections
 // TODO: ShuffledCombinator::begin return some Walker
-// TODO: try to remove Container (and Element) from main template
+// TODO: remove Container from main template
 
 namespace Combinator {
     typedef size_t Position;
@@ -506,7 +506,7 @@ namespace Combinator {
 			}
 	};
 
-	template<class Container, class Combination>
+	template<class Container, class Combination = Container>
 	class OrderedCombinator : public FixedCombinator<
 	        Container,
 	        Combination,
@@ -523,7 +523,7 @@ namespace Combinator {
 					>(elements, length) {}
 	};
 
-    template<class Container, class Combination>
+    template<class Container, class Combination = Container>
     class ShuffledCombinator : public FixedCombinator<
             Container,
             Combination,

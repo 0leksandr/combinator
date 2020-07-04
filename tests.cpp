@@ -5,9 +5,51 @@
 #include "my/macro.cpp"
 
 // TODO: test combinations of combinations
-// TODO: test combinations by checking: all combinations are unique, nr of combinations, (elements are ordered), (elements are unique)
+// TODO: check RandomAccessIterator with big "jumps"
 
 using namespace Combinator;
+
+template<class Container>
+void assertEquals(const Container& a, const Container& b) {
+	Assert(a.size() == b.size());
+	for (int c = 0; c < a.size(); ++c) Assert(a[c] == b[c]);
+}
+template<class Container>
+void assertElementsDiffer(const Container& a, const Container& b) {
+	Assert(a.size() == b.size());
+	bool equal = true;
+	for (int c = 0; c < a.size(); ++c) {
+		if (a[c] != b[c]) {
+			equal = false;
+			break;
+		}
+	}
+	Assert(!equal);
+}
+template<class Combination>
+void assertCombinationsUnique(std::vector<Combination> combinations) {
+	for (int c = 0; c < combinations.size(); ++c) {
+		for (int d = c+1; d < combinations.size(); ++d) {
+			assertElementsDiffer(combinations[c], combinations[d]);
+		}
+	}
+}
+template<class Container>
+void assertOrdered(const Container& container) {
+	if (container.size() > 1) {
+		for (int c = 0; c < container.size() - 1; ++c) {
+			Assert(container[c] < container[c+1]);
+		}
+	}
+}
+template<class Container>
+void assertElementsUnique(const Container& container) {
+	for (int c = 0; c < container.size(); ++c) {
+		for (int d = c+1; d < container.size(); ++d) {
+			Assert(container[c] != container[d]);
+		}
+	}
+}
 
 template<class Combination> void testOrdered() {
 	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
@@ -73,9 +115,52 @@ template<class Combination> void testShuffled() {
 	}
 	myPrint("Test passed\n");
 }
+template<class Container, class Combination, class Combinator>
+void test(
+		const Container& input,
+		const unsigned combinationLength,
+		const unsigned expectedNrCombinations,
+		const bool expectOrdered,
+		const bool expectElementsUnique
+) {
+	auto combinator = Combinator(input, combinationLength);
+	Assert(combinator.size() == expectedNrCombinations);
+	std::vector<Combination> combinations;
+	combinations.reserve(combinator.size());
+	unsigned c(0);
+	for (const auto& combination : combinator) {
+		assertEquals(combination, combinator[c++]);
+		if (expectOrdered) assertOrdered(combination);
+		if (expectElementsUnique) assertElementsUnique(combination);
+		combinations.push_back(combination);
+	}
+	Assert(combinations.size() == expectedNrCombinations);
+	assertCombinationsUnique(combinations);
+	myPrint("Test passed\n");
+}
 void tests() {
 	testOrdered<std::vector<double>>();
 	testOrdered<std::array<double, 2>>();
 	testShuffled<std::vector<double>>();
 	testShuffled<std::array<double, 2>>();
+	test<
+	        std::vector<double>,
+			std::vector<double>,
+			OrderedCombinator<std::vector<double>>
+	>({1, 2, 3, 4}, 2, 6, true, true);
+	test<
+	        std::vector<double>,
+			std::vector<double>,
+			ShuffledCombinator<std::vector<double>>
+	>({1, 2, 3, 4}, 2, 12, false, true);
+	test<
+			std::array<double, 8>,
+			std::array<double, 3>,
+			OrderedCombinator<std::array<double, 8>, std::array<double, 3>>
+	>({1, 2, 3, 4, 5, 6, 7, 8}, 3, 56, true, true);
+	test<
+			std::array<double, 8>,
+			std::array<double, 3>,
+			ShuffledCombinator<std::array<double, 8>, std::array<double, 3>>
+	>({1, 2, 3, 4, 5, 6, 7, 8}, 3, 336, false, true);
 }
