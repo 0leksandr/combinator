@@ -4,6 +4,9 @@
 #include "Combinator.cpp"
 #include "my/macro.cpp"
 
+// TODO: test combinations of combinations
+// TODO: test combinations by checking: all combinations are unique, nr of combinations, (elements are ordered), (elements are unique)
+
 using namespace Combinator;
 
 template<class Combination> void testOrdered() {

@@ -5,6 +5,9 @@
 #include <array>
 #include <boost/assert.hpp>
 
+// TODO: MultiChoiceCombinator
+// TODO: UnorderedCombinator from variadic list of collections
+
 namespace Combinator {
     typedef size_t Position;
 
