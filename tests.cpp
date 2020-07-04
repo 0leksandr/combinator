@@ -11,7 +11,7 @@ using namespace Combinator;
 
 template<class Combination> void testOrdered() {
 	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
-	OrderedCombinator<double, std::vector<double>, Combination> combinations(
+	OrderedCombinator<std::vector<double>, Combination> combinations(
 			std::vector<double>({1, 2, 3, 4}),
 			NR_ELEMENTS_IN_COMBINATION
 	);
@@ -40,7 +40,7 @@ template<class Combination> void testOrdered() {
 }
 template<class Combination> void testShuffled() {
 	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
-	ShuffledCombinator<double, std::vector<double>, Combination> combinations(
+	ShuffledCombinator<std::vector<double>, Combination> combinations(
 			std::vector<double>({1, 2, 3, 4}),
 			NR_ELEMENTS_IN_COMBINATION
 	);
