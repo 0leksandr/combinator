@@ -5,6 +5,8 @@
 #include <array>
 #include <boost/assert.hpp>
 
+#include <iostream> // TODO: remove
+
 // TODO: UnorderedCombinator from variadic list of collections
 // TODO: ShuffledCombinator::begin and MultiChoiceCombinator::begin return some Walker
 // TODO: remove Container from main template
@@ -469,9 +471,41 @@ namespace Combinator {
 	};
 
 	template<class Container, class Combination>
-	class MultiChoiceIterator : public RandomAccessIterator<Container, Combination> {
+	class MultiChoiceFIterator : public ForwardIterator<Container, Combination> {
 		public:
-			explicit MultiChoiceIterator(const FixedRequest<Container>* const request) :
+			explicit MultiChoiceFIterator(const FixedRequest<Container>* const request) :
+					ForwardIterator<Container, Combination>(request),
+					_size(pow(request->elements.size(), request->length)) {
+				for (int c = 0; c < request->length; ++c) this->positions[c] = 0;
+			}
+			void operator++() override {
+				increment(0);
+				++this->index;
+			}
+			[[nodiscard]] Position size() const override {
+				return _size;
+			}
+		private:
+			const Position _size; // TODO: MultiChoiceSizedIterator?
+
+			static Position pow(const Position a, const Position b) {
+				Position res(1);
+				for (int c = 0; c < b; ++c) res *= a;
+				return res;
+			}
+			void increment(const Position position) {
+				if (position < this->request->length) {
+					if (++(this->positions[position]) == this->nrElements()) {
+						this->positions[position] = 0;
+						increment(position + 1);
+					}
+				}
+			}
+	};
+	template<class Container, class Combination>
+	class MultiChoiceRAIterator : public RandomAccessIterator<Container, Combination> {
+		public:
+			explicit MultiChoiceRAIterator(const FixedRequest<Container>* const request) :
 					RandomAccessIterator<Container, Combination>(request),
 					_size(pow(request->elements.size(), request->length)) {
 				for (int c = 0; c < request->length; ++c) this->positions[c] = 0;
@@ -484,6 +518,7 @@ namespace Combinator {
 					index /= nrElements;
 				}
 			}
+			// TODO: are these necessary?
 			void operator++() override {
 				go(this->index + 1);
 			}
@@ -494,7 +529,7 @@ namespace Combinator {
 				return _size;
 			}
 		private:
-			const Position _size;
+			const Position _size; // TODO: remove
 
 			static Position pow(const Position a, const Position b) {
 				Position res(1);
@@ -586,16 +621,16 @@ namespace Combinator {
 	class MultiChoiceCombinator : public FixedCombinator<
 			Container,
 			Combination,
-			MultiChoiceIterator<Container, Combination>,
-			MultiChoiceIterator<Container, Combination>
+			MultiChoiceFIterator<Container, Combination>,
+			MultiChoiceRAIterator<Container, Combination>
 	> {
 		public:
 			MultiChoiceCombinator(const Container& elements, const Position length):
 					FixedCombinator<
 							Container,
 							Combination,
-							MultiChoiceIterator<Container, Combination>,
-							MultiChoiceIterator<Container, Combination>
+							MultiChoiceFIterator<Container, Combination>,
+							MultiChoiceRAIterator<Container, Combination>
 					>(elements, length) {}
 	};
 }
