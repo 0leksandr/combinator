@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Combinator.cpp"
+#include "Combinator.h"
 #include "my/macro.cpp"
 
 // TODO: test combinations of combinations
