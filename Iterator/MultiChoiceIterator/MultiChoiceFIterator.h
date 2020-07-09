@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../ForwardIterator.h"
-#include "../../FixedRequest.h"
 #include "../../Position.h"
+#include "../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class MultiChoiceFIterator : public ForwardIterator<Container, Combination> {

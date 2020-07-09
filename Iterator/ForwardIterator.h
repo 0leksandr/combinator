@@ -2,8 +2,8 @@
 
 #include "IndexedIterator.h"
 #include "../Converter.h"
-#include "../FixedRequest.h"
 #include "../Position.h"
+#include "../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class ForwardIterator : public IndexedIterator {
@@ -12,23 +12,23 @@ class ForwardIterator : public IndexedIterator {
 				IndexedIterator(0),
 				request(request),
 				positions(new Position[request->length]),
-				converter(request),
-				combination(converter.construct(&combination)) {}
+				combination(Converter<Combination>::initCombination(
+						&combination,
+						request->length,
+						request->elements[0]
+				)) {}
 		~ForwardIterator() {
 			delete[] positions;
-			converter.destruct(combination);
+			Converter<Container>::deleteCombination(combination);
 		}
 
 		[[nodiscard]] virtual Position size() const = 0;
 
 		virtual void operator++() = 0;
 		Combination& operator*() {
-			converter.prepare(combination);
-			for (Position c = 0; c < request->length; c++)
-				combination[c] = converter.getElement(
-						&combination,
-						request->elements[positions[c]]
-				);
+			for (Position c = 0; c < request->length; c++) {
+				combination[c] = request->elements[positions[c]];
+			}
 			return combination;
 		}
 	protected:
@@ -39,6 +39,5 @@ class ForwardIterator : public IndexedIterator {
 			return request->elements.size();
 		}
 	private:
-		const Converter<Container> converter;
 		Combination combination;
 };

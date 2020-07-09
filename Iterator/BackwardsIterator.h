@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ForwardIterator.h"
-#include "../FixedRequest.h"
+#include "../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class BackwardsIterator : public ForwardIterator<Container, Combination> {

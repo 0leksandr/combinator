@@ -1,8 +1,8 @@
 #pragma once
 
 #include "BackwardsIterator.h"
-#include "../FixedRequest.h"
 #include "../Position.h"
+#include "../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class RandomAccessIterator : public BackwardsIterator<Container, Combination> {

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../RandomAccessIterator.h"
-#include "../../FixedRequest.h"
 #include "../../Position.h"
+#include "../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class MultiChoiceRAIterator : public RandomAccessIterator<Container, Combination> {

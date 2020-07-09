@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Position.h"
+#include "../Position.h"
 
 template<class Container>
-class FixedRequest {
+class FixedRequest { // TODO: FixedListRequest?
 	public:
 		const Container elements;
 		const Position length;
