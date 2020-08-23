@@ -13,8 +13,6 @@ class MultiChoiceListIterator :
 	public:
 		explicit MultiChoiceListIterator(const FixedRequest<Container>* const request) :
 				ListIterator<Container, Combination>(request),
-				SizedIterator(),
-				PositionedIterator(0),
 				_size(pow(request->elements.size(), request->length)) {
 			for (int c = 0; c < request->length; ++c) this->positions[c] = 0;
 		}

@@ -12,7 +12,6 @@ class OrderIterator :
 	public:
 		explicit OrderIterator(const FixedRequest<Container>* const request) :
 				UniqueElementsIterator<Container, Combination>(request),
-				BackwardsIterator(),
 				_size(nPerM(request->elements.size(), request->length)) {}
 		[[nodiscard]] Position size() const override {
 			return _size;

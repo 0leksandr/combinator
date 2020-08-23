@@ -11,9 +11,7 @@ class MultiChoiceFIterator :
 		public ForwardIterator {
 	public:
 		explicit MultiChoiceFIterator(const FixedRequest<Container>* const request) :
-				MultiChoiceListIterator<Container, Combination>(request),
-				ForwardIterator() {
-		}
+				MultiChoiceListIterator<Container, Combination>(request) {}
 		void operator++() override {
 			increment(0);
 			++this->index;

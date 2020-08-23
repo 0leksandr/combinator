@@ -11,9 +11,7 @@ class MultiChoiceRAIterator :
 		public RandomAccessIterator {
 	public:
 		explicit MultiChoiceRAIterator(const FixedRequest<Container>* const request) :
-				MultiChoiceListIterator<Container, Combination>(request),
-				RandomAccessIterator() {
-		}
+				MultiChoiceListIterator<Container, Combination>(request) {}
 		void go(Position index) override {
 			this->index = index;
 			const Position nrElements(this->nrElements());

@@ -5,7 +5,7 @@
 
 class PositionedIterator : public Iterator {
 	public:
-		explicit PositionedIterator(const Position index) : Iterator(), index(index) {}
+		explicit PositionedIterator(const Position index = 0) : index(index) {}
 		bool operator!=(const PositionedIterator& other) const {
 			return this->index != other.index;
 		}

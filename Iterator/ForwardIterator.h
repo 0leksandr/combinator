@@ -4,6 +4,5 @@
 
 class ForwardIterator : public Iterator {
 	public:
-		ForwardIterator() : Iterator() {}
 		virtual void operator++() = 0;
 };

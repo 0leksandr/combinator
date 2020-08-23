@@ -5,6 +5,5 @@
 
 class RandomAccessIterator : public Iterator {
 	public:
-		explicit RandomAccessIterator() : Iterator() {}
 		virtual void go(Position index) = 0;
 };

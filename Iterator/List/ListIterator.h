@@ -9,7 +9,6 @@ template<class Container, class Combination>
 class ListIterator : public DereferencedIterator<Combination> {
 	public:
 		explicit ListIterator(const FixedRequest<Container>* const request) :
-				DereferencedIterator<Combination>(),
 				request(request),
 				positions(new Position[request->length]),
 				combination(Converter<Combination>::initCombination(
