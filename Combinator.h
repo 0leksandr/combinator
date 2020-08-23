@@ -22,7 +22,7 @@ namespace Combinator {
 			ForwardIterator begin() const {
 				return ForwardIterator(&request);
 			}
-			IndexedIterator end() const {
+			PositionedIterator end() const {
 				return _end;
 			}
 			Position size() const {
@@ -50,7 +50,7 @@ namespace Combinator {
 		private:
 			const FixedRequest<Container> request;
 			mutable RandomAccessIterator* current;
-			const IndexedIterator _end;
+			const PositionedIterator _end;
 
 			RandomAccessIterator* newIterator() const {
 				return new RandomAccessIterator(&request);

@@ -2,7 +2,7 @@
 
 #include "Iterator.h"
 
-class BackwardsIterator : public Iterator { // TODO: BidirectionalIterator ?
+class BackwardsIterator : public Iterator {
 	public:
 		BackwardsIterator() : Iterator() {}
 	protected:

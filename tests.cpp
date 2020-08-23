@@ -5,7 +5,7 @@
 #include "my/macro.cpp"
 
 // TODO: test combinations of combinations
-// TODO: check RandomAccessListIterator with big "jumps"
+// TODO: test ComboIterator with big "jumps"
 // TODO: check case with Combination = collection of addresses of elements (`Converter::getElement`)
 
 using namespace Combinator;

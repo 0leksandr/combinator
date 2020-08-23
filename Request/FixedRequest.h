@@ -3,7 +3,7 @@
 #include "../Position.h"
 
 template<class Container>
-class FixedRequest { // TODO: FixedListRequest?
+class FixedRequest {
 	public:
 		const Container elements;
 		const Position length;

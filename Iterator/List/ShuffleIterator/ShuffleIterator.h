@@ -1,30 +1,14 @@
 #pragma once
 
 #include "../UniqueElementsIterator.h"
-#include "../../BackwardsIterator.h"
-#include "../../ForwardIterator.h"
-#include "../../IndexedIterator.h"
-#include "../../RandomAccessIterator.h"
-#include "../../SizedIterator.h"
 #include "../../../Position.h"
 #include "../../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
-class ShuffleIterator :
-		public UniqueElementsIterator<Container, Combination>,
-		public SizedIterator,
-		public IndexedIterator,
-		public ForwardIterator,
-		public BackwardsIterator,
-		public RandomAccessIterator {
+class ShuffleIterator : public UniqueElementsIterator<Container, Combination> {
 	public:
 		explicit ShuffleIterator(const FixedRequest<Container>* const request) :
 				UniqueElementsIterator<Container, Combination>(request),
-				SizedIterator(),
-				IndexedIterator(0),
-				ForwardIterator(),
-				BackwardsIterator(),
-				RandomAccessIterator(),
 				_size(nPerM(request->elements.size(), request->length)) {}
 		void go(Position index) override {
 			this->index = index;
@@ -36,9 +20,6 @@ class ShuffleIterator :
 		}
 		void operator++() override {
 			go(this->index + 1);
-		}
-		void operator--() override {
-			go(this->index - 1);
 		}
 		[[nodiscard]] Position size() const override {
 			return _size;

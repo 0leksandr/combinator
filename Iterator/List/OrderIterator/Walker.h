@@ -28,7 +28,7 @@ class Walker : public CandidateOrderIterator<Container, Combination> {
 				while (this->index > index) this->operator--();
 			#pragma clang diagnostic pop
 		}
-		[[nodiscard]] Position getIndex() const { // TODO: protected?
+		[[nodiscard]] Position getIndex() const {
 			return this->index;
 		}
 };

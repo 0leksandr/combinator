@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../ListIterator.h"
-#include "../../IndexedIterator.h"
+#include "../../PositionedIterator.h"
 #include "../../SizedIterator.h"
 #include "../../../Request/FixedRequest.h"
 
@@ -9,12 +9,12 @@ template<class Container, class Combination>
 class MultiChoiceListIterator :
 		public ListIterator<Container, Combination>,
 		public SizedIterator,
-		public IndexedIterator {
+		public PositionedIterator {
 	public:
 		explicit MultiChoiceListIterator(const FixedRequest<Container>* const request) :
 				ListIterator<Container, Combination>(request),
 				SizedIterator(),
-				IndexedIterator(0),
+				PositionedIterator(0),
 				_size(pow(request->elements.size(), request->length)) {
 			for (int c = 0; c < request->length; ++c) this->positions[c] = 0;
 		}
@@ -22,7 +22,7 @@ class MultiChoiceListIterator :
 			return _size;
 		}
 	private:
-		const Position _size; // TODO: remove
+		const Position _size;
 
 		static Position pow(const Position a, const Position b) {
 			Position res(1);
