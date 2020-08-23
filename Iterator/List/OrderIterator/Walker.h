@@ -1,8 +1,8 @@
 #pragma once
 
 #include "CandidateOrderIterator.h"
-#include "../../Position.h"
-#include "../../Request/FixedRequest.h"
+#include "../../../Position.h"
+#include "../../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class Walker : public CandidateOrderIterator<Container, Combination> {
@@ -23,12 +23,12 @@ class Walker : public CandidateOrderIterator<Container, Combination> {
 		}
 		void go(const Position index) override {
 			#pragma clang diagnostic push
-			#pragma ide diagnostic ignored "bugprone-infinite-loop"
+			#pragma ide diagnostic ignored "LoopDoesntUseConditionVariableInspection"
 				while (this->index < index) this->operator++();
 				while (this->index > index) this->operator--();
 			#pragma clang diagnostic pop
 		}
-		[[nodiscard]] Position getIndex() const {
+		[[nodiscard]] Position getIndex() const { // TODO: protected?
 			return this->index;
 		}
 };

@@ -1,19 +1,19 @@
 #pragma once
 
-#include "Iterator/MultiChoiceIterator/MultiChoiceFIterator.h"
-#include "Iterator/MultiChoiceIterator/MultiChoiceRAIterator.h"
-#include "Iterator/OrderIterator/ComboIterator.h"
-#include "Iterator/OrderIterator/Walker.h"
-#include "Iterator/ShuffleIterator/ShuffleIterator.h"
+#include "Iterator/List/MultiChoiceIterator/MultiChoiceFIterator.h"
+#include "Iterator/List/MultiChoiceIterator/MultiChoiceRAIterator.h"
+#include "Iterator/List/OrderIterator/ComboIterator.h"
+#include "Iterator/List/OrderIterator/Walker.h"
+#include "Iterator/List/ShuffleIterator/ShuffleIterator.h"
 #include "Position.h"
 
 // TODO: UnorderedCombinator from variadic list of collections
-// TODO: ShuffledCombinator::begin and MultiChoiceCombinator::begin return some Walker
+// TODO: ShuffledCombinator::begin return some Walker
 // TODO: remove Container from main template
 
 namespace Combinator {
 	template<class Container, class Combination, class ForwardIterator, class RandomAccessIterator>
-	class FixedCombinator {
+	class FixedListCombinator {
 		public:
 			Combination& operator[](Position index) const {
 				current->go(index);
@@ -29,12 +29,12 @@ namespace Combinator {
 				return current->size();
 			}
 		protected:
-			FixedCombinator(const Container& elements, const Position length) :
+			FixedListCombinator(const Container& elements, const Position length) :
 					request(elements, length),
 					current(newIterator()),
 					_end(size()) {}
-			FixedCombinator(
-					const FixedCombinator<
+			FixedListCombinator(
+					const FixedListCombinator<
 							Container,
 							Combination,
 							ForwardIterator,
@@ -44,7 +44,7 @@ namespace Combinator {
 					request(other.request),
 					current(newIterator()),
 					_end(other._end) {}
-			~FixedCombinator() {
+			~FixedListCombinator() {
 				delete current;
 			}
 		private:
@@ -58,7 +58,7 @@ namespace Combinator {
 	};
 
 	template<class Container, class Combination = Container>
-	class OrderedCombinator : public FixedCombinator<
+	class OrderedCombinator : public FixedListCombinator<
 	        Container,
 	        Combination,
 	        Walker<Container, Combination>,
@@ -66,7 +66,7 @@ namespace Combinator {
 	> {
 		public:
 			OrderedCombinator(const Container& elements, const Position length) :
-					FixedCombinator<
+					FixedListCombinator<
 					        Container,
 					        Combination,
 					        Walker<Container, Combination>,
@@ -75,7 +75,7 @@ namespace Combinator {
 	};
 
     template<class Container, class Combination = Container>
-    class ShuffledCombinator : public FixedCombinator<
+    class ShuffledCombinator : public FixedListCombinator<
             Container,
             Combination,
             ShuffleIterator<Container, Combination>,
@@ -83,7 +83,7 @@ namespace Combinator {
 	> {
         public:
 			ShuffledCombinator(const Container& elements, const Position length):
-					FixedCombinator<
+					FixedListCombinator<
 					        Container,
 					        Combination,
 					        ShuffleIterator<Container, Combination>,
@@ -92,7 +92,7 @@ namespace Combinator {
     };
 
 	template<class Container, class Combination = Container>
-	class MultiChoiceCombinator : public FixedCombinator<
+	class MultiChoiceCombinator : public FixedListCombinator<
 			Container,
 			Combination,
 			MultiChoiceFIterator<Container, Combination>,
@@ -100,11 +100,15 @@ namespace Combinator {
 	> {
 		public:
 			MultiChoiceCombinator(const Container& elements, const Position length):
-					FixedCombinator<
+					FixedListCombinator<
 							Container,
 							Combination,
 							MultiChoiceFIterator<Container, Combination>,
 							MultiChoiceRAIterator<Container, Combination>
 					>(elements, length) {}
+	};
+
+	template<class Container, Position NrContainers, class Combination>
+	class ComposeIterator {
 	};
 }

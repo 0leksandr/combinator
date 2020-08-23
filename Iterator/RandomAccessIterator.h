@@ -1,13 +1,11 @@
 #pragma once
 
-#include "BackwardsIterator.h"
+#include "Iterator.h"
 #include "../Position.h"
-#include "../Request/FixedRequest.h"
 
-template<class Container, class Combination>
-class RandomAccessIterator : public BackwardsIterator<Container, Combination> {
+class RandomAccessIterator : public Iterator {
 	public:
-		explicit RandomAccessIterator(const FixedRequest<Container>* const request) :
-				BackwardsIterator<Container, Combination>(request) {}
+		explicit RandomAccessIterator() : Iterator() {}
+
 		virtual void go(Position index) = 0;
 };

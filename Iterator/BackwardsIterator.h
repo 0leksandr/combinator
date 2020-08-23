@@ -1,13 +1,10 @@
 #pragma once
 
-#include "ForwardIterator.h"
-#include "../Request/FixedRequest.h"
+#include "Iterator.h"
 
-template<class Container, class Combination>
-class BackwardsIterator : public ForwardIterator<Container, Combination> {
+class BackwardsIterator : public Iterator { // TODO: BidirectionalIterator ?
 	public:
-		explicit BackwardsIterator(const FixedRequest<Container>* const request) :
-				ForwardIterator<Container, Combination>(request) {}
+		BackwardsIterator() : Iterator() {}
 	protected:
 		virtual void operator--() = 0;
 };

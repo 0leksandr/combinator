@@ -5,9 +5,9 @@
 #include "Mathematician.h"
 #include "OrderIterator.h"
 #include "Walker.h"
-#include "../../Assert.h"
-#include "../../Position.h"
-#include "../../Request/FixedRequest.h"
+#include "../../../Assert.h"
+#include "../../../Position.h"
+#include "../../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class ComboIterator : public OrderIterator<Container, Combination> {
@@ -24,7 +24,7 @@ class ComboIterator : public OrderIterator<Container, Combination> {
 		~ComboIterator() {
 			for (auto* iterator : iterators) delete iterator;
 		}
-		void go(Position index) override {
+		void go(Position index) {
 			auto estimated((Position)-1);
 			CandidateOrderIterator<Container, Combination>* chosen(nullptr);
 			for (auto* iterator : iterators) {

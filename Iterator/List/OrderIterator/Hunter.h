@@ -4,8 +4,8 @@
 #include <vector>
 #include "CandidateOrderIterator.h"
 #include "Walker.h"
-#include "../../Position.h"
-#include "../../Request/FixedRequest.h"
+#include "../../../Position.h"
+#include "../../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class Hunter : public CandidateOrderIterator<Container, Combination> {
