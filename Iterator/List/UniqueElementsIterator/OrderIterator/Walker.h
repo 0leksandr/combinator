@@ -1,8 +1,8 @@
 #pragma once
 
 #include "CandidateOrderIterator.h"
-#include "../../../Position.h"
-#include "../../../Request/FixedRequest.h"
+#include "../../../../Position.h"
+#include "../../../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class Walker : public CandidateOrderIterator<Container, Combination> {

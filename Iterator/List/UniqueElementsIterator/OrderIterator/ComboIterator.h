@@ -5,9 +5,9 @@
 #include "Mathematician.h"
 #include "OrderIterator.h"
 #include "Walker.h"
-#include "../../../Assert.h"
-#include "../../../Position.h"
-#include "../../../Request/FixedRequest.h"
+#include "../../../../Assert.h"
+#include "../../../../Position.h"
+#include "../../../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class ComboIterator : public OrderIterator<Container, Combination> {

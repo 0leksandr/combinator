@@ -2,9 +2,9 @@
 
 #include "Iterator/List/MultiChoiceIterator/MultiChoiceFIterator.h"
 #include "Iterator/List/MultiChoiceIterator/MultiChoiceRAIterator.h"
-#include "Iterator/List/OrderIterator/ComboIterator.h"
-#include "Iterator/List/OrderIterator/Walker.h"
-#include "Iterator/List/ShuffleIterator/ShuffleIterator.h"
+#include "Iterator/List/UniqueElementsIterator/OrderIterator/ComboIterator.h"
+#include "Iterator/List/UniqueElementsIterator/OrderIterator/Walker.h"
+#include "Iterator/List/UniqueElementsIterator/ShuffleIterator/ShuffleIterator.h"
 #include "Position.h"
 
 // TODO: UnorderedCombinator from variadic list of collections
@@ -108,7 +108,10 @@ namespace Combinator {
 					>(elements, length) {}
 	};
 
-	template<class Container, Position NrContainers, class Combination>
-	class ComposeIterator {
-	};
+//	template<class Container, Position NrContainers, class Combination>
+//	class ComposeCombinator : public FixedListCombinator<
+//			Container,
+//			Combination
+//	> {
+//	};
 }

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../UniqueElementsIterator.h"
-#include "../../../Position.h"
-#include "../../../Request/FixedRequest.h"
+#include "../../../../Position.h"
+#include "../../../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class ShuffleIterator : public UniqueElementsIterator<Container, Combination> {
