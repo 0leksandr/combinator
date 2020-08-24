@@ -21,14 +21,14 @@ namespace Combinator {
 	class FixedCombinator {
 		public:
 			Combination& operator[](Position index) const {
-				if (current == nullptr) current = newIterator();
+				if (current == nullptr) current = new RandomAccessIterator(request);
 				current->operator[](index);
 				return **current;
 			}
-			ForwardIterator begin() const {
+			[[maybe_unused]] ForwardIterator begin() const {
 				return ForwardIterator(request);
 			}
-			PositionedIterator end() const {
+			[[maybe_unused]] PositionedIterator end() const {
 				return _end;
 			}
 			Position size() const {
@@ -46,10 +46,6 @@ namespace Combinator {
 			const Request request;
 			mutable RandomAccessIterator* current;
 			const PositionedIterator _end;
-
-			RandomAccessIterator* newIterator() const {
-				return new RandomAccessIterator(request);
-			}
 	};
 
 	template<class Container, class Combination, class ForwardIterator, class RandomAccessIterator>
