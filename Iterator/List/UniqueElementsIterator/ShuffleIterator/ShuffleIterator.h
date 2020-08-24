@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../UniqueElementsIterator.h"
-#include "../../../ForwardIterator.h"
-#include "../../../MobileIteratorMacros.h"
-#include "../../../RandomAccessIterator.h"
+#include "../../../Movement/ForwardIterator.h"
+#include "../../../Movement/MobileIteratorMacros.h"
+#include "../../../Movement/RandomAccessIterator.h"
 #include "../../../../Position.h"
 #include "../../../../Request/FixedRequest.h"
 

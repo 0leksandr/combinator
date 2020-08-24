@@ -1,9 +1,9 @@
 #pragma once
 
 #include "CandidateOrderIterator.h"
-#include "../../../BackwardsIterator.h"
-#include "../../../ForwardIterator.h"
-#include "../../../MobileIteratorMacros.h"
+#include "../../../Movement/BackwardsIterator.h"
+#include "../../../Movement/ForwardIterator.h"
+#include "../../../Movement/MobileIteratorMacros.h"
 #include "../../../../Position.h"
 #include "../../../../Request/FixedRequest.h"
 

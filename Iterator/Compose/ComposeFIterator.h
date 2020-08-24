@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ComposeIterator.h"
-#include "../ForwardIterator.h"
+#include "../Movement/ForwardIterator.h"
 #include "../../Position.h"
 #include "../../Request/ComposeRequest.h"
 
@@ -12,9 +12,8 @@ class ComposeFIterator :
 	public:
 		explicit ComposeFIterator(const ComposeRequest<Container, NrContainers>* request) :
 				ComposeIterator<Container,NrContainers,Combination>(request) {}
-		void operator++() override {
+		void increment() override {
 			increment(0);
-			++this->index;
 		}
 	private:
 		void increment(const Position position) {

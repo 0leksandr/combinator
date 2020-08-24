@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Iterator.h"
-#include "../Position.h"
+#include "../Iterator.h"
+#include "../../Position.h"
 
 class PositionedIterator : public Iterator {
 	public:
@@ -10,7 +10,7 @@ class PositionedIterator : public Iterator {
 			return this->index != other.index;
 		}
 	protected:
-		virtual Position getIndex() const {
+		[[nodiscard]] virtual Position getIndex() const {
 			return index;
 		}
 		virtual void setIndex(const Position _index) {

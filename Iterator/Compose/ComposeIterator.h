@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../DereferencedIterator.h"
-#include "../PositionedIterator.h"
+#include "../Movement/PositionedIterator.h"
 #include "../SizedIterator.h"
 #include "../../Converter.h"
 #include "../../Request/ComposeRequest.h"

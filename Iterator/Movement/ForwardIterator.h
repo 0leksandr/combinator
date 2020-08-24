@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PositionedIterator.h"
-#include "../Position.h"
+#include "../../Position.h"
 
 class ForwardIterator : public PositionedIterator {
 	public:

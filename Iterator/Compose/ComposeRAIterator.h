@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ComposeIterator.h"
-#include "../RandomAccessIterator.h"
+#include "../Movement/RandomAccessIterator.h"
 #include "../../Position.h"
 #include "../../Request/ComposeRequest.h"
 

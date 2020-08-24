@@ -5,7 +5,7 @@
 #include "Mathematician.h"
 #include "OrderIterator.h"
 #include "Walker.h"
-#include "../../../RandomAccessIterator.h"
+#include "../../../Movement/RandomAccessIterator.h"
 #include "../../../../Assert.h"
 #include "../../../../Position.h"
 #include "../../../../Request/FixedRequest.h"
