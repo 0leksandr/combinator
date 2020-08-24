@@ -5,7 +5,7 @@
 
 class RandomAccessIterator : public PositionedIterator {
 	public:
-		void goWithIndex(const Position index) {
+		void operator[](const Position index) {
 			go(index);
 			this->index = index;
 		}

@@ -16,7 +16,7 @@ namespace Combinator {
 	class FixedListCombinator {
 		public:
 			Combination& operator[](Position index) const {
-				current->goWithIndex(index);
+				current->operator[](index);
 				return **current;
 			}
 			ForwardIterator begin() const {

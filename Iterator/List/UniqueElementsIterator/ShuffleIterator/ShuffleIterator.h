@@ -11,7 +11,7 @@ class ShuffleIterator : public UniqueElementsIterator<Container, Combination> {
 				UniqueElementsIterator<Container, Combination>(request),
 				_size(nPerM(request->elements.size(), request->length)) {}
 		void operator++() override {
-			this->goWithIndex(this->index + 1);
+			this->operator[](this->index + 1);
 		}
 		[[nodiscard]] Position size() const override {
 			return _size;

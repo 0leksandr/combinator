@@ -28,7 +28,7 @@ class Hunter : public CandidateOrderIterator<Container, Combination> {
 	protected:
 		void go(const Position index) override {
 			auto envoy = guardian(index);
-			envoy->goWithIndex(index);
+			envoy->operator[](index);
 			for (Position c = 0; c < this->request->length; c++) {
 				this->positions[c] = envoy->getPosition(c);
 			}

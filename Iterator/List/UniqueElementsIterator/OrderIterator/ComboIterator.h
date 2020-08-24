@@ -36,7 +36,7 @@ class ComboIterator : public OrderIterator<Container, Combination> {
 				}
 			}
 			Assert(chosen != nullptr);
-			chosen->goWithIndex(index);
+			chosen->operator[](index);
 			for (Position c = 0; c < this->request->length; c++) {
 				this->positions[c] = chosen->getPosition(c);
 			}
