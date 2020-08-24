@@ -7,7 +7,7 @@
 template<class Container, class Combination>
 class DereferencedIterator : public Iterator {
 	public:
-		explicit DereferencedIterator(const Position combinationSize, const Combination combination) :
+		explicit DereferencedIterator(const Combination combination, const Position combinationSize) :
 				positions(new Position[combinationSize]),
 				combination(combination) {}
 		~DereferencedIterator() {

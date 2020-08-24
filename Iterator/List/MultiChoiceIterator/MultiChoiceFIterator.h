@@ -17,11 +17,10 @@ class MultiChoiceFIterator :
 		}
 	private:
 		void increment(const Position position) {
-			if (position < this->request->length) {
-				if (++(this->positions[position]) == this->nrElements()) {
-					this->positions[position] = 0;
-					increment(position + 1);
-				}
+			if (position == this->request->length) return;
+			if (++(this->positions[position]) == this->nrElements()) {
+				this->positions[position] = 0;
+				increment(position + 1);
 			}
 		}
 };

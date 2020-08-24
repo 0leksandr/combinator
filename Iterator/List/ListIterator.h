@@ -10,12 +10,12 @@ class ListIterator : public DereferencedIterator<Container, Combination> {
 	public:
 		explicit ListIterator(const FixedRequest<Container>* const request) :
 				DereferencedIterator<Container, Combination>(
-						request->length,
 						Converter<Combination>::initCombination(
 								&this->combination,
 								request->length,
 								request->elements[0]
-						)
+						),
+						request->length
 				),
 				request(request) {}
 		Combination& operator*() const override {

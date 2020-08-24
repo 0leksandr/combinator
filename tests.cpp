@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <vector>
 #include "Combinator.h"
 #include "my/macro.cpp"
@@ -116,15 +117,13 @@ template<class Combination> void testShuffled() {
 	}
 	myPrint("Test passed\n");
 }
-template<class Container, class Combination, class Combinator>
+template<class Combination, class Combinator>
 void test(
-		const Container& input,
-		const unsigned combinationLength,
+		const Combinator& combinator,
 		const unsigned expectedNrCombinations,
 		const bool expectOrdered,
 		const bool expectElementsUnique
 ) {
-	auto combinator = Combinator(input, combinationLength);
 	Assert(combinator.size() == expectedNrCombinations);
 	std::vector<Combination> combinations;
 	combinations.reserve(combinator.size());
@@ -145,35 +144,26 @@ void tests() {
 	testShuffled<std::vector<double>>();
 	testShuffled<std::array<double, 2>>();
 
-	test<
-	        std::vector<double>,
-			std::vector<double>,
-			OrderedCombinator<std::vector<double>>
-	>({1, 2, 3, 4}, 2, 6, true, true);
-	test<
-	        std::vector<double>,
-			std::vector<double>,
-			ShuffledCombinator<std::vector<double>>
-	>({1, 2, 3, 4}, 2, 12, false, true);
-	test<
-			std::vector<double>,
-			std::vector<double>,
-			MultiChoiceCombinator<std::vector<double>>
-	>({1, 2, 3, 4}, 2, 16, false, false);
+	#define INPUT <std::vector<double>>({1, 2, 3, 4}, 2)
+	test<std::vector<double>>(OrderedCombinator INPUT, 6, true, true);
+	test<std::vector<double>>(ShuffledCombinator INPUT, 12, false, true);
+	test<std::vector<double>>(MultiChoiceCombinator INPUT, 16, false, false);
 
-	test<
-			std::array<double, 8>,
-			std::array<double, 3>,
-			OrderedCombinator<std::array<double, 8>, std::array<double, 3>>
-	>({1, 2, 3, 4, 5, 6, 7, 8}, 3, 56, true, true);
-	test<
-			std::array<double, 8>,
-			std::array<double, 3>,
-			ShuffledCombinator<std::array<double, 8>, std::array<double, 3>>
-	>({1, 2, 3, 4, 5, 6, 7, 8}, 3, 336, false, true);
-	test<
-			std::array<double, 8>,
-			std::array<double, 3>,
-			MultiChoiceCombinator<std::array<double, 8>, std::array<double, 3>>
-	>({1, 2, 3, 4, 5, 6, 7, 8}, 3, 512, false, false);
+	#define COMBINATION std::array<double, 3>
+	#define INPUT <std::array<double, 8>, COMBINATION>({1, 2, 3, 4, 5, 6, 7, 8}, 3)
+	test<COMBINATION>(OrderedCombinator INPUT, 56, true, true);
+	test<COMBINATION>(ShuffledCombinator INPUT, 336, false, true);
+	test<COMBINATION>(MultiChoiceCombinator INPUT, 512, false, false);
+
+	test<std::vector<int>>(
+			ComposeCombinator<std::vector<int>, 2, std::vector<int>>(
+					std::array<std::vector<int>, 2>{
+						std::vector<int>{1, 2},
+						std::vector<int>{3, 4},
+					}
+			),
+			4,
+			false,
+			false
+	);
 }

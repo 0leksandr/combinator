@@ -17,11 +17,10 @@ class ComposeFIterator :
 		}
 	private:
 		void increment(const Position position) {
-			if (position < this->request->containers.size()) {
-				if (++(this->positions[position]) == this->request->containers[position].size()) {
-					this->positions[position] = 0;
-					increment(position + 1);
-				}
+			if (position == this->request->containers.size()) return;
+			if (++(this->positions[position]) == this->request->containers[position].size()) {
+				this->positions[position] = 0;
+				increment(position + 1);
 			}
 		}
 };
