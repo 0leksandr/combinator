@@ -15,9 +15,9 @@ class Hunter : public CandidateOrderIterator<Container, Combination> {
 			const Position nrGuardians = (Position)sqrt(this->size()) + 1;
 			reactionTime = this->size() / nrGuardians; // TODO: check
 			Walker<Container, Combination> patrol(request);
-			while (patrol.getIndex() < this->size() - 1) {
+			while (patrol.getWalkerIndex() < this->size() - 1) {
 				patrol.operator++();
-				if ((patrol.getIndex() + reactionTime / 2) % reactionTime == 0) {
+				if ((patrol.getWalkerIndex() + reactionTime / 2) % reactionTime == 0) {
 					guardians.push_back(patrol);
 				}
 			}

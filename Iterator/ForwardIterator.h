@@ -1,8 +1,14 @@
 #pragma once
 
-#include "Iterator.h"
+#include "PositionedIterator.h"
+#include "../Position.h"
 
-class ForwardIterator : public Iterator {
+class ForwardIterator : public PositionedIterator {
 	public:
-		virtual void operator++() = 0;
+		void operator++() {
+			increment();
+			this->setIndex(this->getIndex() + 1);
+		}
+	protected:
+		virtual void increment() = 0;
 };

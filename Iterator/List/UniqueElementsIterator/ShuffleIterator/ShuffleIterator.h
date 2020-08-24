@@ -1,18 +1,22 @@
 #pragma once
 
 #include "../UniqueElementsIterator.h"
+#include "../../../ForwardIterator.h"
+#include "../../../MobileIteratorMacros.h"
+#include "../../../RandomAccessIterator.h"
 #include "../../../../Position.h"
 #include "../../../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
-class ShuffleIterator : public UniqueElementsIterator<Container, Combination> {
+class ShuffleIterator :
+		public UniqueElementsIterator<Container, Combination>,
+		public ForwardIterator,
+		public RandomAccessIterator {
+	MOBILE_ITERATOR;
 	public:
 		explicit ShuffleIterator(const FixedRequest<Container>* const request) :
 				UniqueElementsIterator<Container, Combination>(request),
 				_size(nPerM(request->elements.size(), request->length)) {}
-		void operator++() override {
-			this->operator[](this->index + 1);
-		}
 		[[nodiscard]] Position size() const override {
 			return _size;
 		}
@@ -24,8 +28,12 @@ class ShuffleIterator : public UniqueElementsIterator<Container, Combination> {
 				index /= nrElements--;
 			}
 		}
+		void increment() override {
+			// TODO: something smarter
+			this->go(this->getIndex() + 1);
+		}
 	private:
-		const Position _size;
+		const Position _size; // TODO: put into SizesIterator
 
 		void insertUnique(
 				const Position position,
@@ -38,7 +46,7 @@ class ShuffleIterator : public UniqueElementsIterator<Container, Combination> {
 					if (
 							(prevValue + 1 < this->positions[c] + 1) &&
 							(this->positions[c] <= value)
-							) {
+					) {
 						++add;
 					}
 				}

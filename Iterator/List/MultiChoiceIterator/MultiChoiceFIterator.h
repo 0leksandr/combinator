@@ -12,9 +12,8 @@ class MultiChoiceFIterator :
 	public:
 		explicit MultiChoiceFIterator(const FixedRequest<Container>* const request) :
 				MultiChoiceListIterator<Container, Combination>(request) {}
-		void operator++() override {
+		void increment() override {
 			increment(0);
-			++this->index;
 		}
 	private:
 		void increment(const Position position) {

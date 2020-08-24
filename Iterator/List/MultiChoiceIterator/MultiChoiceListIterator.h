@@ -1,15 +1,13 @@
 #pragma once
 
 #include "../ListIterator.h"
-#include "../../PositionedIterator.h"
 #include "../../SizedIterator.h"
 #include "../../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
 class MultiChoiceListIterator :
 		public ListIterator<Container, Combination>,
-		public SizedIterator,
-		public PositionedIterator {
+		public SizedIterator {
 	public:
 		explicit MultiChoiceListIterator(const FixedRequest<Container>* const request) :
 				ListIterator<Container, Combination>(request),

@@ -7,7 +7,7 @@ class RandomAccessIterator : public PositionedIterator {
 	public:
 		void operator[](const Position index) {
 			go(index);
-			this->index = index;
+			this->setIndex(index);
 		}
 	protected:
 		virtual void go(Position index) = 0;

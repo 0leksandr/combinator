@@ -1,8 +1,6 @@
 #pragma once
 
 #include "../ListIterator.h"
-#include "../../ForwardIterator.h"
-#include "../../RandomAccessIterator.h"
 #include "../../SizedIterator.h"
 #include "../../../Position.h"
 #include "../../../Request/FixedRequest.h"
@@ -10,9 +8,7 @@
 template<class Container, class Combination>
 class UniqueElementsIterator :
 		public ListIterator<Container, Combination>,
-		public SizedIterator,
-		public ForwardIterator,
-		public RandomAccessIterator {
+		public SizedIterator {
 	public:
 		explicit UniqueElementsIterator(const FixedRequest<Container>* const request) :
 				ListIterator<Container, Combination>(request) {

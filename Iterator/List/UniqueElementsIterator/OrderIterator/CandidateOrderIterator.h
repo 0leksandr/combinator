@@ -1,11 +1,14 @@
 #pragma once
 
 #include "OrderIterator.h"
+#include "../../../RandomAccessIterator.h"
 #include "../../../../Position.h"
 #include "../../../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
-class CandidateOrderIterator : public OrderIterator<Container, Combination> {
+class CandidateOrderIterator :
+		public OrderIterator<Container, Combination>,
+		public RandomAccessIterator {
 	public:
 		explicit CandidateOrderIterator(const FixedRequest<Container>* const request) :
 				OrderIterator<Container, Combination>(request) {}

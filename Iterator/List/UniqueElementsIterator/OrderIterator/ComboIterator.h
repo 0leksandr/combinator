@@ -5,12 +5,15 @@
 #include "Mathematician.h"
 #include "OrderIterator.h"
 #include "Walker.h"
+#include "../../../RandomAccessIterator.h"
 #include "../../../../Assert.h"
 #include "../../../../Position.h"
 #include "../../../../Request/FixedRequest.h"
 
 template<class Container, class Combination>
-class ComboIterator : public OrderIterator<Container, Combination> {
+class ComboIterator :
+		public OrderIterator<Container, Combination>,
+		public RandomAccessIterator {
 	private:
 		std::vector<CandidateOrderIterator<Container, Combination>*> iterators;
 	public:
