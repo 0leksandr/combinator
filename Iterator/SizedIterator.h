@@ -5,5 +5,10 @@
 
 class SizedIterator : public Iterator {
 	public:
-		[[nodiscard]] virtual Position size() const = 0;
+		SizedIterator(const Position size) : _size(size) {}
+		[[nodiscard]] Position size() const {
+			return _size;
+		}
+	private:
+		const Position _size;
 };

@@ -15,11 +15,10 @@ class ShuffleIterator :
 	MOBILE_ITERATOR;
 	public:
 		explicit ShuffleIterator(const FixedRequest<Container>* const request) :
-				UniqueElementsIterator<Container, Combination>(request),
-				_size(nPerM(request->elements.size(), request->length)) {}
-		[[nodiscard]] Position size() const override {
-			return _size;
-		}
+				UniqueElementsIterator<Container, Combination>(
+						request,
+						nPerM(request->elements.size(), request->length)
+				) {}
 	protected:
 		void go(Position index) override {
 			Position nrElements(this->nrElements());
@@ -33,8 +32,6 @@ class ShuffleIterator :
 			this->go(this->getIndex() + 1);
 		}
 	private:
-		const Position _size; // TODO: put into SizesIterator
-
 		void insertUnique(
 				const Position position,
 				Position value

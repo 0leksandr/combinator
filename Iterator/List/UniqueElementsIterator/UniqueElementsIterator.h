@@ -10,8 +10,9 @@ class UniqueElementsIterator :
 		public ListIterator<Container, Combination>,
 		public SizedIterator {
 	public:
-		explicit UniqueElementsIterator(const FixedRequest<Container>* const request) :
-				ListIterator<Container, Combination>(request) {
+		UniqueElementsIterator(const FixedRequest<Container>* const request, const Position size) :
+				ListIterator<Container, Combination>(request),
+				SizedIterator(size) {
 			for (Position c = 0; c < request->length; c++) this->positions[c] = c;
 		}
 };

@@ -8,11 +8,10 @@ template<class Container, class Combination>
 class OrderIterator : public UniqueElementsIterator<Container, Combination> {
 	public:
 		explicit OrderIterator(const FixedRequest<Container>* const request) :
-				UniqueElementsIterator<Container, Combination>(request),
-				_size(nPerM(request->elements.size(), request->length)) {}
-		[[nodiscard]] Position size() const override {
-			return _size;
-		}
+				UniqueElementsIterator<Container, Combination>(
+						request,
+						nPerM(request->elements.size(), request->length)
+				) {}
 	protected:
 		template<typename Float = float>
 		static Position nPerM(const Position n, const Position m) {
@@ -23,6 +22,4 @@ class OrderIterator : public UniqueElementsIterator<Container, Combination> {
 			}
 			return (Position)res;
 		}
-	private:
-		const Position _size;
 };

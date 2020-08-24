@@ -21,20 +21,16 @@ class ComposeIterator :
 								request->containers[0][0]
 						)
 				),
-				request(request),
-				_size(getSize(request)) {}
+				SizedIterator(getSize(request)),
+				request(request) {}
 		Combination& operator*() const override {
 			for (Position c = 0; c < request->containers.size(); c++) {
 				this->combination[c] = request->containers[c][this->positions[c]];
 			}
 			return this->combination;
 		}
-		[[nodiscard]] Position size() const override {
-			return _size;
-		}
 	private:
 		const ComposeRequest<Container, NrContainers>* const request;
-		const Position _size;
 
 		static Position getSize(const ComposeRequest<Container, NrContainers>* request) {
 			Position _size = 1;
