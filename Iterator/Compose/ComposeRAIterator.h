@@ -1,10 +1,23 @@
 #pragma once
 
+#include "ComposeIterator.h"
 #include "../RandomAccessIterator.h"
 #include "../../Position.h"
+#include "../../Request/ComposeRequest.h"
 
-class ComposeRAIterator {
+#include "my/macro.cpp"
 
+template<class Container, Position NrContainers, class Combination>
+class ComposeRAIterator :
+		public ComposeIterator<Container, NrContainers, Combination>,
+		public RandomAccessIterator {
+	public:
+		ComposeRAIterator(const ComposeRequest<Container, NrContainers>* const request) :
+				ComposeIterator<Container, NrContainers, Combination>(request) {}
+		void go(const Position position) override {
+// TODO: implement
+FIXME;
+		}
 };
 
 

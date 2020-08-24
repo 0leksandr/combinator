@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include "../Position.h"
 
 template<class Container, Position NrContainers>
