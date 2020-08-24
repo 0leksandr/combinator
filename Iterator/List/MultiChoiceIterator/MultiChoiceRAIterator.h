@@ -12,8 +12,8 @@ class MultiChoiceRAIterator :
 	public:
 		explicit MultiChoiceRAIterator(const FixedRequest<Container>* const request) :
 				MultiChoiceListIterator<Container, Combination>(request) {}
+	protected:
 		void go(Position index) override {
-			this->index = index;
 			const Position nrElements(this->nrElements());
 			for (Position c = 0; c < this->request->length; c++) {
 				this->positions[c] = index % nrElements;

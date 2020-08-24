@@ -14,6 +14,7 @@ class ComposeRAIterator :
 	public:
 		ComposeRAIterator(const ComposeRequest<Container, NrContainers>* const request) :
 				ComposeIterator<Container, NrContainers, Combination>(request) {}
+	protected:
 		void go(const Position position) override {
 // TODO: implement
 FIXME;

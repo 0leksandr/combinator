@@ -10,19 +10,19 @@ class ShuffleIterator : public UniqueElementsIterator<Container, Combination> {
 		explicit ShuffleIterator(const FixedRequest<Container>* const request) :
 				UniqueElementsIterator<Container, Combination>(request),
 				_size(nPerM(request->elements.size(), request->length)) {}
+		void operator++() override {
+			this->goWithIndex(this->index + 1);
+		}
+		[[nodiscard]] Position size() const override {
+			return _size;
+		}
+	protected:
 		void go(Position index) override {
-			this->index = index;
 			Position nrElements(this->nrElements());
 			for (Position c = 0; c < this->request->length; c++) {
 				insertUnique(c, index % nrElements);
 				index /= nrElements--;
 			}
-		}
-		void operator++() override {
-			go(this->index + 1);
-		}
-		[[nodiscard]] Position size() const override {
-			return _size;
 		}
 	private:
 		const Position _size;

@@ -2,7 +2,6 @@
 
 #include "../ListIterator.h"
 #include "../../ForwardIterator.h"
-#include "../../PositionedIterator.h"
 #include "../../RandomAccessIterator.h"
 #include "../../SizedIterator.h"
 #include "../../../Position.h"
@@ -12,7 +11,6 @@ template<class Container, class Combination>
 class UniqueElementsIterator :
 		public ListIterator<Container, Combination>,
 		public SizedIterator,
-		public PositionedIterator,
 		public ForwardIterator,
 		public RandomAccessIterator {
 	public:

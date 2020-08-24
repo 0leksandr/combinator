@@ -21,14 +21,15 @@ class Walker : public CandidateOrderIterator<Container, Combination> {
 			if (index < this->index) return this->index - index;
 			return 0;
 		}
+		[[nodiscard]] Position getIndex() const {
+			return this->index;
+		}
+	protected:
 		void go(const Position index) override {
 			#pragma clang diagnostic push
 			#pragma ide diagnostic ignored "LoopDoesntUseConditionVariableInspection"
-				while (this->index < index) this->operator++();
-				while (this->index > index) this->operator--();
+			while (this->index < index) this->operator++();
+			while (this->index > index) this->operator--();
 			#pragma clang diagnostic pop
-		}
-		[[nodiscard]] Position getIndex() const {
-			return this->index;
 		}
 };

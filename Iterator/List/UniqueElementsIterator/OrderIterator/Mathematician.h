@@ -14,8 +14,8 @@ class Mathematician : public CandidateOrderIterator<Container, Combination> {
 		[[nodiscard]] Position estimate(Position index) const override {
 			return avgEstimation; // TODO: test
 		}
+	protected:
 		void go(Position index) override {
-			this->index = index;
 			Position nrElements(this->nrElements());
 			for (Position c = 0; c < this->request->length; c++) {
 				Step step = getStep(c, nrElements, index);

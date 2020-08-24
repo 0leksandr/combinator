@@ -24,7 +24,8 @@ class ComboIterator : public OrderIterator<Container, Combination> {
 		~ComboIterator() {
 			for (auto* iterator : iterators) delete iterator;
 		}
-		void go(Position index) {
+	protected:
+		void go(Position index) override {
 			auto estimated((Position)-1);
 			CandidateOrderIterator<Container, Combination>* chosen(nullptr);
 			for (auto* iterator : iterators) {
@@ -35,10 +36,9 @@ class ComboIterator : public OrderIterator<Container, Combination> {
 				}
 			}
 			Assert(chosen != nullptr);
-			chosen->go(index);
+			chosen->goWithIndex(index);
 			for (Position c = 0; c < this->request->length; c++) {
 				this->positions[c] = chosen->getPosition(c);
 			}
-			this->index = index;
 		}
 };

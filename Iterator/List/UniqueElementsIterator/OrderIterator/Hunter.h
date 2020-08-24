@@ -25,13 +25,13 @@ class Hunter : public CandidateOrderIterator<Container, Combination> {
 		[[nodiscard]] Position estimate(const Position index) const override {
 			return guardian(index)->estimate(index);
 		}
+	protected:
 		void go(const Position index) override {
 			auto envoy = guardian(index);
-			envoy->go(index);
+			envoy->goWithIndex(index);
 			for (Position c = 0; c < this->request->length; c++) {
 				this->positions[c] = envoy->getPosition(c);
 			}
-			this->index = index;
 		}
 	private:
 		std::vector<Walker<Container, Combination>> guardians;
