@@ -5,10 +5,8 @@
 
 class SizedIterator : public Iterator {
 	public:
-		SizedIterator(const Position size) : _size(size) {}
-		[[nodiscard]] Position size() const {
-			return _size;
+		template<class Request>
+		static Position size(const Request& request) { // TODO: virtual
+			throw 0;
 		}
-	private:
-		const Position _size;
 };

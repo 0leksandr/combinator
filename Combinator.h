@@ -21,45 +21,34 @@ namespace Combinator {
 	class FixedCombinator {
 		public:
 			Combination& operator[](Position index) const {
+				if (current == nullptr) current = newIterator();
 				current->operator[](index);
 				return **current;
 			}
 			ForwardIterator begin() const {
-				return ForwardIterator(&request);
+				return ForwardIterator(request);
 			}
 			PositionedIterator end() const {
 				return _end;
 			}
 			Position size() const {
-				return current->size();
+				return ForwardIterator::size(request);
 			}
 		protected:
 			explicit FixedCombinator(const Request& request) :
 					request(request),
-					current(newIterator()),
+					current(nullptr),
 					_end(size()) {}
-			FixedCombinator(
-					const FixedCombinator<
-							Container,
-							Combination,
-							Request,
-							ForwardIterator,
-							RandomAccessIterator
-					>& other
-			) :
-					request(other.request),
-					current(newIterator()),
-					_end(other._end) {}
-			~FixedCombinator() { // TODO: check if called
-				delete current;
+			~FixedCombinator() {
+				if (current != nullptr) delete current;
 			}
 		private:
 			const Request request;
-			mutable RandomAccessIterator* current; // TODO: init only when calling `[]`
+			mutable RandomAccessIterator* current;
 			const PositionedIterator _end;
 
 			RandomAccessIterator* newIterator() const {
-				return new RandomAccessIterator(&request);
+				return new RandomAccessIterator(request);
 			}
 	};
 

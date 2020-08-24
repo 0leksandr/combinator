@@ -9,10 +9,12 @@ class MultiChoiceListIterator :
 		public ListIterator<Container, Combination>,
 		public SizedIterator {
 	public:
-		explicit MultiChoiceListIterator(const FixedRequest<Container>* const request) :
-				ListIterator<Container, Combination>(request),
-				SizedIterator(pow(request->elements.size(), request->length)) {
-			for (int c = 0; c < request->length; ++c) this->positions[c] = 0;
+		explicit MultiChoiceListIterator(const FixedRequest<Container>& request) :
+				ListIterator<Container, Combination>(request) {
+			for (int c = 0; c < request.length; ++c) this->positions[c] = 0;
+		}
+		static Position size(const FixedRequest<Container>& request) {
+			return pow(request.elements.size(), request.length);
 		}
 	private:
 		static Position pow(const Position a, const Position b) {

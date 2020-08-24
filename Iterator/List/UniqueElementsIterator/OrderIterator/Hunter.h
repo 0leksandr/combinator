@@ -10,12 +10,13 @@
 template<class Container, class Combination>
 class Hunter : public CandidateOrderIterator<Container, Combination> {
 	public:
-		explicit Hunter(const FixedRequest<Container>* const request) :
+		explicit Hunter(const FixedRequest<Container>& request) :
 				CandidateOrderIterator<Container, Combination>(request) {
-			const Position nrGuardians = (Position)sqrt(this->size()) + 1;
-			reactionTime = this->size() / nrGuardians; // TODO: check
+			const auto size = OrderIterator<Container, Combination>::size(request);
+			const Position nrGuardians = (Position)sqrt(size) + 1;
+			reactionTime = size / nrGuardians; // TODO: check
 			Walker<Container, Combination> patrol(request);
-			while (patrol.getWalkerIndex() < this->size() - 1) {
+			while (patrol.getWalkerIndex() < size - 1) {
 				patrol.operator++();
 				if ((patrol.getWalkerIndex() + reactionTime / 2) % reactionTime == 0) {
 					guardians.push_back(patrol);
@@ -29,7 +30,7 @@ class Hunter : public CandidateOrderIterator<Container, Combination> {
 		void go(const Position index) override {
 			auto envoy = guardian(index);
 			envoy->operator[](index);
-			for (Position c = 0; c < this->request->length; c++) {
+			for (Position c = 0; c < this->request.length; c++) {
 				this->positions[c] = envoy->getPosition(c);
 			}
 		}

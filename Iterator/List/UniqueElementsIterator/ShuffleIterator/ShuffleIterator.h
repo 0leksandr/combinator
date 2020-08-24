@@ -14,15 +14,15 @@ class ShuffleIterator :
 		public RandomAccessIterator {
 	MOBILE_ITERATOR;
 	public:
-		explicit ShuffleIterator(const FixedRequest<Container>* const request) :
-				UniqueElementsIterator<Container, Combination>(
-						request,
-						nPerM(request->elements.size(), request->length)
-				) {}
+		explicit ShuffleIterator(const FixedRequest<Container>& request) :
+				UniqueElementsIterator<Container, Combination>(request) {}
+		static Position size(const FixedRequest<Container>& request) {
+			return nPerM(request.elements.size(), request.length);
+		}
 	protected:
 		void go(Position index) override {
 			Position nrElements(this->nrElements());
-			for (Position c = 0; c < this->request->length; c++) {
+			for (Position c = 0; c < this->request.length; c++) {
 				insertUnique(c, index % nrElements);
 				index /= nrElements--;
 			}

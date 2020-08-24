@@ -10,12 +10,12 @@ class MultiChoiceRAIterator :
 		public MultiChoiceListIterator<Container, Combination>,
 		public RandomAccessIterator {
 	public:
-		explicit MultiChoiceRAIterator(const FixedRequest<Container>* const request) :
+		explicit MultiChoiceRAIterator(const FixedRequest<Container>& request) :
 				MultiChoiceListIterator<Container, Combination>(request) {}
 	protected:
 		void go(Position index) override {
 			const Position nrElements(this->nrElements());
-			for (Position c = 0; c < this->request->length; c++) {
+			for (Position c = 0; c < this->request.length; c++) {
 				this->positions[c] = index % nrElements;
 				index /= nrElements;
 			}

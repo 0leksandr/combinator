@@ -17,7 +17,7 @@ class ComboIterator :
 	private:
 		std::vector<CandidateOrderIterator<Container, Combination>*> iterators;
 	public:
-		explicit ComboIterator(const FixedRequest<Container>* const request) :
+		explicit ComboIterator(const FixedRequest<Container>& request) :
 				OrderIterator<Container, Combination>(request),
 				iterators() {
 			iterators.push_back(new Walker<Container, Combination>(request));
@@ -40,7 +40,7 @@ class ComboIterator :
 			}
 			Assert(chosen != nullptr);
 			chosen->operator[](index);
-			for (Position c = 0; c < this->request->length; c++) {
+			for (Position c = 0; c < this->request.length; c++) {
 				this->positions[c] = chosen->getPosition(c);
 			}
 		}

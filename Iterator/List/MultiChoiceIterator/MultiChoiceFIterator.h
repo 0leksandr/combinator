@@ -10,14 +10,14 @@ class MultiChoiceFIterator :
 		public MultiChoiceListIterator<Container, Combination>,
 		public ForwardIterator {
 	public:
-		explicit MultiChoiceFIterator(const FixedRequest<Container>* const request) :
+		explicit MultiChoiceFIterator(const FixedRequest<Container>& request) :
 				MultiChoiceListIterator<Container, Combination>(request) {}
 		void increment() override {
 			increment(0);
 		}
 	private:
 		void increment(const Position position) {
-			if (position == this->request->length) return;
+			if (position == this->request.length) return;
 			if (++(this->positions[position]) == this->nrElements()) {
 				this->positions[position] = 0;
 				increment(position + 1);

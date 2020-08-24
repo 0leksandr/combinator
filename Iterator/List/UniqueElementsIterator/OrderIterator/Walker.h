@@ -14,12 +14,12 @@ class Walker :
 		public BackwardsIterator {
 	MOBILE_ITERATOR;
 	public:
-		explicit Walker(const FixedRequest<Container>* const request) :
+		explicit Walker(const FixedRequest<Container>& request) :
 				CandidateOrderIterator<Container, Combination>(request) {}
 		Walker(const Walker& other) :
 				CandidateOrderIterator<Container, Combination>(other.request) {
 			this->setIndex(other.getIndex());
-			for (Position c = 0; c < this->request->length; c++) {
+			for (Position c = 0; c < this->request.length; c++) {
 				this->positions[c] = other.positions[c];
 			}
 		}
@@ -40,11 +40,11 @@ class Walker :
 			#pragma clang diagnostic pop
 		}
 		void operator--() override {
-			decrement(this->request->length - 1);
+			decrement(this->request.length - 1);
 			this->setIndex(this->getIndex() - 1);
 		}
 		void increment() override {
-			increment(this->request->length - 1);
+			increment(this->request.length - 1);
 		}
 	private:
 		void increment(const Position position) {
@@ -58,13 +58,13 @@ class Walker :
 		void decrement(const Position position) const {
 			--this->positions[position];
 			if (position > 0 && this->positions[position] == this->positions[position - 1]) {
-				for (Position c = position; c < this->request->length; c++) {
+				for (Position c = position; c < this->request.length; c++) {
 					this->positions[c] = maxPosition(c);
 				}
 				decrement(position - 1);
 			}
 		}
 		[[nodiscard]] Position maxPosition(const Position position) const {
-			return this->nrElements() + position - this->request->length;
+			return this->nrElements() + position - this->request.length;
 		}
 };

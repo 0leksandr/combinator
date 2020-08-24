@@ -7,7 +7,7 @@
 template<class Container, class Combination>
 class Mathematician : public CandidateOrderIterator<Container, Combination> {
 	public:
-		explicit Mathematician(const FixedRequest<Container>* const request) :
+		explicit Mathematician(const FixedRequest<Container>& request) :
 				CandidateOrderIterator<Container, Combination>(request) {
 			avgEstimation = avgNrSteps();
 		}
@@ -17,7 +17,7 @@ class Mathematician : public CandidateOrderIterator<Container, Combination> {
 	protected:
 		void go(Position index) override {
 			Position nrElements(this->nrElements());
-			for (Position c = 0; c < this->request->length; c++) {
+			for (Position c = 0; c < this->request.length; c++) {
 				Step step = getStep(c, nrElements, index);
 				nrElements -= step.x + 1;
 				index -= step.beginningOfX;
@@ -38,13 +38,13 @@ class Mathematician : public CandidateOrderIterator<Container, Combination> {
 				const Position nrElements,
 				const Position index
 		) const {
-			if (position == this->request->length - 1) return Step(index, index);
+			if (position == this->request.length - 1) return Step(index, index);
 			Step res(0, 0);
 			Position lastNPerM(0);
 			while (res.beginningOfX <= index) { // TODO: optimize
 				res.beginningOfX += lastNPerM = this->nPerM(
 						nrElements - res.x - 1,
-						this->request->length - position - 1
+						this->request.length - position - 1
 				);
 				res.x++;
 			}
@@ -59,7 +59,7 @@ class Mathematician : public CandidateOrderIterator<Container, Combination> {
 		[[nodiscard]] Position avgNrSteps() const {
 			float totalAvgNrSteps(0.f);
 			Position prevValue(0);
-			for (Position c = 0; c < this->request->length; c++) {
+			for (Position c = 0; c < this->request.length; c++) {
 				float nrSteps = avgNrSteps(c, prevValue);
 				prevValue = getStep(
 						c,
@@ -78,11 +78,11 @@ class Mathematician : public CandidateOrderIterator<Container, Combination> {
 			Position maxValue = this->nrElements()
 								+ position
 								+ 1
-								- this->request->length;
+								- this->request.length;
 			for (Position c = minValue; c < maxValue; c++)
 				sum += this->nPerM(
 						this->nrElements() - c - 1,
-						this->request->length - position - 1
+						this->request.length - position - 1
 				);
 			return sum / float(maxValue - minValue + 1);
 		}

@@ -10,7 +10,7 @@ class CandidateOrderIterator :
 		public OrderIterator<Container, Combination>,
 		public RandomAccessIterator {
 	public:
-		explicit CandidateOrderIterator(const FixedRequest<Container>* const request) :
+		explicit CandidateOrderIterator(const FixedRequest<Container>& request) :
 				OrderIterator<Container, Combination>(request) {}
 		[[nodiscard]] virtual Position estimate(Position index) const = 0;
 		[[nodiscard]] Position getPosition(const Position position) const {
