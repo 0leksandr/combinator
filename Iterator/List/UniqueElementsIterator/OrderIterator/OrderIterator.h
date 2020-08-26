@@ -2,14 +2,14 @@
 
 #include "../UniqueElementsIterator.h"
 #include "../../../../Position.h"
-#include "../../../../Request/FixedRequest.h"
+#include "../../../../Request/FixedSizeRequest.h"
 
 template<class Container, class Combination>
 class OrderIterator : public UniqueElementsIterator<Container, Combination> {
 	public:
-		explicit OrderIterator(const FixedRequest<Container>& request) :
+		explicit OrderIterator(const FixedSizeRequest<Container>& request) :
 				UniqueElementsIterator<Container, Combination>(request) {}
-		static Position size(const FixedRequest<Container>& request) {
+		static Position size(const FixedSizeRequest<Container>& request) {
 			return nPerM(request.elements.size(), request.length);
 		}
 	protected:

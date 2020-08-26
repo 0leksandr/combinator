@@ -5,12 +5,12 @@
 #include "CandidateOrderIterator.h"
 #include "Walker.h"
 #include "../../../../Position.h"
-#include "../../../../Request/FixedRequest.h"
+#include "../../../../Request/FixedSizeRequest.h"
 
 template<class Container, class Combination>
 class Hunter : public CandidateOrderIterator<Container, Combination> {
 	public:
-		explicit Hunter(const FixedRequest<Container>& request) :
+		explicit Hunter(const FixedSizeRequest<Container>& request) :
 				CandidateOrderIterator<Container, Combination>(request) {
 			const auto size = OrderIterator<Container, Combination>::size(request);
 			const Position nrGuardians = (Position)sqrt(size) + 1;

@@ -1,17 +1,17 @@
 #pragma once
 
-#include "MultiChoiceListIterator.h"
+#include "MultiPermutationIterator.h"
 #include "../../Movement/ForwardIterator.h"
 #include "../../../Position.h"
-#include "../../../Request/FixedRequest.h"
+#include "../../../Request/FixedSizeRequest.h"
 
 template<class Container, class Combination>
-class MultiChoiceFIterator :
-		public MultiChoiceListIterator<Container, Combination>,
+class MultiPermutationFIterator :
+		public MultiPermutationIterator<Container, Combination>,
 		public ForwardIterator {
 	public:
-		explicit MultiChoiceFIterator(const FixedRequest<Container>& request) :
-				MultiChoiceListIterator<Container, Combination>(request) {}
+		explicit MultiPermutationFIterator(const FixedSizeRequest<Container>& request) :
+				MultiPermutationIterator<Container, Combination>(request) {}
 		void increment() override {
 			increment(0);
 		}

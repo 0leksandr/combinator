@@ -3,12 +3,12 @@
 #include "../DereferencedIterator.h"
 #include "../../Converter.h"
 #include "../../Position.h"
-#include "../../Request/FixedRequest.h"
+#include "../../Request/FixedSizeRequest.h"
 
 template<class Container, class Combination>
 class ListIterator : public DereferencedIterator<Container, Combination> {
 	public:
-		explicit ListIterator(const FixedRequest<Container>& request) :
+		explicit ListIterator(const FixedSizeRequest<Container>& request) :
 				DereferencedIterator<Container, Combination>(
 						Converter<Combination>::initCombination(
 								&this->combination,
@@ -25,7 +25,7 @@ class ListIterator : public DereferencedIterator<Container, Combination> {
 			return this->combination;
 		}
 	protected:
-		const FixedRequest<Container>& request;
+		const FixedSizeRequest<Container>& request;
 
 		[[nodiscard]] Position nrElements() const {
 			return request.elements.size();

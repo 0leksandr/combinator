@@ -1,24 +1,25 @@
 #pragma once
 
 #include <array>
-#include "Iterator/Compose/ComposeFIterator.h"
-#include "Iterator/Compose/ComposeRAIterator.h"
-#include "Iterator/List/MultiChoiceIterator/MultiChoiceFIterator.h"
-#include "Iterator/List/MultiChoiceIterator/MultiChoiceRAIterator.h"
+#include "Iterator/Multiset/MultisetFIterator.h"
+#include "Iterator/Multiset/MultisetRAIterator.h"
+#include "Iterator/List/MultiPermutationIterator/MultiPermutationFIterator.h"
+#include "Iterator/List/MultiPermutationIterator/MultiPermutationRAIterator.h"
 #include "Iterator/List/UniqueElementsIterator/OrderIterator/ComboIterator.h"
 #include "Iterator/List/UniqueElementsIterator/OrderIterator/Walker.h"
-#include "Iterator/List/UniqueElementsIterator/ShuffleIterator/ShuffleIterator.h"
+#include "Iterator/List/UniqueElementsIterator/PermutationIterator/PermutationIterator.h"
 #include "Position.h"
-#include "Request/ComposeRequest.h"
-#include "Request/FixedRequest.h"
+#include "Request/FixedSizeRequest.h"
+#include "Request/MultisetRequest.h"
 
-// TODO: UnorderedCombinator from variadic list of collections
-// TODO: ShuffledCombinator::begin return some Walker
+// TODO: MultiPermutator from variadic list of collections
+// TODO: make Permutator::begin return some Walker
 // TODO: remove Container from main template
+// TODO: optional combination size
 
 namespace Combinator {
 	template<class Container, class Combination, class Request, class ForwardIterator, class RandomAccessIterator>
-	class FixedCombinator {
+	class FixedSizeCombinator {
 		public:
 			Combination& operator[](Position index) const {
 				if (current == nullptr) current = new RandomAccessIterator(request);
@@ -35,11 +36,11 @@ namespace Combinator {
 				return _size;
 			}
 		protected:
-			explicit FixedCombinator(const Request& request) :
+			explicit FixedSizeCombinator(const Request& request) :
 					request(request),
 					current(nullptr),
 					_size(ForwardIterator::size(request)) {}
-			~FixedCombinator() {
+			~FixedSizeCombinator() {
 				if (current != nullptr) delete current;
 			}
 		private:
@@ -49,25 +50,25 @@ namespace Combinator {
 	};
 
 	template<class Container, class Combination, class ForwardIterator, class RandomAccessIterator>
-	class FixedListCombinator : public FixedCombinator<
+	class FixedSizedSingleSetCombinator : public FixedSizeCombinator<
 			Container,
 			Combination,
-			FixedRequest<Container>,
+			FixedSizeRequest<Container>,
 			ForwardIterator,
 			RandomAccessIterator
 	> {
 		protected:
-			FixedListCombinator(const Container& elements, const Position length) : FixedCombinator<
+			FixedSizedSingleSetCombinator(const Container& elements, const Position length) : FixedSizeCombinator<
 					Container,
 					Combination,
-					FixedRequest<Container>,
+					FixedSizeRequest<Container>,
 					ForwardIterator,
 					RandomAccessIterator
-			>(FixedRequest<Container>(elements, length)) {}
+			>(FixedSizeRequest<Container>(elements, length)) {}
 	};
 
 	template<class Container, class Combination = Container>
-	class OrderedCombinator : public FixedListCombinator<
+	class OrderedCombinator : public FixedSizedSingleSetCombinator<
 			Container,
 			Combination,
 			Walker<Container, Combination>,
@@ -75,7 +76,7 @@ namespace Combinator {
 	> {
 		public:
 			OrderedCombinator(const Container& elements, const Position length) :
-					FixedListCombinator<
+					FixedSizedSingleSetCombinator<
 							Container,
 							Combination,
 							Walker<Container, Combination>,
@@ -84,54 +85,54 @@ namespace Combinator {
 	};
 
 	template<class Container, class Combination = Container>
-	class ShuffledCombinator : public FixedListCombinator<
+	class Permutator : public FixedSizedSingleSetCombinator<
 			Container,
 			Combination,
-			ShuffleIterator<Container, Combination>,
-			ShuffleIterator<Container, Combination>
+			PermutationIterator<Container, Combination>,
+			PermutationIterator<Container, Combination>
 	> {
 		public:
-			ShuffledCombinator(const Container& elements, const Position length):
-					FixedListCombinator<
+			Permutator(const Container& elements, const Position length):
+					FixedSizedSingleSetCombinator<
 							Container,
 							Combination,
-							ShuffleIterator<Container, Combination>,
-							ShuffleIterator<Container, Combination>
+							PermutationIterator<Container, Combination>,
+							PermutationIterator<Container, Combination>
 					>(elements, length) {}
 	};
 
 	template<class Container, class Combination = Container>
-	class MultiChoiceCombinator : public FixedListCombinator<
+	class MultiPermutator : public FixedSizedSingleSetCombinator<
 			Container,
 			Combination,
-			MultiChoiceFIterator<Container, Combination>,
-			MultiChoiceRAIterator<Container, Combination>
+			MultiPermutationFIterator<Container, Combination>,
+			MultiPermutationRAIterator<Container, Combination>
 	> {
 		public:
-			MultiChoiceCombinator(const Container& elements, const Position length):
-					FixedListCombinator<
+			MultiPermutator(const Container& elements, const Position length):
+					FixedSizedSingleSetCombinator<
 							Container,
 							Combination,
-							MultiChoiceFIterator<Container, Combination>,
-							MultiChoiceRAIterator<Container, Combination>
+							MultiPermutationFIterator<Container, Combination>,
+							MultiPermutationRAIterator<Container, Combination>
 					>(elements, length) {}
 	};
 
 	template<class Container, Position NrContainers, class Combination>
-	class ComposeCombinator : public FixedCombinator<
+	class Cartesian : public FixedSizeCombinator<
 			Container,
 			Combination,
-			ComposeRequest<Container, NrContainers>,
-			ComposeFIterator<Container, NrContainers, Combination>,
-			ComposeRAIterator<Container, NrContainers, Combination>
+			MultisetRequest<Container, NrContainers>,
+			MultisetFIterator<Container, NrContainers, Combination>,
+			MultisetRAIterator<Container, NrContainers, Combination>
 	> {
 		public:
-			explicit ComposeCombinator(const std::array<Container, NrContainers>& containers) : FixedCombinator<
+			explicit Cartesian(const std::array<Container, NrContainers>& containers) : FixedSizeCombinator<
 					Container,
 					Combination,
-					ComposeRequest<Container, NrContainers>,
-					ComposeFIterator<Container, NrContainers, Combination>,
-					ComposeRAIterator<Container, NrContainers, Combination>
-			>(ComposeRequest<Container, NrContainers>(containers)) {}
+					MultisetRequest<Container, NrContainers>,
+					MultisetFIterator<Container, NrContainers, Combination>,
+					MultisetRAIterator<Container, NrContainers, Combination>
+			>(MultisetRequest<Container, NrContainers>(containers)) {}
 	};
 }

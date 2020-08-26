@@ -8,16 +8,16 @@
 #include "../../../Movement/RandomAccessIterator.h"
 #include "../../../../Assert.h"
 #include "../../../../Position.h"
-#include "../../../../Request/FixedRequest.h"
+#include "../../../../Request/FixedSizeRequest.h"
 
 template<class Container, class Combination>
-class ComboIterator :
+class ComboIterator : // TODO: use same approach for all combinators, not only OrderedCombinator
 		public OrderIterator<Container, Combination>,
 		public RandomAccessIterator {
 	private:
 		std::vector<CandidateOrderIterator<Container, Combination>*> iterators;
 	public:
-		explicit ComboIterator(const FixedRequest<Container>& request) :
+		explicit ComboIterator(const FixedSizeRequest<Container>& request) :
 				OrderIterator<Container, Combination>(request),
 				iterators() {
 			iterators.push_back(new Walker<Container, Combination>(request));

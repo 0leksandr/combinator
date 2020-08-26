@@ -1,17 +1,17 @@
 #pragma once
 
-#include "ComposeIterator.h"
+#include "MultisetIterator.h"
 #include "../Movement/ForwardIterator.h"
 #include "../../Position.h"
-#include "../../Request/ComposeRequest.h"
+#include "../../Request/MultisetRequest.h"
 
 template<class Container, Position NrContainers, class Combination>
-class ComposeFIterator :
-		public ComposeIterator<Container, NrContainers, Combination>,
+class MultisetFIterator :
+		public MultisetIterator<Container, NrContainers, Combination>,
 		public ForwardIterator {
 	public:
-		explicit ComposeFIterator(const ComposeRequest<Container, NrContainers>& request) :
-				ComposeIterator<Container,NrContainers,Combination>(request) {}
+		explicit MultisetFIterator(const MultisetRequest<Container, NrContainers>& request) :
+				MultisetIterator<Container,NrContainers,Combination>(request) {}
 		void increment() override {
 			increment(0);
 		}

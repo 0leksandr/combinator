@@ -3,12 +3,12 @@
 #include "../Position.h"
 
 template<class Container>
-class FixedRequest {
+class FixedSizeRequest {
 	public:
 		const Container elements;
 		const Position length;
 
-		FixedRequest(
+		FixedSizeRequest(
 				const Container elements,
 				const Position length
 		) : elements(elements), length(length) {}

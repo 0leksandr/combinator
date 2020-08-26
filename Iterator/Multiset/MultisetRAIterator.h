@@ -1,17 +1,17 @@
 #pragma once
 
-#include "ComposeIterator.h"
+#include "MultisetIterator.h"
 #include "../Movement/RandomAccessIterator.h"
 #include "../../Position.h"
-#include "../../Request/ComposeRequest.h"
+#include "../../Request/MultisetRequest.h"
 
 template<class Container, Position NrContainers, class Combination>
-class ComposeRAIterator :
-		public ComposeIterator<Container, NrContainers, Combination>,
+class MultisetRAIterator :
+		public MultisetIterator<Container, NrContainers, Combination>,
 		public RandomAccessIterator {
 	public:
-		explicit ComposeRAIterator(const ComposeRequest<Container, NrContainers>& request) :
-				ComposeIterator<Container, NrContainers, Combination>(request) {}
+		explicit MultisetRAIterator(const MultisetRequest<Container, NrContainers>& request) :
+				MultisetIterator<Container, NrContainers, Combination>(request) {}
 	protected:
 		void go(Position index) override {
 			for (Position c = 0; c < this->request.containers.size(); c++) {

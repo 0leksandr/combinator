@@ -5,7 +5,7 @@
 #include "../../../Movement/ForwardIterator.h"
 #include "../../../Movement/MobileIteratorMacros.h"
 #include "../../../../Position.h"
-#include "../../../../Request/FixedRequest.h"
+#include "../../../../Request/FixedSizeRequest.h"
 
 template<class Container, class Combination>
 class Walker :
@@ -14,7 +14,7 @@ class Walker :
 		public BackwardsIterator {
 	MOBILE_ITERATOR;
 	public:
-		explicit Walker(const FixedRequest<Container>& request) :
+		explicit Walker(const FixedSizeRequest<Container>& request) :
 				CandidateOrderIterator<Container, Combination>(request) {}
 		Walker(const Walker& other) :
 				CandidateOrderIterator<Container, Combination>(other.request) {

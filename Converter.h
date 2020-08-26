@@ -4,7 +4,7 @@
 #include <vector>
 #include "Assert.h"
 #include "Position.h"
-#include "Request/FixedRequest.h"
+#include "Request/FixedSizeRequest.h"
 
 template<class Container>
 class Converter {

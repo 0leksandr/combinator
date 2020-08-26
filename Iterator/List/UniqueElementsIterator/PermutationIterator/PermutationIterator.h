@@ -5,18 +5,18 @@
 #include "../../../Movement/MobileIteratorMacros.h"
 #include "../../../Movement/RandomAccessIterator.h"
 #include "../../../../Position.h"
-#include "../../../../Request/FixedRequest.h"
+#include "../../../../Request/FixedSizeRequest.h"
 
 template<class Container, class Combination>
-class ShuffleIterator :
+class PermutationIterator :
 		public UniqueElementsIterator<Container, Combination>,
 		public ForwardIterator,
 		public RandomAccessIterator {
 	MOBILE_ITERATOR;
 	public:
-		explicit ShuffleIterator(const FixedRequest<Container>& request) :
+		explicit PermutationIterator(const FixedSizeRequest<Container>& request) :
 				UniqueElementsIterator<Container, Combination>(request) {}
-		static Position size(const FixedRequest<Container>& request) {
+		static Position size(const FixedSizeRequest<Container>& request) {
 			return nPerM(request.elements.size(), request.length);
 		}
 	protected:

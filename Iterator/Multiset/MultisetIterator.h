@@ -3,14 +3,14 @@
 #include "../DereferencedIterator.h"
 #include "../SizedIterator.h"
 #include "../../Converter.h"
-#include "../../Request/ComposeRequest.h"
+#include "../../Request/MultisetRequest.h"
 
 template<class Container, Position NrContainers, class Combination>
-class ComposeIterator :
+class MultisetIterator :
 		public DereferencedIterator<Container, Combination>,
 		public SizedIterator {
 	public:
-		explicit ComposeIterator(const ComposeRequest<Container, NrContainers>& request) :
+		explicit MultisetIterator(const MultisetRequest<Container, NrContainers>& request) :
 				DereferencedIterator<Container, Combination>(
 						Converter<Combination>::initCombination(
 								&this->combination,
@@ -28,11 +28,11 @@ class ComposeIterator :
 			}
 			return this->combination;
 		}
-		static Position size(const ComposeRequest<Container, NrContainers>& request) {
+		static Position size(const MultisetRequest<Container, NrContainers>& request) {
 			Position size = 1;
 			for (const auto& container : request.containers) size *= container.size();
 			return size;
 		}
 	protected:
-		const ComposeRequest<Container, NrContainers>& request;
+		const MultisetRequest<Container, NrContainers>& request;
 };

@@ -1,17 +1,17 @@
 #pragma once
 
-#include "MultiChoiceListIterator.h"
+#include "MultiPermutationIterator.h"
 #include "../../Movement/RandomAccessIterator.h"
 #include "../../../Position.h"
-#include "../../../Request/FixedRequest.h"
+#include "../../../Request/FixedSizeRequest.h"
 
 template<class Container, class Combination>
-class MultiChoiceRAIterator :
-		public MultiChoiceListIterator<Container, Combination>,
+class MultiPermutationRAIterator :
+		public MultiPermutationIterator<Container, Combination>,
 		public RandomAccessIterator {
 	public:
-		explicit MultiChoiceRAIterator(const FixedRequest<Container>& request) :
-				MultiChoiceListIterator<Container, Combination>(request) {}
+		explicit MultiPermutationRAIterator(const FixedSizeRequest<Container>& request) :
+				MultiPermutationIterator<Container, Combination>(request) {}
 	protected:
 		void go(Position index) override {
 			const Position nrElements(this->nrElements());

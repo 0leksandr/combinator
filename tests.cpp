@@ -92,7 +92,7 @@ void testOrdered() {
 template<class Combination>
 void testShuffled() {
 	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
-	ShuffledCombinator<std::vector<double>, Combination> combinations(
+	Permutator<std::vector<double>, Combination> combinations(
 			std::vector<double>({1, 2, 3, 4}),
 			NR_ELEMENTS_IN_COMBINATION
 	);
@@ -151,7 +151,7 @@ void testCompose(
 		const std::array<Container, NrContainers>& containers,
 		const unsigned expectedNrCombinations
 ) {
-	const auto combinator = ComposeCombinator<Container, NrContainers, Combination>(containers);
+	const auto combinator = Cartesian<Container, NrContainers, Combination>(containers);
 	Assert(combinator.size() == expectedNrCombinations);
 	std::vector<Combination> combinations;
 	combinations.reserve(combinator.size());
@@ -173,14 +173,14 @@ void tests() {
 
 	#define INPUT1 <std::vector<double>>({1, 2, 3, 4}, 2)
 	testList<std::vector<double>>(OrderedCombinator INPUT1, 6, true, true);
-	testList<std::vector<double>>(ShuffledCombinator INPUT1, 12, false, true);
-	testList<std::vector<double>>(MultiChoiceCombinator INPUT1, 16, false, false);
+	testList<std::vector<double>>(Permutator INPUT1, 12, false, true);
+	testList<std::vector<double>>(MultiPermutator INPUT1, 16, false, false);
 
 	#define COMBINATION std::array<double, 3>
 	#define INPUT2 <std::array<double, 8>, COMBINATION>({1, 2, 3, 4, 5, 6, 7, 8}, 3)
 	testList<COMBINATION >(OrderedCombinator INPUT2, 56, true, true);
-	testList<COMBINATION >(ShuffledCombinator INPUT2, 336, false, true);
-	testList<COMBINATION >(MultiChoiceCombinator INPUT2, 512, false, false);
+	testList<COMBINATION >(Permutator INPUT2, 336, false, true);
+	testList<COMBINATION >(MultiPermutator INPUT2, 512, false, false);
 
 	testCompose<std::vector<int>, 2, std::vector<int>>(
 			std::array<std::vector<int>, 2>{
@@ -248,13 +248,13 @@ void testBigJumps() {
 			);
 
 			testForwardAndRAEquality(
-					ShuffledCombinator<std::vector<unsigned>>(elements, 3),
+					Permutator<std::vector<unsigned>>(elements, 3),
 					nrElements * (nrElements - 1) * (nrElements - 2),
 					rand
 			);
 
 			testForwardAndRAEquality(
-					MultiChoiceCombinator<std::vector<unsigned>>(elements, 3),
+					MultiPermutator<std::vector<unsigned>>(elements, 3),
 					nrElements * nrElements * nrElements,
 					rand
 			);

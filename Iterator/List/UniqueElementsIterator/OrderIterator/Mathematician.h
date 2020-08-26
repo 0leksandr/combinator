@@ -2,12 +2,12 @@
 
 #include "CandidateOrderIterator.h"
 #include "../../../../Position.h"
-#include "../../../../Request/FixedRequest.h"
+#include "../../../../Request/FixedSizeRequest.h"
 
 template<class Container, class Combination>
 class Mathematician : public CandidateOrderIterator<Container, Combination> {
 	public:
-		explicit Mathematician(const FixedRequest<Container>& request) :
+		explicit Mathematician(const FixedSizeRequest<Container>& request) :
 				CandidateOrderIterator<Container, Combination>(request) {
 			avgEstimation = avgNrSteps();
 		}
