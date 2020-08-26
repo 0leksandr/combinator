@@ -216,7 +216,7 @@ void testForwardAndRAEquality(
 	for (int c = 0; c < expectedNrCombinations; ++c) picks.push_back(c);
 	std::shuffle(picks.begin(), picks.end(), rand);
 	for (int c = 0; c < picks.size(); ++c) {
-		if (!(c%10000)) dump(float(c)/expectedNrCombinations);
+		if (!(c%100000)) dump(float(c)/expectedNrCombinations);
 		const auto pick = picks[c];
 		orderedCombinations[pick] = combinator[pick];
 	}

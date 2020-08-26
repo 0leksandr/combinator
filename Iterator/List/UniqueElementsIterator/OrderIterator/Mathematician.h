@@ -11,7 +11,7 @@ class Mathematician : public CandidateOrderIterator<Container, Combination> {
 				CandidateOrderIterator<Container, Combination>(request) {
 			avgEstimation = avgNrSteps();
 		}
-		[[nodiscard]] Position estimate(Position index) const override {
+		[[nodiscard]] Position estimate(Position) const override {
 			return avgEstimation; // TODO: test
 		}
 	protected:
@@ -57,6 +57,7 @@ class Mathematician : public CandidateOrderIterator<Container, Combination> {
 			this->positions[position] = value;
 		}
 		[[nodiscard]] Position avgNrSteps() const {
+return this->request.length * this->request.length; // TODO: make it right
 			float totalAvgNrSteps(0.f);
 			Position prevValue(0);
 			for (Position c = 0; c < this->request.length; c++) {
@@ -79,11 +80,12 @@ class Mathematician : public CandidateOrderIterator<Container, Combination> {
 								+ position
 								+ 1
 								- this->request.length;
-			for (Position c = minValue; c < maxValue; c++)
+			for (Position c = minValue; c < maxValue; c++) {
 				sum += this->nPerM(
 						this->nrElements() - c - 1,
 						this->request.length - position - 1
 				);
+			}
 			return sum / float(maxValue - minValue + 1);
 		}
 };
