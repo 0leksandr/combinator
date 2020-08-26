@@ -29,23 +29,23 @@ namespace Combinator {
 				return ForwardIterator(request);
 			}
 			[[maybe_unused]] PositionedIterator end() const {
-				return _end;
+				return PositionedIterator(_size);
 			}
 			Position size() const {
-				return ForwardIterator::size(request);
+				return _size;
 			}
 		protected:
 			explicit FixedCombinator(const Request& request) :
 					request(request),
 					current(nullptr),
-					_end(size()) {}
+					_size(ForwardIterator::size(request)) {}
 			~FixedCombinator() {
 				if (current != nullptr) delete current;
 			}
 		private:
 			const Request request;
+			const Position _size;
 			mutable RandomAccessIterator* current;
-			const PositionedIterator _end;
 	};
 
 	template<class Container, class Combination, class ForwardIterator, class RandomAccessIterator>

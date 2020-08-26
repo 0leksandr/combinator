@@ -39,6 +39,7 @@ class Hunter : public CandidateOrderIterator<Container, Combination> {
 		Position reactionTime;
 
 		Walker<Container, Combination>* guardian(const Position index) const {
-			return (Walker<Container, Combination>*)&guardians[index / reactionTime];
+			const auto guardianIndex = std::min(index / reactionTime, guardians.size() - 1);
+			return (Walker<Container, Combination>*)&guardians[guardianIndex];
 		}
 };

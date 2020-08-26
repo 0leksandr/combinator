@@ -1,13 +1,14 @@
 #pragma once
 
 #include <array>
+#include <cmath>
+#include <map>
+#include <random>
 #include <vector>
 #include "Combinator.h"
-#include "my/macro.cpp"
+#include <my/macro.cpp>
 
 // TODO: test combinations of combinations
-// TODO: test ComboIterator with big "jumps"
-// TODO: check case with Combination = collection of addresses of elements (`Converter::getElement`)
 
 using namespace Combinator;
 
@@ -60,13 +61,13 @@ void assertIn(const Container& container, const Element& element) {
 
 template<class Combination>
 void testOrdered() {
-	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
+	const unsigned nrElementsInCombination = 2;
 	OrderedCombinator<std::vector<double>, Combination> combinations(
 			std::vector<double>({1, 2, 3, 4}),
-			NR_ELEMENTS_IN_COMBINATION
+			nrElementsInCombination
 	);
-	const unsigned NR_COMBINATIONS = 6;
-	double expectedOrdered[NR_COMBINATIONS][2] = {
+	const unsigned nrCombinations = 6;
+	double expectedOrdered[nrCombinations][nrElementsInCombination] = {
 			{1., 2.},
 			{1., 3.},
 			{1., 4.},
@@ -74,12 +75,12 @@ void testOrdered() {
 			{2., 4.},
 			{3., 4.},
 	};
-	Assert(combinations.size() == NR_COMBINATIONS);
+	Assert(combinations.size() == nrCombinations);
 	unsigned c(0);
 	for (auto combination : combinations) {
-		Assert(combination.size() == NR_ELEMENTS_IN_COMBINATION);
-		Assert(combinations[c].size() == NR_ELEMENTS_IN_COMBINATION);
-		for (unsigned d = 0; d < NR_ELEMENTS_IN_COMBINATION; d++) {
+		Assert(combination.size() == nrElementsInCombination);
+		Assert(combinations[c].size() == nrElementsInCombination);
+		for (unsigned d = 0; d < nrElementsInCombination; d++) {
 			double expected = expectedOrdered[c][d];
 			Assert(combination[d] == expected);
 			Assert(combinations[c][d] == expected);
@@ -146,7 +147,10 @@ void testList(
 	myPrint("Test passed\n");
 }
 template<class Container, Position NrContainers, class Combination>
-void testCompose(const std::array<Container, NrContainers>& containers, const unsigned expectedNrCombinations) {
+void testCompose(
+		const std::array<Container, NrContainers>& containers,
+		const unsigned expectedNrCombinations
+) {
 	const auto combinator = ComposeCombinator<Container, NrContainers, Combination>(containers);
 	Assert(combinator.size() == expectedNrCombinations);
 	std::vector<Combination> combinations;
@@ -194,4 +198,66 @@ void tests() {
 			},
 			81
 	);
+}
+
+template<class Combinator, class RandomFunc>
+void testForwardAndRAEquality(
+		const Combinator& combinator,
+		const unsigned expectedNrCombinations,
+		RandomFunc rand
+) {
+	dump(combinator);
+	dump(expectedNrCombinations);
+	Assert(combinator.size() == expectedNrCombinations);
+
+	std::map<unsigned, std::vector<unsigned>> orderedCombinations;
+	std::vector<unsigned> picks;
+	picks.reserve(expectedNrCombinations);
+	for (int c = 0; c < expectedNrCombinations; ++c) picks.push_back(c);
+	std::shuffle(picks.begin(), picks.end(), rand);
+	for (int c = 0; c < picks.size(); ++c) {
+		if (!(c%10000)) dump(float(c)/expectedNrCombinations);
+		const auto pick = picks[c];
+		orderedCombinations[pick] = combinator[pick];
+	}
+	unsigned c(0);
+	for (const auto& combination : combinator) {
+		assertEquals(combination, orderedCombinations[c++]);
+	}
+}
+void testBigJumps() {
+	for (const int seed : {1, 23, 456}) {
+		dump(seed);
+		auto rand = std::default_random_engine(seed);
+		for (const auto nrElements : {10, 50, 150, 300}) {
+			dump(nrElements);
+			std::vector<unsigned> elements;
+			elements.reserve(nrElements);
+			for (unsigned c = 0; c < nrElements; ++c) elements.push_back(c);
+
+			testForwardAndRAEquality(
+					OrderedCombinator<std::vector<unsigned>>(elements, 3),
+					1
+					* nrElements
+					* (nrElements - 1)
+					* (nrElements - 2)
+					/ 1
+					/ 2
+					/ 3,
+					rand
+			);
+
+			testForwardAndRAEquality(
+					ShuffledCombinator<std::vector<unsigned>>(elements, 3),
+					nrElements * (nrElements - 1) * (nrElements - 2),
+					rand
+			);
+
+			testForwardAndRAEquality(
+					MultiChoiceCombinator<std::vector<unsigned>>(elements, 3),
+					nrElements * nrElements * nrElements,
+					rand
+			);
+		}
+	}
 }
