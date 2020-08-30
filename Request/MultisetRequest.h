@@ -1,12 +1,15 @@
 #pragma once
 
-#include <array>
+#include <vector>
 #include "../Position.h"
 
-template<class Container, Position NrContainers>
+template<class Container>
 class MultisetRequest {
 	public:
-		const std::array<Container, NrContainers> containers;
+		const std::vector<Container> containers;
 
-		MultisetRequest(const std::array<Container, NrContainers>& containers) : containers(containers) {}
+//		MultisetRequest(const Containers&&... containers) : containers{std::forward<Containers>(containers)...} {}
+		MultisetRequest(const std::vector<Container>& containers) : containers(containers) {}
+//		template<class T>
+//		MultisetRequest(const T&& containers) : containers(containers) {}
 };

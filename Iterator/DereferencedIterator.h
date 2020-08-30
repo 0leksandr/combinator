@@ -4,7 +4,7 @@
 #include "../Converter.h"
 #include "../Position.h"
 
-template<class Container, class Combination>
+template<class Combination>
 class DereferencedIterator : public Iterator {
 	public:
 		explicit DereferencedIterator(const Combination combination, const Position combinationSize) :
@@ -12,7 +12,7 @@ class DereferencedIterator : public Iterator {
 				combination(combination) {}
 		~DereferencedIterator() {
 			delete[] positions;
-			Converter<Container>::deleteCombination(combination);
+			Converter::deleteCombination(combination);
 		}
 		virtual Combination& operator*() const = 0;
 	protected:

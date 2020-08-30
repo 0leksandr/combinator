@@ -5,14 +5,14 @@
 #include "../../Converter.h"
 #include "../../Request/MultisetRequest.h"
 
-template<class Container, Position NrContainers, class Combination>
+template<class Container, class Combination>
 class MultisetIterator :
-		public DereferencedIterator<Container, Combination>,
+		public DereferencedIterator<Combination>,
 		public SizedIterator {
 	public:
-		explicit MultisetIterator(const MultisetRequest<Container, NrContainers>& request) :
-				DereferencedIterator<Container, Combination>(
-						Converter<Combination>::initCombination(
+		explicit MultisetIterator(const MultisetRequest<Container>& request) :
+				DereferencedIterator<Combination>(
+						Converter::initCombination(
 								&this->combination,
 								request.containers.size(),
 								request.containers[0][0]
@@ -28,11 +28,11 @@ class MultisetIterator :
 			}
 			return this->combination;
 		}
-		static Position size(const MultisetRequest<Container, NrContainers>& request) {
+		static Position size(const MultisetRequest<Container>& request) {
 			Position size = 1;
 			for (const auto& container : request.containers) size *= container.size();
 			return size;
 		}
 	protected:
-		const MultisetRequest<Container, NrContainers>& request;
+		const MultisetRequest<Container>& request;
 };

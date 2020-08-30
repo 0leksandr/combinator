@@ -12,13 +12,13 @@
 #include "Request/FixedSizeRequest.h"
 #include "Request/MultisetRequest.h"
 
-// TODO: MultiPermutator from variadic list of collections
+// TODO: Cartesian from variadic list of collections
 // TODO: make Permutator::begin return some Walker
 // TODO: remove Container from main template
-// TODO: optional combination size
+// TODO: optional permutation size
 
 namespace Combinator {
-	template<class Container, class Combination, class Request, class ForwardIterator, class RandomAccessIterator>
+	template<class Combination, class Request, class ForwardIterator, class RandomAccessIterator>
 	class FixedSizeCombinator {
 		public:
 			Combination& operator[](Position index) const {
@@ -51,7 +51,6 @@ namespace Combinator {
 
 	template<class Container, class Combination, class ForwardIterator, class RandomAccessIterator>
 	class FixedSizedSingleSetCombinator : public FixedSizeCombinator<
-			Container,
 			Combination,
 			FixedSizeRequest<Container>,
 			ForwardIterator,
@@ -59,7 +58,6 @@ namespace Combinator {
 	> {
 		protected:
 			FixedSizedSingleSetCombinator(const Container& elements, const Position length) : FixedSizeCombinator<
-					Container,
 					Combination,
 					FixedSizeRequest<Container>,
 					ForwardIterator,
@@ -118,21 +116,25 @@ namespace Combinator {
 					>(elements, length) {}
 	};
 
-	template<class Container, Position NrContainers, class Combination>
+	template<class Combination, class Container>
 	class Cartesian : public FixedSizeCombinator<
-			Container,
 			Combination,
-			MultisetRequest<Container, NrContainers>,
-			MultisetFIterator<Container, NrContainers, Combination>,
-			MultisetRAIterator<Container, NrContainers, Combination>
+			MultisetRequest<Container>,
+			MultisetFIterator<Container, Combination>,
+			MultisetRAIterator<Container, Combination>
 	> {
 		public:
-			explicit Cartesian(const std::array<Container, NrContainers>& containers) : FixedSizeCombinator<
-					Container,
-					Combination,
-					MultisetRequest<Container, NrContainers>,
-					MultisetFIterator<Container, NrContainers, Combination>,
-					MultisetRAIterator<Container, NrContainers, Combination>
-			>(MultisetRequest<Container, NrContainers>(containers)) {}
+//			explicit Cartesian(const Containers&&... containers) : FixedSizeCombinator<
+//					Combination,
+//					MultisetRequest<Containers...>,
+//					MultisetFIterator<Combination, Containers...>,
+//					MultisetRAIterator<Combination, Containers...>
+//			>(MultisetRequest<Containers...>(containers...)) {}
+			explicit Cartesian(const std::vector<Container>& containers) : FixedSizeCombinator<
+			        Combination,
+			        MultisetRequest<Container>,
+					MultisetFIterator<Container, Combination>,
+					MultisetRAIterator<Container, Combination>
+			>(containers) {}
 	};
 }

@@ -60,7 +60,7 @@ void assertIn(const Container& container, const Element& element) {
 }
 
 template<class Combination>
-void testOrdered() {
+void testCombinator() {
 	const unsigned nrElementsInCombination = 2;
 	OrderedCombinator<std::vector<double>, Combination> combinations(
 			std::vector<double>({1, 2, 3, 4}),
@@ -90,7 +90,7 @@ void testOrdered() {
 	myPrint("Test passed\n");
 }
 template<class Combination>
-void testShuffled() {
+void testPermutator() {
 	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
 	Permutator<std::vector<double>, Combination> combinations(
 			std::vector<double>({1, 2, 3, 4}),
@@ -146,19 +146,19 @@ void testList(
 	assertCombinationsUnique(combinations);
 	myPrint("Test passed\n");
 }
-template<class Container, Position NrContainers, class Combination>
-void testCompose(
-		const std::array<Container, NrContainers>& containers,
+template<class Container, class Combination>
+void testCartesian(
+		const std::vector<Container>& containers,
 		const unsigned expectedNrCombinations
 ) {
-	const auto combinator = Cartesian<Container, NrContainers, Combination>(containers);
+	const auto combinator = Cartesian<Combination, Container>(containers);
 	Assert(combinator.size() == expectedNrCombinations);
 	std::vector<Combination> combinations;
 	combinations.reserve(combinator.size());
 	unsigned c(0);
 	for (const auto& combination : combinator) {
 		assertEquals(combination, combinator[c++]);
-		for (int d = 0; d < NrContainers; ++d) assertIn(containers[d], combination[d]);
+		for (int d = 0; d < containers.size(); ++d) assertIn(containers[d], combination[d]);
 		combinations.push_back(combination);
 	}
 	Assert(combinations.size() == expectedNrCombinations);
@@ -166,10 +166,10 @@ void testCompose(
 	myPrint("Test passed\n");
 }
 void tests() {
-	testOrdered<std::vector<double>>();
-	testOrdered<std::array<double, 2>>();
-	testShuffled<std::vector<double>>();
-	testShuffled<std::array<double, 2>>();
+	testCombinator<std::vector<double>>();
+	testCombinator<std::array<double, 2>>();
+	testPermutator<std::vector<double>>();
+	testPermutator<std::array<double, 2>>();
 
 	#define INPUT1 <std::vector<double>>({1, 2, 3, 4}, 2)
 	testList<std::vector<double>>(OrderedCombinator INPUT1, 6, true, true);
@@ -182,15 +182,15 @@ void tests() {
 	testList<COMBINATION >(Permutator INPUT2, 336, false, true);
 	testList<COMBINATION >(MultiPermutator INPUT2, 512, false, false);
 
-	testCompose<std::vector<int>, 2, std::vector<int>>(
-			std::array<std::vector<int>, 2>{
+	testCartesian<std::vector<int>, std::vector<int>>(
+			std::vector<std::vector<int>>{
 					std::vector<int>{1, 2},
 					std::vector<int>{3, 4},
 			},
 			4
 	);
-	testCompose<std::vector<int>, 4, std::vector<int>>(
-			std::array<std::vector<int>, 4>{
+	testCartesian<std::vector<int>, std::vector<int>>(
+			std::vector<std::vector<int>>{
 					std::vector<int>{1, 2, 3},
 					std::vector<int>{3, 4, 5},
 					std::vector<int>{5, 6, 7},

@@ -43,5 +43,3 @@ Functions as random-access iterator, so that allows to generate arbitrary big se
 Accepts collections of any objects (integers are shows as example).
 
 Returns iterables of different types (array/std::array/vector); required type should be declared as template argument when creating combinator object.
-
-Supports combination of pointers to original objects (if memory resourses are limited)

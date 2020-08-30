@@ -6,7 +6,6 @@
 #include "Position.h"
 #include "Request/FixedSizeRequest.h"
 
-template<class Container>
 class Converter {
 	public:
 		template<class Element>

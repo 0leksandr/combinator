@@ -5,13 +5,13 @@
 #include "../../Position.h"
 #include "../../Request/MultisetRequest.h"
 
-template<class Container, Position NrContainers, class Combination>
+template<class Container, class Combination>
 class MultisetRAIterator :
-		public MultisetIterator<Container, NrContainers, Combination>,
+		public MultisetIterator<Combination, Container>,
 		public RandomAccessIterator {
 	public:
-		explicit MultisetRAIterator(const MultisetRequest<Container, NrContainers>& request) :
-				MultisetIterator<Container, NrContainers, Combination>(request) {}
+		explicit MultisetRAIterator(const MultisetRequest<Container>& request) :
+				MultisetIterator<Combination, Container>(request) {}
 	protected:
 		void go(Position index) override {
 			for (Position c = 0; c < this->request.containers.size(); c++) {

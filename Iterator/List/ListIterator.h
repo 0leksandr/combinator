@@ -6,11 +6,11 @@
 #include "../../Request/FixedSizeRequest.h"
 
 template<class Container, class Combination>
-class ListIterator : public DereferencedIterator<Container, Combination> {
+class ListIterator : public DereferencedIterator<Combination> {
 	public:
 		explicit ListIterator(const FixedSizeRequest<Container>& request) :
-				DereferencedIterator<Container, Combination>(
-						Converter<Combination>::initCombination(
+				DereferencedIterator<Combination>(
+						Converter::initCombination(
 								&this->combination,
 								request.length,
 								request.elements[0]

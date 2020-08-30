@@ -5,13 +5,13 @@
 #include "../../Position.h"
 #include "../../Request/MultisetRequest.h"
 
-template<class Container, Position NrContainers, class Combination>
+template<class Container, class Combination>
 class MultisetFIterator :
-		public MultisetIterator<Container, NrContainers, Combination>,
+		public MultisetIterator<Combination, Container>,
 		public ForwardIterator {
 	public:
-		explicit MultisetFIterator(const MultisetRequest<Container, NrContainers>& request) :
-				MultisetIterator<Container,NrContainers,Combination>(request) {}
+		explicit MultisetFIterator(const MultisetRequest<Container>& request) :
+				MultisetIterator<Combination, Container>(request) {}
 		void increment() override {
 			increment(0);
 		}
