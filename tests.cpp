@@ -92,7 +92,7 @@ void testCombinator() {
 template<class Combination>
 void testPermutator() {
 	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
-	Permutator<std::vector<double>, Combination> combinations(
+	Permutator<std::vector<double>, Combination> permutations(
 			std::vector<double>({1, 2, 3, 4}),
 			NR_ELEMENTS_IN_COMBINATION
 	);
@@ -111,17 +111,27 @@ void testPermutator() {
 			{3., 4.},
 			{4., 3.},
 	};
-	Assert(combinations.size() == NR_COMBINATIONS);
+	Assert(permutations.size() == NR_COMBINATIONS);
 	unsigned c(0);
-	for (auto combination : combinations) {
-		Assert(combination.size() == NR_ELEMENTS_IN_COMBINATION);
-		Assert(combinations[c].size() == NR_ELEMENTS_IN_COMBINATION);
+	for (auto permutation : permutations) {
+		Assert(permutation.size() == NR_ELEMENTS_IN_COMBINATION);
+		Assert(permutations[c].size() == NR_ELEMENTS_IN_COMBINATION);
 		for (unsigned d = 0; d < NR_ELEMENTS_IN_COMBINATION; d++) {
 			double expected = expectedShuffled[c][d];
-			Assert(combination[d] == expected);
-			Assert(combinations[c][d] == expected);
+			Assert(permutation[d] == expected);
+			Assert(permutations[c][d] == expected);
 		}
 		c++;
+	}
+	myPrint("Test passed\n");
+}
+void testPermutatorNoSize() {
+	const auto elements = std::vector<double>({1, 2, 3, 4});
+	Permutator<std::vector<double>> permutations1(elements,4);
+	Permutator<std::vector<double>> permutations2(elements);
+	Assert(permutations1.size() == permutations2.size());
+	for (int c = 0; c < permutations1.size(); ++c) {
+		assertEquals(permutations1[c], permutations2[c]);
 	}
 	myPrint("Test passed\n");
 }
@@ -151,7 +161,7 @@ void testCartesian(
 		const std::vector<Container>& containers,
 		const unsigned expectedNrCombinations
 ) {
-	const auto combinator = Cartesian<Combination, Container>(containers);
+	const auto combinator = Cartesian<Container, Combination>(containers);
 	Assert(combinator.size() == expectedNrCombinations);
 	std::vector<Combination> combinations;
 	combinations.reserve(combinator.size());
@@ -170,6 +180,7 @@ void tests() {
 	testCombinator<std::array<double, 2>>();
 	testPermutator<std::vector<double>>();
 	testPermutator<std::array<double, 2>>();
+	testPermutatorNoSize();
 
 	#define INPUT1 <std::vector<double>>({1, 2, 3, 4}, 2)
 	testList<std::vector<double>>(OrderedCombinator INPUT1, 6, true, true);

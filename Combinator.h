@@ -15,7 +15,6 @@
 // TODO: Cartesian from variadic list of collections
 // TODO: make Permutator::begin return some Walker
 // TODO: remove Container from main template
-// TODO: optional permutation size
 
 namespace Combinator {
 	template<class Combination, class Request, class ForwardIterator, class RandomAccessIterator>
@@ -90,6 +89,13 @@ namespace Combinator {
 			PermutationIterator<Container, Combination>
 	> {
 		public:
+			explicit Permutator(const Container& elements):
+					FixedSizedSingleSetCombinator<
+							Container,
+							Combination,
+							PermutationIterator<Container, Combination>,
+							PermutationIterator<Container, Combination>
+					>(elements, elements.size()) {}
 			Permutator(const Container& elements, const Position length):
 					FixedSizedSingleSetCombinator<
 							Container,
@@ -116,7 +122,7 @@ namespace Combinator {
 					>(elements, length) {}
 	};
 
-	template<class Combination, class Container>
+	template<class Container, class Combination = Container>
 	class Cartesian : public FixedSizeCombinator<
 			Combination,
 			MultisetRequest<Container>,
