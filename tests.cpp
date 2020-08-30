@@ -10,8 +10,6 @@
 
 // TODO: test combinations of combinations
 
-using namespace Combinator;
-
 template<class Container>
 void assertEquals(const Container& a, const Container& b) {
 	Assert(a.size() == b.size());
@@ -59,9 +57,13 @@ void assertIn(const Container& container, const Element& element) {
 	Assert(false);
 }
 
+void testPassed() {
+	myPrint("Test passed\n");
+}
+
 void testCombinator() {
 	const unsigned nrElementsInCombination = 2;
-	OrderedCombinator combinations(
+	Combinator combinations(
 			std::vector<double>({1, 2, 3, 4}),
 			nrElementsInCombination
 	);
@@ -86,12 +88,12 @@ void testCombinator() {
 		}
 		c++;
 	}
-	myPrint("Test passed\n");
+	testPassed();
 }
 template<class Combination>
 void testCombinatorCustomCombination() {
 	const unsigned nrElementsInCombination = 2;
-	OrderedCombinator<std::vector<double>, Combination> combinations(
+	Combinator<std::vector<double>, Combination> combinations(
 			std::vector<double>({1, 2, 3, 4}),
 			nrElementsInCombination
 	);
@@ -116,7 +118,7 @@ void testCombinatorCustomCombination() {
 		}
 		c++;
 	}
-	myPrint("Test passed\n");
+	testPassed();
 }
 void testPermutator() {
 	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
@@ -151,7 +153,7 @@ void testPermutator() {
 		}
 		c++;
 	}
-	myPrint("Test passed\n");
+	testPassed();
 }
 template<class Combination>
 void testPermutatorCustomCombination() {
@@ -187,7 +189,7 @@ void testPermutatorCustomCombination() {
 		}
 		c++;
 	}
-	myPrint("Test passed\n");
+	testPassed();
 }
 void testPermutatorNoSize() {
 	const auto elements = std::vector<double>({1, 2, 3, 4});
@@ -197,7 +199,7 @@ void testPermutatorNoSize() {
 	for (int c = 0; c < permutations1.size(); ++c) {
 		assertEquals(permutations1[c], permutations2[c]);
 	}
-	myPrint("Test passed\n");
+	testPassed();
 }
 template<class Combination, class Combinator>
 void testList(
@@ -218,7 +220,7 @@ void testList(
 	}
 	Assert(combinations.size() == expectedNrCombinations);
 	assertCombinationsUnique(combinations);
-	myPrint("Test passed\n");
+	testPassed();
 }
 template<class Container, class Combination>
 void testCartesian(
@@ -237,7 +239,7 @@ void testCartesian(
 	}
 	Assert(combinations.size() == expectedNrCombinations);
 	assertCombinationsUnique(combinations);
-	myPrint("Test passed\n");
+	testPassed();
 }
 void tests() {
 	testCombinator();
@@ -249,13 +251,13 @@ void tests() {
 	testPermutatorNoSize();
 
 	#define INPUT1 <std::vector<double>>({1, 2, 3, 4}, 2)
-	testList<std::vector<double>>(OrderedCombinator INPUT1, 6, true, true);
+	testList<std::vector<double>>(Combinator INPUT1, 6, true, true);
 	testList<std::vector<double>>(Permutator INPUT1, 12, false, true);
 	testList<std::vector<double>>(MultiPermutator INPUT1, 16, false, false);
 
 	#define COMBINATION std::array<double, 3>
 	#define INPUT2 <std::array<double, 8>, COMBINATION>({1, 2, 3, 4, 5, 6, 7, 8}, 3)
-	testList<COMBINATION >(OrderedCombinator INPUT2, 56, true, true);
+	testList<COMBINATION >(Combinator INPUT2, 56, true, true);
 	testList<COMBINATION >(Permutator INPUT2, 336, false, true);
 	testList<COMBINATION >(MultiPermutator INPUT2, 512, false, false);
 
@@ -313,7 +315,7 @@ void testBigJumps() {
 			for (unsigned c = 0; c < nrElements; ++c) elements.push_back(c);
 
 			testForwardAndRAEquality(
-					OrderedCombinator<std::vector<unsigned>>(elements, 3),
+					Combinator<std::vector<unsigned>>(elements, 3),
 					1
 					* nrElements
 					* (nrElements - 1)

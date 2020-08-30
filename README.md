@@ -1,15 +1,15 @@
-# combinator
+### Combinator
 
-Service, generating combinations of subsets from passed collection (array/std::array/vector, etc.).
+Service that generates collection of subsets from passed collection(s) (`std::array` or `std::vector`).
 
-F.e.,
+Example:
 ```c++
-OrderedCombinator<std::vector<int>>({1, 2, 3}, 2) = {
+Combinator(std::vector<int>({1, 2, 3}), 2) ~= {
     {1, 2},
     {1, 3},
     {2, 3},
 };
-Permutator<std::vector<int>>({1, 2, 3}, 2) = {
+Permutator(std::vector<int>({1, 2, 3}), 2) ~= {
     {1, 2},
     {1, 3},
     {2, 1},
@@ -17,7 +17,7 @@ Permutator<std::vector<int>>({1, 2, 3}, 2) = {
     {3, 1},
     {3, 2},
 };
-MultiPermutator<std::vector<int>>({1, 2, 3}, 2) = {
+MultiPermutator(std::vector<int>({1, 2, 3}), 2) ~= {
     {1, 1},
     {2, 1},
     {3, 1},
@@ -28,9 +28,7 @@ MultiPermutator<std::vector<int>>({1, 2, 3}, 2) = {
     {2, 3},
     {3, 3},
 };
-Cartesian<std::vector<int>, 2, std::vector<int>>(
-    std::array<std::vector<int>, 2>{std::vector<int>{1, 2}, {3, 4}}
-) = {
+Cartesian(std::vector<std::vector<int>>({std::vector<int>{1, 2}, {3, 4}})) ~= {
     {1, 3},    
     {2, 3},
     {1, 4},
@@ -38,8 +36,8 @@ Cartesian<std::vector<int>, 2, std::vector<int>>(
 };
 ```
 
-Functions as random-access iterator, so that allows to generate arbitrary big sequenses, requiring minimum amount of memory.
+Functions as forward-iterator and random-access-iterator, so that allows to generate arbitrary big sequenses, requiring minimum amount of memory.
 
 Accepts collections of any objects (integers are shows as example).
 
-Returns iterables of different types (array/std::array/vector); required type should be declared as template argument when creating combinator object.
+Returns sets of `std::array` or `std::vector` (required type should be declared as template argument).

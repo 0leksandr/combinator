@@ -11,7 +11,7 @@
 #include "../../../../Request/FixedSizeRequest.h"
 
 template<class Container, class Combination>
-class ComboIterator : // TODO: use same approach for all combinators, not only OrderedCombinator
+class ComboIterator : // TODO: use same approach for all combinators, not only Combinator
 		public OrderIterator<Container, Combination>,
 		public RandomAccessIterator {
 	private:
