@@ -2,7 +2,9 @@
 
 #include "../Iterator.h"
 
-class BackwardsIterator : public Iterator {
-	protected:
-		virtual void operator--() = 0;
-};
+namespace CombinatorNamespace {
+	class BackwardsIterator : public Iterator {
+		protected:
+			virtual void operator--() = 0;
+	};
+}

@@ -1,6 +1,8 @@
 #pragma once
 
-class Iterator {
-	protected:
-		// TODO: virtual ~Iterator();
-};
+namespace CombinatorNamespace {
+	class Iterator {
+		protected:
+			// TODO: virtual ~Iterator();
+	};
+}

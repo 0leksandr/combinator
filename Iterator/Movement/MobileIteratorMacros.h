@@ -1,6 +1,6 @@
 #pragma once
 
-// this actually shouldn't matter, how we convert
+// it actually shouldn't matter, how we convert
 #define MOBILE_ITERATOR                                                   \
 	public:                                                               \
 		bool operator!=(const PositionedIterator& other) const override { \

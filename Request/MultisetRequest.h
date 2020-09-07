@@ -3,13 +3,15 @@
 #include <vector>
 #include "../Position.h"
 
-template<class Container>
-class MultisetRequest {
-	public:
-		const std::vector<Container> containers;
+namespace CombinatorNamespace {
+	template<class Container>
+	class MultisetRequest {
+		public:
+			const std::vector<Container> containers;
 
-//		MultisetRequest(const Containers&&... containers) : containers{std::forward<Containers>(containers)...} {}
-		MultisetRequest(const std::vector<Container>& containers) : containers(containers) {}
-//		template<class T>
-//		MultisetRequest(const T&& containers) : containers(containers) {}
-};
+	//		MultisetRequest(const Containers&&... containers) : containers{std::forward<Containers>(containers)...} {}
+			MultisetRequest(const std::vector<Container>& containers) : containers(containers) {}
+	//		template<class T>
+	//		MultisetRequest(const T&& containers) : containers(containers) {}
+	};
+}

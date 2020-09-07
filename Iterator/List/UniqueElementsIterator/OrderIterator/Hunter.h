@@ -7,39 +7,41 @@
 #include "../../../../Position.h"
 #include "../../../../Request/FixedSizeRequest.h"
 
-template<class Container, class Combination>
-class Hunter : public CandidateOrderIterator<Container, Combination> {
-	public:
-		explicit Hunter(const FixedSizeRequest<Container>& request) :
-				CandidateOrderIterator<Container, Combination>(request) {
-			const auto size = OrderIterator<Container, Combination>::size(request);
-			const Position nrGuardians = (Position)sqrt(size) + 1;
-			reactionTime = size / nrGuardians; // TODO: check
-			Walker<Container, Combination> patrol(request);
-			while (patrol.getWalkerIndex() < size - 1) {
-				patrol.operator++();
-				if ((patrol.getWalkerIndex() + reactionTime / 2) % reactionTime == 0) {
-					guardians.push_back(patrol);
+namespace CombinatorNamespace {
+	template<class Container, class Combination>
+	class Hunter : public CandidateOrderIterator<Container, Combination> {
+		public:
+			explicit Hunter(const FixedSizeRequest<Container>& request) :
+					CandidateOrderIterator<Container, Combination>(request) {
+				const auto size = OrderIterator<Container, Combination>::size(request);
+				const Position nrGuardians = (Position)sqrt(size) + 1;
+				reactionTime = size / nrGuardians; // TODO: check
+				Walker<Container, Combination> patrol(request);
+				while (patrol.getWalkerIndex() < size - 1) {
+					patrol.operator++();
+					if ((patrol.getWalkerIndex() + reactionTime / 2) % reactionTime == 0) {
+						guardians.push_back(patrol);
+					}
 				}
 			}
-		}
-		[[nodiscard]] Position estimate(const Position index) const override {
-			return guardian(index)->estimate(index);
-		}
-	protected:
-		void go(const Position index) override {
-			auto envoy = guardian(index);
-			envoy->operator[](index);
-			for (Position c = 0; c < this->request.length; c++) {
-				this->positions[c] = envoy->getPosition(c);
+			[[nodiscard]] Position estimate(const Position index) const override {
+				return guardian(index)->estimate(index);
 			}
-		}
-	private:
-		std::vector<Walker<Container, Combination>> guardians;
-		Position reactionTime;
+		protected:
+			void go(const Position index) override {
+				auto envoy = guardian(index);
+				envoy->operator[](index);
+				for (Position c = 0; c < this->request.length; c++) {
+					this->positions[c] = envoy->getPosition(c);
+				}
+			}
+		private:
+			std::vector<Walker<Container, Combination>> guardians;
+			Position reactionTime;
 
-		Walker<Container, Combination>* guardian(const Position index) const {
-			const auto guardianIndex = std::min(index / reactionTime, guardians.size() - 1);
-			return (Walker<Container, Combination>*)&guardians[guardianIndex];
-		}
-};
+			Walker<Container, Combination>* guardian(const Position index) const {
+				const auto guardianIndex = std::min(index / reactionTime, guardians.size() - 1);
+				return (Walker<Container, Combination>*)&guardians[guardianIndex];
+			}
+	};
+}

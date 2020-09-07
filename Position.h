@@ -2,4 +2,6 @@
 
 #include <cstddef>
 
-typedef size_t Position;
+namespace CombinatorNamespace {
+	typedef size_t Position;
+}

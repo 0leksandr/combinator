@@ -19,7 +19,7 @@
 template<class Combination, class Request, class ForwardIterator, class RandomAccessIterator>
 class FixedSizeCombinator {
 	public:
-		Combination& operator[](Position index) const {
+		Combination& operator[](CombinatorNamespace::Position index) const {
 			if (current == nullptr) current = new RandomAccessIterator(request);
 			current->operator[](index);
 			return **current;
@@ -27,10 +27,10 @@ class FixedSizeCombinator {
 		[[maybe_unused]] ForwardIterator begin() const {
 			return ForwardIterator(request);
 		}
-		[[maybe_unused]] PositionedIterator end() const {
-			return PositionedIterator(_size);
+		[[maybe_unused]] CombinatorNamespace::PositionedIterator end() const {
+			return CombinatorNamespace::PositionedIterator(_size);
 		}
-		Position size() const {
+		CombinatorNamespace::Position size() const {
 			return _size;
 		}
 	protected:
@@ -43,40 +43,43 @@ class FixedSizeCombinator {
 		}
 	private:
 		const Request request;
-		const Position _size;
+		const CombinatorNamespace::Position _size;
 		mutable RandomAccessIterator* current;
 };
 
 template<class Container, class Combination, class ForwardIterator, class RandomAccessIterator>
 class FixedSizedSingleSetCombinator : public FixedSizeCombinator<
 		Combination,
-		FixedSizeRequest<Container>,
+		CombinatorNamespace::FixedSizeRequest<Container>,
 		ForwardIterator,
 		RandomAccessIterator
 > {
 	protected:
-		FixedSizedSingleSetCombinator(const Container& elements, const Position length) : FixedSizeCombinator<
+		FixedSizedSingleSetCombinator(
+				const Container& elements,
+				const CombinatorNamespace::Position length
+		) : FixedSizeCombinator<
 				Combination,
-				FixedSizeRequest<Container>,
+				CombinatorNamespace::FixedSizeRequest<Container>,
 				ForwardIterator,
 				RandomAccessIterator
-		>(FixedSizeRequest<Container>(elements, length)) {}
+		>(CombinatorNamespace::FixedSizeRequest<Container>(elements, length)) {}
 };
 
 template<class Container, class Combination = Container>
 class Combinator : public FixedSizedSingleSetCombinator<
 		Container,
 		Combination,
-		Walker<Container, Combination>,
-		ComboIterator<Container, Combination>
+		CombinatorNamespace::Walker<Container, Combination>,
+		CombinatorNamespace::ComboIterator<Container, Combination>
 > {
 	public:
-		Combinator(const Container& elements, const Position length) :
+		Combinator(const Container& elements, const CombinatorNamespace::Position length) :
 				FixedSizedSingleSetCombinator<
 						Container,
 						Combination,
-						Walker<Container, Combination>,
-						ComboIterator<Container, Combination>
+						CombinatorNamespace::Walker<Container, Combination>,
+						CombinatorNamespace::ComboIterator<Container, Combination>
 				>(elements, length) {}
 };
 
@@ -84,23 +87,23 @@ template<class Container, class Combination = Container>
 class Permutator : public FixedSizedSingleSetCombinator<
 		Container,
 		Combination,
-		PermutationIterator<Container, Combination>,
-		PermutationIterator<Container, Combination>
+		CombinatorNamespace::PermutationIterator<Container, Combination>,
+		CombinatorNamespace::PermutationIterator<Container, Combination>
 > {
 	public:
 		explicit Permutator(const Container& elements):
 				FixedSizedSingleSetCombinator<
 						Container,
 						Combination,
-						PermutationIterator<Container, Combination>,
-						PermutationIterator<Container, Combination>
+						CombinatorNamespace::PermutationIterator<Container, Combination>,
+						CombinatorNamespace::PermutationIterator<Container, Combination>
 				>(elements, elements.size()) {}
-		Permutator(const Container& elements, const Position length):
+		Permutator(const Container& elements, const CombinatorNamespace::Position length):
 				FixedSizedSingleSetCombinator<
 						Container,
 						Combination,
-						PermutationIterator<Container, Combination>,
-						PermutationIterator<Container, Combination>
+						CombinatorNamespace::PermutationIterator<Container, Combination>,
+						CombinatorNamespace::PermutationIterator<Container, Combination>
 				>(elements, length) {}
 };
 
@@ -108,25 +111,25 @@ template<class Container, class Combination = Container>
 class MultiPermutator : public FixedSizedSingleSetCombinator<
 		Container,
 		Combination,
-		MultiPermutationFIterator<Container, Combination>,
-		MultiPermutationRAIterator<Container, Combination>
+		CombinatorNamespace::MultiPermutationFIterator<Container, Combination>,
+		CombinatorNamespace::MultiPermutationRAIterator<Container, Combination>
 > {
 	public:
-		MultiPermutator(const Container& elements, const Position length):
+		MultiPermutator(const Container& elements, const CombinatorNamespace::Position length):
 				FixedSizedSingleSetCombinator<
 						Container,
 						Combination,
-						MultiPermutationFIterator<Container, Combination>,
-						MultiPermutationRAIterator<Container, Combination>
+						CombinatorNamespace::MultiPermutationFIterator<Container, Combination>,
+						CombinatorNamespace::MultiPermutationRAIterator<Container, Combination>
 				>(elements, length) {}
 };
 
 template<class Container, class Combination = Container>
 class Cartesian : public FixedSizeCombinator<
 		Combination,
-		MultisetRequest<Container>,
-		MultisetFIterator<Container, Combination>,
-		MultisetRAIterator<Container, Combination>
+		CombinatorNamespace::MultisetRequest<Container>,
+		CombinatorNamespace::MultisetFIterator<Container, Combination>,
+		CombinatorNamespace::MultisetRAIterator<Container, Combination>
 > {
 	public:
 		// template<class... Containers>
@@ -138,8 +141,8 @@ class Cartesian : public FixedSizeCombinator<
 		// >(MultisetRequest<Containers...>(std::forward<Containers>(containers)...)) {}
 		explicit Cartesian(const std::vector<Container>& containers) : FixedSizeCombinator<
 				Combination,
-				MultisetRequest<Container>,
-				MultisetFIterator<Container, Combination>,
-				MultisetRAIterator<Container, Combination>
+				CombinatorNamespace::MultisetRequest<Container>,
+				CombinatorNamespace::MultisetFIterator<Container, Combination>,
+				CombinatorNamespace::MultisetRAIterator<Container, Combination>
 		>(containers) {}
 };
