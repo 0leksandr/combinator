@@ -241,6 +241,27 @@ void testCartesian(
 	assertCombinationsUnique(combinations);
 	testPassed();
 }
+void testCartesianSizeOverflow() {
+	const unsigned nrContainers = 100; // 2^100 > 10e30
+	const unsigned nrElementsInContainer = 2;
+	std::vector<std::vector<int>> containers;
+	containers.reserve(nrContainers);
+	for (unsigned c = 0; c < nrContainers; ++c) {
+		std::vector<int> container;
+		container.reserve(nrElementsInContainer);
+		for (int d = 0; d < nrElementsInContainer; ++d) container.push_back(d);
+		containers.push_back(container);
+	}
+
+	bool exThrown = false;
+	try {
+		(Cartesian(containers));
+	} catch (std::overflow_error&) {
+		exThrown = true;
+	}
+	Assert(exThrown);
+	testPassed();
+}
 void tests() {
 	testCombinator();
 	testCombinatorCustomCombination<std::vector<double>>();
@@ -277,6 +298,7 @@ void tests() {
 			},
 			81
 	);
+	testCartesianSizeOverflow();
 }
 
 template<class Combinator, class RandomFunc>
