@@ -31,7 +31,13 @@ namespace CombinatorNamespace {
 			}
 			static Position size(const MultisetRequest<Container>& request) {
 				Position size = 1;
-				for (const auto& container : request.containers) size *= container.size();
+				for (const auto& container : request.containers) {
+					const auto prev = size; // TODO: would it be better (more performant) to declare it outside of the loop?
+					size *= container.size();
+					if (size == 0 && prev != 0 && container.size() != 0) {
+						throw std::overflow_error("Number of combinations exceeded max allowed number");
+					}
+				}
 				return size;
 			}
 		protected:
