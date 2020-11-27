@@ -61,14 +61,9 @@ void testPassed() {
 	myPrint("Test passed\n");
 }
 
-void testCombinator() {
-	const unsigned nrElementsInCombination = 2;
-	Combinator combinations(
-			std::vector<double>({1, 2, 3, 4}),
-			nrElementsInCombination
-	);
-	const unsigned nrCombinations = 6;
-	double expectedOrdered[nrCombinations][nrElementsInCombination] = {
+template<unsigned NrElementsInCombination, unsigned NrCombinations, class Combinator = nullptr_t>
+void testCombinator(const Combinator& combinations) {
+	double expectedOrdered[NrCombinations][NrElementsInCombination] = {
 			{1., 2.},
 			{1., 3.},
 			{1., 4.},
@@ -76,12 +71,12 @@ void testCombinator() {
 			{2., 4.},
 			{3., 4.},
 	};
-	Assert(combinations.size() == nrCombinations);
+	Assert(combinations.size() == NrCombinations);
 	unsigned c(0);
 	for (auto combination : combinations) {
-		Assert(combination.size() == nrElementsInCombination);
-		Assert(combinations[c].size() == nrElementsInCombination);
-		for (unsigned d = 0; d < nrElementsInCombination; d++) {
+		Assert(combination.size() == NrElementsInCombination);
+		Assert(combinations[c].size() == NrElementsInCombination);
+		for (unsigned d = 0; d < NrElementsInCombination; d++) {
 			double expected = expectedOrdered[c][d];
 			Assert(combination[d] == expected);
 			Assert(combinations[c][d] == expected);
@@ -89,45 +84,25 @@ void testCombinator() {
 		c++;
 	}
 	testPassed();
+}
+void testCombinatorSameCombination() {
+	const unsigned nrElementsInCombination = 2;
+	testCombinator<nrElementsInCombination, 6>(Combinator(
+			std::vector<double>({1, 2, 3, 4}),
+			nrElementsInCombination
+	));
 }
 template<class Combination>
 void testCombinatorCustomCombination() {
 	const unsigned nrElementsInCombination = 2;
-	Combinator<std::vector<double>, Combination> combinations(
+	testCombinator<nrElementsInCombination, 6>(Combinator<std::vector<double>, Combination>(
 			std::vector<double>({1, 2, 3, 4}),
 			nrElementsInCombination
-	);
-	const unsigned nrCombinations = 6;
-	double expectedOrdered[nrCombinations][nrElementsInCombination] = {
-			{1., 2.},
-			{1., 3.},
-			{1., 4.},
-			{2., 3.},
-			{2., 4.},
-			{3., 4.},
-	};
-	Assert(combinations.size() == nrCombinations);
-	unsigned c(0);
-	for (auto combination : combinations) {
-		Assert(combination.size() == nrElementsInCombination);
-		Assert(combinations[c].size() == nrElementsInCombination);
-		for (unsigned d = 0; d < nrElementsInCombination; d++) {
-			double expected = expectedOrdered[c][d];
-			Assert(combination[d] == expected);
-			Assert(combinations[c][d] == expected);
-		}
-		c++;
-	}
-	testPassed();
+	));
 }
-void testPermutator() {
-	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
-	Permutator permutations(
-			std::vector<double>({1, 2, 3, 4}),
-			NR_ELEMENTS_IN_COMBINATION
-	);
-	const unsigned NR_COMBINATIONS = 12;
-	double expectedShuffled[NR_COMBINATIONS][2] = {
+template<unsigned NrElementsInCombination, unsigned NrCombinations, class Permutator = nullptr_t>
+void testPermutator(Permutator permutations) {
+	double expectedShuffled[NrCombinations][NrElementsInCombination] = {
 			{1., 2.},
 			{2., 1.},
 			{3., 1.},
@@ -141,12 +116,12 @@ void testPermutator() {
 			{3., 4.},
 			{4., 3.},
 	};
-	Assert(permutations.size() == NR_COMBINATIONS);
+	Assert(permutations.size() == NrCombinations);
 	unsigned c(0);
 	for (auto permutation : permutations) {
-		Assert(permutation.size() == NR_ELEMENTS_IN_COMBINATION);
-		Assert(permutations[c].size() == NR_ELEMENTS_IN_COMBINATION);
-		for (unsigned d = 0; d < NR_ELEMENTS_IN_COMBINATION; d++) {
+		Assert(permutation.size() == NrElementsInCombination);
+		Assert(permutations[c].size() == NrElementsInCombination);
+		for (unsigned d = 0; d < NrElementsInCombination; d++) {
 			double expected = expectedShuffled[c][d];
 			Assert(permutation[d] == expected);
 			Assert(permutations[c][d] == expected);
@@ -154,42 +129,21 @@ void testPermutator() {
 		c++;
 	}
 	testPassed();
+}
+void testPermutatorSameCombination() {
+	const unsigned nrElementsInCombination = 2;
+	testPermutator<nrElementsInCombination, 12>(Permutator(
+			std::vector<double>({1, 2, 3, 4}),
+			nrElementsInCombination
+	));
 }
 template<class Combination>
 void testPermutatorCustomCombination() {
-	const unsigned NR_ELEMENTS_IN_COMBINATION = 2;
-	Permutator<std::vector<double>, Combination> permutations(
+	const unsigned nrElementsInCombination = 2;
+	testPermutator<nrElementsInCombination, 12>(Permutator<std::vector<double>, Combination>(
 			std::vector<double>({1, 2, 3, 4}),
-			NR_ELEMENTS_IN_COMBINATION
-	);
-	const unsigned NR_COMBINATIONS = 12;
-	double expectedShuffled[NR_COMBINATIONS][2] = {
-			{1., 2.},
-			{2., 1.},
-			{3., 1.},
-			{4., 1.},
-			{1., 3.},
-			{2., 3.},
-			{3., 2.},
-			{4., 2.},
-			{1., 4.},
-			{2., 4.},
-			{3., 4.},
-			{4., 3.},
-	};
-	Assert(permutations.size() == NR_COMBINATIONS);
-	unsigned c(0);
-	for (auto permutation : permutations) {
-		Assert(permutation.size() == NR_ELEMENTS_IN_COMBINATION);
-		Assert(permutations[c].size() == NR_ELEMENTS_IN_COMBINATION);
-		for (unsigned d = 0; d < NR_ELEMENTS_IN_COMBINATION; d++) {
-			double expected = expectedShuffled[c][d];
-			Assert(permutation[d] == expected);
-			Assert(permutations[c][d] == expected);
-		}
-		c++;
-	}
-	testPassed();
+			nrElementsInCombination
+	));
 }
 void testPermutatorNoSize() {
 	const auto elements = std::vector<double>({1, 2, 3, 4});
@@ -262,11 +216,22 @@ void testCartesianSizeOverflow() {
 	Assert(exThrown);
 	testPassed();
 }
+void testCartesianConstValues() {
+	class NonCopyable {
+		public:
+			NonCopyable() = default;
+			NonCopyable& operator=(const NonCopyable& other) {
+				Assert(false);
+			}
+	};
+	for (const auto& c : Cartesian<std::vector<NonCopyable>>{{{NonCopyable{}}, {NonCopyable{}}}}) {}
+	testPassed();
+}
 void tests() {
-	testCombinator();
+	testCombinatorSameCombination();
 	testCombinatorCustomCombination<std::vector<double>>();
 	testCombinatorCustomCombination<std::array<double, 2>>();
-	testPermutator();
+	testPermutatorSameCombination();
 	testPermutatorCustomCombination<std::vector<double>>();
 	testPermutatorCustomCombination<std::array<double, 2>>();
 	testPermutatorNoSize();
@@ -299,6 +264,7 @@ void tests() {
 			81
 	);
 	testCartesianSizeOverflow();
+//	testCartesianConstValues();
 }
 
 template<class Combinator, class RandomFunc>
