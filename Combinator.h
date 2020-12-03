@@ -22,7 +22,7 @@ class FixedSizeCombinator {
 		Combination& operator[](CombinatorNamespace::Position index) const {
 			if (current == nullptr) current = new RandomAccessIterator(request);
 			current->operator[](index);
-			return **current;
+			return current->operator*();
 		}
 		[[maybe_unused]] ForwardIterator begin() const {
 			return ForwardIterator(request);
@@ -115,6 +115,13 @@ class MultiPermutator : public FixedSizedSingleSetCombinator<
 		CombinatorNamespace::MultiPermutationRAIterator<Container, Combination>
 > {
 	public:
+		explicit MultiPermutator(const Container& elements):
+				FixedSizedSingleSetCombinator<
+						Container,
+						Combination,
+						CombinatorNamespace::MultiPermutationFIterator<Container, Combination>,
+						CombinatorNamespace::MultiPermutationRAIterator<Container, Combination>
+				>(elements, elements.size()) {}
 		MultiPermutator(const Container& elements, const CombinatorNamespace::Position length):
 				FixedSizedSingleSetCombinator<
 						Container,
