@@ -16,14 +16,16 @@ namespace CombinatorNamespace {
 			Position combinationSize() const {
 				return containers.size();
 			}
+
 			template<typename Element>
-			const Element& getElement(const Position elementPosition, const Position combinationPosition) const {
-				return containers[combinationPosition][elementPosition];
-			}
-			template<typename Element>
-			Element* getElementAddress(const Position elementPosition, const Position combinationPosition) const {
+			/*const*/ Element& getElement(const Position elementPosition, const Position combinationPosition) const {
 				// TODO: hope it's ok
-				return (Element*)&containers[combinationPosition][elementPosition];
+				return (Element&)containers[combinationPosition][elementPosition];
+			}
+			template<typename ElementAddress>
+			ElementAddress getElementAddress(const Position elementPosition, const Position combinationPosition) const {
+				// TODO: hope it's ok
+				return (ElementAddress)&containers[combinationPosition][elementPosition];
 			}
 	};
 }

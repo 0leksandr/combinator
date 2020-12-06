@@ -2,10 +2,11 @@
 
 #include <array>
 #include <vector>
+#include "Combination/ElementFetcher/ElementFetcher.h"
+#include "Combination/ElementFetcher/ElementAddressFetcher.h"
+#include "Combination/ArrayCombination.h"
 #include "Combination/StdArrayCombination.h"
-#include "Combination/StdArrayPCombination.h"
 #include "Combination/VectorCombination.h"
-#include "Combination/VectorPCombination.h"
 #include "Position.h"
 
 namespace CombinatorNamespace {
@@ -21,37 +22,54 @@ namespace CombinatorNamespace {
 			}
 		private:
 			template<typename Element, size_t Size>
-			static CombinationWrapper<Combination, Request>* createCombinationWrapper(
-					std::array<Element, Size>*,
-					const Position size,
+			[[maybe_unused]] static CombinationWrapper<Combination, Request>* createCombinationWrapper(
+					std::array<Element, Size> *,
+					const Position,
 					const Element& example
 			) {
-				return new StdArrayCombination<Request, Element, Size>{};
+				return new StdArrayCombination<Request, ElementFetcher, Element, Size>{};
 			}
 			template<typename Element, size_t Size>
-			static CombinationWrapper<Combination, Request>* createCombinationWrapper(
-					std::array<Element*, Size>*,
-					const Position size,
+			[[maybe_unused]] static CombinationWrapper<Combination, Request>* createCombinationWrapper(
+					std::array<Element*, Size> *,
+					const Position,
 					const Element& example
 			) {
-				return new StdArrayPCombination<Request, Element, Size>{};
+				return new StdArrayCombination<Request, ElementAddressFetcher, Element*, Size>{};
 			}
 			template<typename Element>
-			static CombinationWrapper<Combination, Request>* createCombinationWrapper(
-					std::vector<Element>*,
-					const Position size,
+			[[maybe_unused]] static CombinationWrapper<Combination, Request>* createCombinationWrapper(
+					std::vector<Element> *,
+					const Position,
 					const Element& example
 			) {
-				return new VectorCombination<Request, Element>{};
+				return new VectorCombination<Request, ElementFetcher, Element>{};
 			}
 			template<typename Element>
-			static CombinationWrapper<Combination, Request>* createCombinationWrapper(
-					std::vector<Element*>*,
+			[[maybe_unused]] static CombinationWrapper<Combination, Request>* createCombinationWrapper(
+					std::vector<Element*> *,
+					const Position,
+					const Element& example
+			) {
+				return new VectorCombination<Request, ElementAddressFetcher, Element*>{};
+			}
+			template<typename Element>
+			[[maybe_unused]] static CombinationWrapper<Combination, Request>* createCombinationWrapper(
+					Element* *,
 					const Position size,
 					const Element& example
 			) {
-				return new VectorPCombination<Request, Element>{size};
+				return new ArrayCombination<Request, ElementFetcher, Element>{size};
 			}
+			template<typename Element>
+			[[maybe_unused]] static CombinationWrapper<Combination, Request>* createCombinationWrapper(
+					Element** *,
+					const Position size,
+					const Element& example
+			) {
+				return new ArrayCombination<Request, ElementAddressFetcher, Element*>{size};
+			}
+
 			template<typename T>
 			static T* tplToParam() {
 				return nullptr;
