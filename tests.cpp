@@ -6,6 +6,7 @@
 #include <random>
 #include <vector>
 #include "Combinator.h"
+
 #include <my/macro.cpp>
 
 // TODO: test combinations of combinations
@@ -61,9 +62,9 @@ void testPassed() {
 	myPrint("Test passed\n");
 }
 
-template<unsigned NrElementsInCombination, unsigned NrCombinations, class Combinator = nullptr_t>
+template<unsigned NrElementsInCombination, unsigned ExpectedNrCombinations, class Combinator = nullptr_t>
 void testCombinator(const Combinator& combinations) {
-	double expectedOrdered[NrCombinations][NrElementsInCombination] = {
+	double expectedOrdered[ExpectedNrCombinations][NrElementsInCombination] = {
 			{1., 2.},
 			{1., 3.},
 			{1., 4.},
@@ -71,11 +72,9 @@ void testCombinator(const Combinator& combinations) {
 			{2., 4.},
 			{3., 4.},
 	};
-	Assert(combinations.size() == NrCombinations);
+	Assert(combinations.size() == ExpectedNrCombinations);
 	unsigned c(0);
 	for (const auto& combination : combinations) {
-		Assert(combination.size() == NrElementsInCombination);
-		Assert(combinations[c].size() == NrElementsInCombination);
 		for (unsigned d = 0; d < NrElementsInCombination; d++) {
 			double expected = expectedOrdered[c][d];
 			Assert(combination[d] == expected);
@@ -85,9 +84,20 @@ void testCombinator(const Combinator& combinations) {
 	}
 	testPassed();
 }
+template<unsigned NrElementsInCombination, unsigned ExpectedNrCombinations, class Combinator = nullptr_t>
+void testCombinatorWithSize(const Combinator& combinations) {
+	testCombinator<NrElementsInCombination, ExpectedNrCombinations, Combinator>(combinations);
+	unsigned c(0);
+	for (const auto& combination : combinations) {
+		Assert(combination.size() == NrElementsInCombination);
+		Assert(combinations[c].size() == NrElementsInCombination);
+		c++;
+	}
+	testPassed();
+}
 void testCombinatorSameCombination() {
 	const unsigned nrElementsInCombination = 2;
-	testCombinator<nrElementsInCombination, 6>(Combinator(
+	testCombinatorWithSize<nrElementsInCombination, 6>(Combinator(
 			std::vector<double>({1, 2, 3, 4}),
 			nrElementsInCombination
 	));
@@ -119,8 +129,6 @@ void testPermutator(Permutator permutations) {
 	Assert(permutations.size() == NrCombinations);
 	unsigned c(0);
 	for (const auto& permutation : permutations) {
-		Assert(permutation.size() == NrElementsInCombination);
-		Assert(permutations[c].size() == NrElementsInCombination);
 		for (unsigned d = 0; d < NrElementsInCombination; d++) {
 			double expected = expectedShuffled[c][d];
 			Assert(permutation[d] == expected);
@@ -130,9 +138,20 @@ void testPermutator(Permutator permutations) {
 	}
 	testPassed();
 }
+template<unsigned NrElementsInCombination, unsigned NrCombinations, class Permutator = nullptr_t>
+void testPermutatorWithSize(Permutator permutations) {
+	testPermutator<NrElementsInCombination, NrCombinations, Permutator>(permutations);
+	unsigned c(0);
+	for (const auto& permutation : permutations) {
+		Assert(permutation.size() == NrElementsInCombination);
+		Assert(permutations[c].size() == NrElementsInCombination);
+		c++;
+	}
+	testPassed();
+}
 void testPermutatorSameCombination() {
 	const unsigned nrElementsInCombination = 2;
-	testPermutator<nrElementsInCombination, 12>(Permutator(
+	testPermutatorWithSize<nrElementsInCombination, 12>(Permutator(
 			std::vector<double>({1, 2, 3, 4}),
 			nrElementsInCombination
 	));
@@ -231,12 +250,25 @@ void testCartesianSizeOverflow() {
 void testCartesianConstValues() {
 	class NonCopyable {
 		public:
-			NonCopyable() = default;
+			const int value;
+			explicit NonCopyable(const int value) : value(value) {}
 			NonCopyable& operator=(const NonCopyable& other) {
 				Assert(false);
 			}
 	};
-	for (const auto& c : Cartesian<std::vector<NonCopyable>>{{{NonCopyable{}}, {NonCopyable{}}}}) {}
+	std::vector<std::vector<NonCopyable>> elements{{NonCopyable{1}}, {NonCopyable{2}}};
+	for (const auto& c : Cartesian<std::vector<NonCopyable>>{elements}) {
+		Assert(c[0].value == 1);
+		Assert(c[1].value == 2);
+	}
+	for (const auto& c : Cartesian<std::vector<NonCopyable>, std::array<NonCopyable*, 2>>{elements}) {
+		Assert(c[0]->value == 1);
+		Assert(c[1]->value == 2);
+	}
+	for (const auto& c : Cartesian<std::vector<NonCopyable>, NonCopyable**>{elements}) {
+		Assert(c[0]->value == 1);
+		Assert(c[1]->value == 2);
+	}
 	testPassed();
 }
 void testPointers() {
@@ -269,15 +301,22 @@ explicit operator std::string() const {
 	Assert(cart1[0]->value == 2);
 	Assert(cart1[1]->value == 3);
 
+	const auto combinations2 = Combinator<std::vector<Test>, Test**>{elements, 2};
+	const auto combination2 = combinations2[2];
+	Assert(combination2[0]->value == 8);
+	Assert(combination2[1]->value == 9);
+
 	testPassed();
 }
 void tests() {
 	testCombinatorSameCombination();
 	testCombinatorCustomCombination<std::vector<double>>();
 	testCombinatorCustomCombination<std::array<double, 2>>();
+	testCombinatorCustomCombination<double*>();
 	testPermutatorSameCombination();
 	testPermutatorCustomCombination<std::vector<double>>();
 	testPermutatorCustomCombination<std::array<double, 2>>();
+	testPermutatorCustomCombination<double*>();
 	testPermutatorNoSize();
 	testMultiPermutatorNoSize();
 

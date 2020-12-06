@@ -4,12 +4,12 @@
 #include "CombinationWrapper.h"
 
 namespace CombinatorNamespace {
-	template<class Request, typename Element, size_t Size>
+	template<class Request, class ElementFetcher, typename Element, size_t Size>
 	class StdArrayCombination : public CombinationWrapper<std::array<Element, Size>, Request> {
 		public:
 			std::array<Element, Size>& get(const Request& request, Position* const positions) const override {
 				for (Position c = 0, to = request.combinationSize(); c < to; c++) {
-					combination[c] = request.template getElement<Element>(positions[c], c);
+					combination[c] = ElementFetcher::template get<Request, Element>(request, positions[c], c);
 				}
 				return combination;
 			}
