@@ -22,7 +22,7 @@ class FixedSizeCombinator {
 		Combination& operator[](CombinatorNamespace::Position index) const {
 			if (current == nullptr) current = new RandomAccessIterator(request);
 			current->operator[](index);
-			return **current;
+			return current->operator*();
 		}
 		[[maybe_unused]] ForwardIterator begin() const {
 			return ForwardIterator(request);

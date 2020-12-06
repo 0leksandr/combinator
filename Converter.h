@@ -2,47 +2,59 @@
 
 #include <array>
 #include <vector>
-#include "Assert.h"
+#include "Combination/StdArrayCombination.h"
+#include "Combination/StdArrayPCombination.h"
+#include "Combination/VectorCombination.h"
+#include "Combination/VectorPCombination.h"
 #include "Position.h"
-#include "Request/FixedSizeRequest.h"
 
 namespace CombinatorNamespace {
-	class Converter {
+	template<typename Combination, class Request>
+	class Converter { // TODO: CombinationInitializer
 		public:
-			template<class Element>
-			static std::vector<Element> initCombination(
-					std::vector<Element>*,
+			template<typename Element>
+			static CombinationWrapper<Combination, Request>* createCombinationWrapper(
 					const Position size,
 					const Element& example
 			) {
-				std::vector<Element> vec{};
-				vec.reserve(size);
-				for (Position c = 0; c < size; ++c) vec.push_back(example);
-				return vec;
+				return createCombinationWrapper(tplToParam<Combination>(), size, example);
 			}
-			template<class Element, unsigned long Size>
-			static std::array<Element, Size> initCombination(
+		private:
+			template<typename Element, size_t Size>
+			static CombinationWrapper<Combination, Request>* createCombinationWrapper(
 					std::array<Element, Size>*,
 					const Position size,
 					const Element& example
 			) {
-				Assert(Size == size);
-				return std::array<Element, Size>();
+				return new StdArrayCombination<Request, Element, Size>{};
 			}
-			template<class Element>
-			static Element* initCombination(Element**,const Position size,const Element& example) {
-				return new Element[size];
+			template<typename Element, size_t Size>
+			static CombinationWrapper<Combination, Request>* createCombinationWrapper(
+					std::array<Element*, Size>*,
+					const Position size,
+					const Element& example
+			) {
+				return new StdArrayPCombination<Request, Element, Size>{};
 			}
-			template<class C, class Element>
-			static C initCombination(C*, const Position size, const Element& example) {
-				throw std::runtime_error("Unsupported combination type");
+			template<typename Element>
+			static CombinationWrapper<Combination, Request>* createCombinationWrapper(
+					std::vector<Element>*,
+					const Position size,
+					const Element& example
+			) {
+				return new VectorCombination<Request, Element>{};
 			}
-
-			template<class element>
-			static void deleteCombination(element*& combination) {
-				delete combination;
+			template<typename Element>
+			static CombinationWrapper<Combination, Request>* createCombinationWrapper(
+					std::vector<Element*>*,
+					const Position size,
+					const Element& example
+			) {
+				return new VectorPCombination<Request, Element>{size};
 			}
-			template<class C>
-			static void deleteCombination(C& combination) {}
+			template<typename T>
+			static T* tplToParam() {
+				return nullptr;
+			}
 	};
 }

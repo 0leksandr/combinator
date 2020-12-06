@@ -2,19 +2,14 @@
 
 #include <array>
 #include "CombinationWrapper.h"
-#include "../Iterator/List/ListIterator.h"
-#include "../Request/FixedSizeRequest.h"
 
 namespace CombinatorNamespace {
-	template<class Container, class Element, size_t Size>
-	class StdArrayCombination : public CombinationWrapper<std::array<Element, Size>, FixedSizeRequest<Container>> {
+	template<class Request, typename Element, size_t Size>
+	class StdArrayCombination : public CombinationWrapper<std::array<Element, Size>, Request> {
 		public:
-			std::array<Element, Size>& get(
-					const FixedSizeRequest<Container>& request,
-					Position* const positions
-			) const override {
-				for (Position c = 0; c < request.length; c++) {
-					combination[c] = request.elements[positions[c]];
+			std::array<Element, Size>& get(const Request& request, Position* const positions) const override {
+				for (Position c = 0, to = request.combinationSize(); c < to; c++) {
+					combination[c] = request.template getElement<Element>(positions[c], c);
 				}
 				return combination;
 			}
