@@ -7,23 +7,16 @@
 
 namespace CombinatorNamespace {
 	template<class Container, class Combination>
-	class ListIterator : public DereferencedIterator<Combination> {
+	class ListIterator : public DereferencedIterator<Combination, FixedSizeRequest<Container>> {
 		public:
 			explicit ListIterator(const FixedSizeRequest<Container>& request) :
-					DereferencedIterator<Combination>(
-							Converter::initCombination(
-									&this->combination,
-									request.length,
-									request.elements[0]
-							),
-							request.length
+					DereferencedIterator<Combination, FixedSizeRequest<Container>>(
+							request.length,
+							request.elements[0]
 					),
 					request(request) {}
 			Combination& operator*() const override {
-				for (Position c = 0; c < request.length; c++) {
-					this->combination[c] = request.elements[this->positions[c]];
-				}
-				return this->combination;
+				return this->combinationWrapper->get(request, this->positions);
 			}
 		protected:
 			const FixedSizeRequest<Container>& request;

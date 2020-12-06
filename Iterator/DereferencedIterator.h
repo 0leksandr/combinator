@@ -1,23 +1,31 @@
 #pragma once
 
 #include "Iterator.h"
+#include "../Combination/CombinationWrapper.h"
 #include "../Converter.h"
 #include "../Position.h"
 
 namespace CombinatorNamespace {
-	template<class Combination>
+	template<typename Combination, class Request>
 	class DereferencedIterator : public Iterator {
 		public:
-			explicit DereferencedIterator(const Combination combination, const Position combinationSize) :
+			template<typename Element>
+			DereferencedIterator(
+					const Position combinationSize,
+					const Element& example
+			) :
 					positions(new Position[combinationSize]),
-					combination(combination) {}
+					combinationWrapper(Converter<Combination, Request>::template createCombinationWrapper<Element>(
+							combinationSize,
+							example
+					)) {}
 			~DereferencedIterator() {
+				delete combinationWrapper;
 				delete[] positions;
-				Converter::deleteCombination(combination);
 			}
 			virtual Combination& operator*() const = 0;
 		protected:
 			Position* const positions;
-			mutable Combination combination;
+			mutable CombinationWrapper<Combination, Request>* combinationWrapper;
 	};
 }

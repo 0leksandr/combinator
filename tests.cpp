@@ -73,7 +73,7 @@ void testCombinator(const Combinator& combinations) {
 	};
 	Assert(combinations.size() == NrCombinations);
 	unsigned c(0);
-	for (auto combination : combinations) {
+	for (const auto& combination : combinations) {
 		Assert(combination.size() == NrElementsInCombination);
 		Assert(combinations[c].size() == NrElementsInCombination);
 		for (unsigned d = 0; d < NrElementsInCombination; d++) {
@@ -118,7 +118,7 @@ void testPermutator(Permutator permutations) {
 	};
 	Assert(permutations.size() == NrCombinations);
 	unsigned c(0);
-	for (auto permutation : permutations) {
+	for (const auto& permutation : permutations) {
 		Assert(permutation.size() == NrElementsInCombination);
 		Assert(permutations[c].size() == NrElementsInCombination);
 		for (unsigned d = 0; d < NrElementsInCombination; d++) {
@@ -239,6 +239,38 @@ void testCartesianConstValues() {
 	for (const auto& c : Cartesian<std::vector<NonCopyable>>{{{NonCopyable{}}, {NonCopyable{}}}}) {}
 	testPassed();
 }
+void testPointers() {
+	class Test {
+		public:
+			int value;
+			explicit Test(const int value) : value(value) {}
+explicit operator std::string() const {
+	return "value:" + anyToString(value);
+}
+	};
+	std::vector<Test> elements{Test{7}, Test{8}, Test{9}};
+
+	const auto combinations = Combinator<std::vector<Test>, std::vector<Test*>>{elements, 2};
+	const auto combination = combinations[1];
+	Assert(combination.size() == 2);
+	Assert(combination[0]->value == 7);
+	Assert(combination[1]->value == 9);
+
+	const auto permutations = Permutator<std::vector<Test>, std::array<Test*, 2>>{elements, 2};
+	const auto permutation = permutations[1];
+	Assert(permutation.size() == 2);
+	Assert(permutation[0]->value == 8);
+	Assert(permutation[1]->value == 7);
+
+	std::vector<std::vector<Test>> containers{{Test{1}, Test{2}}, {Test{3}, Test{4}}};
+	const auto cartesian = Cartesian<std::vector<Test>, std::vector<Test*>>{containers};
+	const auto cart1 = cartesian[1];
+	Assert(cart1.size() == 2);
+	Assert(cart1[0]->value == 2);
+	Assert(cart1[1]->value == 3);
+
+	testPassed();
+}
 void tests() {
 	testCombinatorSameCombination();
 	testCombinatorCustomCombination<std::vector<double>>();
@@ -277,7 +309,9 @@ void tests() {
 			81
 	);
 	testCartesianSizeOverflow();
-//	testCartesianConstValues();
+	testCartesianConstValues();
+
+	testPointers();
 }
 
 template<class Combinator, class RandomFunc>

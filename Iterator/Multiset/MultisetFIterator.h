@@ -8,11 +8,11 @@
 namespace CombinatorNamespace {
 	template<class Container, class Combination>
 	class MultisetFIterator :
-			public MultisetIterator<Combination, Container>,
+			public MultisetIterator<Container, Combination>,
 			public ForwardIterator {
 		public:
 			explicit MultisetFIterator(const MultisetRequest<Container>& request) :
-					MultisetIterator<Combination, Container>(request) {}
+					MultisetIterator<Container, Combination>(request) {}
 			void increment() override {
 				increment(0);
 			}

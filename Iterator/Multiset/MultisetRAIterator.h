@@ -8,11 +8,11 @@
 namespace CombinatorNamespace {
 	template<class Container, class Combination>
 	class MultisetRAIterator :
-			public MultisetIterator<Combination, Container>,
+			public MultisetIterator<Container, Combination>,
 			public RandomAccessIterator {
 		public:
 			explicit MultisetRAIterator(const MultisetRequest<Container>& request) :
-					MultisetIterator<Combination, Container>(request) {}
+					MultisetIterator<Container, Combination>(request) {}
 		protected:
 			void go(Position index) override {
 				for (Position c = 0; c < this->request.containers.size(); c++) {
