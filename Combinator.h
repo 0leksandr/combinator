@@ -55,15 +55,13 @@ class FixedSizedSingleSetCombinator : public FixedSizeCombinator<
 		RandomAccessIterator
 > {
 	protected:
-		FixedSizedSingleSetCombinator(
-				const Container& elements,
-				const CombinatorNamespace::Position length
-		) : FixedSizeCombinator<
-				Combination,
-				CombinatorNamespace::FixedSizeRequest<Container>,
-				ForwardIterator,
-				RandomAccessIterator
-		>(CombinatorNamespace::FixedSizeRequest<Container>(elements, length)) {}
+		FixedSizedSingleSetCombinator(const Container& elements,const CombinatorNamespace::Position length) :
+				FixedSizeCombinator<
+						Combination,
+						CombinatorNamespace::FixedSizeRequest<Container>,
+						ForwardIterator,
+						RandomAccessIterator
+				>(CombinatorNamespace::FixedSizeRequest<Container>(elements, length)) {}
 };
 
 template<class Container, class Combination = Container>
@@ -144,5 +142,5 @@ class Cartesian : public FixedSizeCombinator<
 				CombinatorNamespace::MultisetRequest<Container>,
 				CombinatorNamespace::MultisetFIterator<Container, Combination>,
 				CombinatorNamespace::MultisetRAIterator<Container, Combination>
-		>(containers) {}
+		>(CombinatorNamespace::MultisetRequest<Container>{containers}) {}
 };

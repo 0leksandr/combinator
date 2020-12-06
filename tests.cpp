@@ -250,8 +250,12 @@ explicit operator std::string() const {
 	Assert(permutation[0]->value == 8);
 	Assert(permutation[1]->value == 7);
 
-//	std::vector<std::vector<Test>> containers{{Test{1}, Test{2}}, {Test{3}, Test{4}}};
-//	const auto cartesian = Cartesian<std::vector<Test>, std::vector<Test*>>{containers};
+	std::vector<std::vector<Test>> containers{{Test{1}, Test{2}}, {Test{3}, Test{4}}};
+	const auto cartesian = Cartesian<std::vector<Test>, std::vector<Test*>>{containers};
+	const auto cart1 = cartesian[1];
+	Assert(cart1.size() == 2);
+	Assert(cart1[0]->value == 2);
+	Assert(cart1[1]->value == 3);
 
 	testPassed();
 }
