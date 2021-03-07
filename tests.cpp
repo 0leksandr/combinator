@@ -105,7 +105,7 @@ void testCombinatorSameCombination() {
 template<class Combination>
 void testCombinatorCustomCombination() {
 	const unsigned nrElementsInCombination = 2;
-	testCombinator<nrElementsInCombination, 6>(Combinator<std::vector<double>, Combination>(
+	testCombinator<nrElementsInCombination, 6>(Combinator<Combination>(
 			std::vector<double>({1, 2, 3, 4}),
 			nrElementsInCombination
 	));
@@ -159,7 +159,7 @@ void testPermutatorSameCombination() {
 template<class Combination>
 void testPermutatorCustomCombination() {
 	const unsigned nrElementsInCombination = 2;
-	testPermutator<nrElementsInCombination, 12>(Permutator<std::vector<double>, Combination>(
+	testPermutator<nrElementsInCombination, 12>(Permutator<Combination>(
 			std::vector<double>({1, 2, 3, 4}),
 			nrElementsInCombination
 	));
@@ -175,15 +175,15 @@ void testPermutatorNoSize(const Permutator& permutations1, const Permutator& per
 void testPermutatorNoSize() {
 	const auto elements = std::vector<double>({1, 2, 3, 4});
 	testPermutatorNoSize(
-			Permutator<std::vector<double>>{elements, 4},
-			Permutator<std::vector<double>>{elements}
+			Permutator(elements, 4),
+			Permutator(elements)
 	);
 }
 void testMultiPermutatorNoSize() {
 	const auto elements = std::vector<double>({1, 2, 3, 4});
 	testPermutatorNoSize(
-			MultiPermutator<std::vector<double>>{elements, 4},
-			MultiPermutator<std::vector<double>>{elements}
+			MultiPermutator(elements, 4),
+			MultiPermutator(elements)
 	);
 }
 template<class Combination, class Combinator>
@@ -257,15 +257,15 @@ void testCartesianConstValues() {
 			}
 	};
 	std::vector<std::vector<NonCopyable>> elements{{NonCopyable{1}}, {NonCopyable{2}}};
-	for (const auto& c : Cartesian<std::vector<NonCopyable>>{elements}) {
+	for (const auto& c : Cartesian<std::vector<NonCopyable>>(elements)) {
 		Assert(c[0].value == 1);
 		Assert(c[1].value == 2);
 	}
-	for (const auto& c : Cartesian<std::vector<NonCopyable>, std::array<NonCopyable*, 2>>{elements}) {
+	for (const auto& c : Cartesian<std::array<NonCopyable*, 2>>(elements)) {
 		Assert(c[0]->value == 1);
 		Assert(c[1]->value == 2);
 	}
-	for (const auto& c : Cartesian<std::vector<NonCopyable>, NonCopyable**>{elements}) {
+	for (const auto& c : Cartesian<NonCopyable**>(elements)) {
 		Assert(c[0]->value == 1);
 		Assert(c[1]->value == 2);
 	}
@@ -282,26 +282,26 @@ explicit operator std::string() const {
 	};
 	std::vector<Test> elements{Test{7}, Test{8}, Test{9}};
 
-	const auto combinations = Combinator<std::vector<Test>, std::vector<Test*>>{elements, 2};
+	const auto combinations = Combinator<std::vector<Test*>>(elements, 2);
 	const auto combination = combinations[1];
 	Assert(combination.size() == 2);
 	Assert(combination[0]->value == 7);
 	Assert(combination[1]->value == 9);
 
-	const auto permutations = Permutator<std::vector<Test>, std::array<Test*, 2>>{elements, 2};
+	const auto permutations = Permutator<std::array<Test*, 2>>(elements, 2);
 	const auto permutation = permutations[1];
 	Assert(permutation.size() == 2);
 	Assert(permutation[0]->value == 8);
 	Assert(permutation[1]->value == 7);
 
 	std::vector<std::vector<Test>> containers{{Test{1}, Test{2}}, {Test{3}, Test{4}}};
-	const auto cartesian = Cartesian<std::vector<Test>, std::vector<Test*>>{containers};
+	const auto cartesian = Cartesian<std::vector<Test*>>(containers);
 	const auto cart1 = cartesian[1];
 	Assert(cart1.size() == 2);
 	Assert(cart1[0]->value == 2);
 	Assert(cart1[1]->value == 3);
 
-	const auto combinations2 = Combinator<std::vector<Test>, Test**>{elements, 2};
+	const auto combinations2 = Combinator<Test**>(elements, 2);
 	const auto combination2 = combinations2[2];
 	Assert(combination2[0]->value == 8);
 	Assert(combination2[1]->value == 9);
@@ -331,10 +331,10 @@ explicit operator std::string() const {
 
 	std::vector<Test> elements{Test{7}, Test{8}, Test{9}};
 
-	Combinator<std::vector<Test>, std::vector<Test*>>{elements, 1}[0][0]->value *= 2;
+	Combinator<std::vector<Test*>>(elements, 1)[0][0]->value *= 2;
 	Assert(elements[0].value == 7);
 
-	Combinator<std::vector<Test>, std::vector<Test*>, true>{elements, 1}[0][0]->value *= 2;
+	Combinator<std::vector<Test*>, true>(elements, 1)[0][0]->value *= 2;
 	Assert(elements[0].value == 14);
 }
 void tests() {
@@ -349,13 +349,13 @@ void tests() {
 	testPermutatorNoSize();
 	testMultiPermutatorNoSize();
 
-	#define INPUT1 <std::vector<double>>({1, 2, 3, 4}, 2)
+	#define INPUT1 (std::vector<double>{1, 2, 3, 4}, 2)
 	testList<std::vector<double>>(Combinator INPUT1, 6, true, true);
 	testList<std::vector<double>>(Permutator INPUT1, 12, false, true);
 	testList<std::vector<double>>(MultiPermutator INPUT1, 16, false, false);
 
 	#define COMBINATION std::array<double, 3>
-	#define INPUT2 <std::array<double, 8>, COMBINATION>({1, 2, 3, 4, 5, 6, 7, 8}, 3)
+	#define INPUT2 <COMBINATION>(std::array<double, 8>{1, 2, 3, 4, 5, 6, 7, 8}, 3)
 	testList<COMBINATION >(Combinator INPUT2, 56, true, true);
 	testList<COMBINATION >(Permutator INPUT2, 336, false, true);
 	testList<COMBINATION >(MultiPermutator INPUT2, 512, false, false);

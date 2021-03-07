@@ -6,9 +6,6 @@ template<class Container, bool ContainerReference>
 class ContainerWrapper {
 	public:
 		explicit ContainerWrapper(const Container& container) : container(container) {}
-//		typename std::result_of<decltype(&Container::operator[])(Container)>::type operator[](const size_t i) const {
-//		decltype(&Container::operator[](std::declval<size_t>))(size_t) operator[](const size_t i) const {
-//		decltype(this->container[0]) operator[](const size_t i) const {
 		auto& operator[](const size_t i) const {
 			return this->container[i];
 		}
