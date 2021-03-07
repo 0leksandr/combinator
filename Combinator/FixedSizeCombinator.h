@@ -7,7 +7,7 @@ namespace CombinatorNamespace {
 	template<class Combination, class Request, class ForwardIterator, class RandomAccessIterator>
 	class FixedSizeCombinator {
 		public:
-			Combination& operator[](CombinatorNamespace::Position index) const {
+			Combination& operator[](Position index) const {
 				if (current == nullptr) current = new RandomAccessIterator(request);
 				current->operator[](index);
 				return current->operator*();
@@ -16,9 +16,9 @@ namespace CombinatorNamespace {
 				return ForwardIterator(request);
 			}
 			[[maybe_unused]] PositionedIterator end() const {
-				return CombinatorNamespace::PositionedIterator(_size);
+				return PositionedIterator(_size);
 			}
-			CombinatorNamespace::Position size() const {
+			Position size() const {
 				return _size;
 			}
 		protected:

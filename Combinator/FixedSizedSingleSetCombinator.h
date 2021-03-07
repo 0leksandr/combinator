@@ -13,12 +13,12 @@ namespace CombinatorNamespace {
 	> {
 		protected:
 			template<class Container>
-			FixedSizedSingleSetCombinator(const Container& elements, const CombinatorNamespace::Position length) :
+			FixedSizedSingleSetCombinator(const Container& elements, const Position length) :
 					FixedSizeCombinator<
 							Combination,
-							CombinatorNamespace::FixedSizeRequest<ContainerWrapper>,
+							FixedSizeRequest<ContainerWrapper>,
 							ForwardIterator,
 							RandomAccessIterator
-					>(CombinatorNamespace::FixedSizeRequest<ContainerWrapper>(elements, length)) {}
+					>(FixedSizeRequest<ContainerWrapper>(elements, length)) {}
 	};
 }
