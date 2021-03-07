@@ -9,6 +9,7 @@
 #include "Iterator/List/UniqueElementsIterator/OrderIterator/Walker.h"
 #include "Iterator/List/UniqueElementsIterator/PermutationIterator/PermutationIterator.h"
 #include "Position.h"
+#include "Request/ContainerWrapper/ContainerWrapper.h"
 #include "Request/FixedSizeRequest.h"
 #include "Request/MultisetRequest.h"
 
@@ -47,107 +48,113 @@ class FixedSizeCombinator {
 		mutable RandomAccessIterator* current;
 };
 
-template<class Container, class Combination, class ForwardIterator, class RandomAccessIterator>
+template<class ContainerWrapper, class Combination, class ForwardIterator, class RandomAccessIterator>
 class FixedSizedSingleSetCombinator : public FixedSizeCombinator<
 		Combination,
-		CombinatorNamespace::FixedSizeRequest<Container>,
+		CombinatorNamespace::FixedSizeRequest<ContainerWrapper>,
 		ForwardIterator,
 		RandomAccessIterator
 > {
 	protected:
-		FixedSizedSingleSetCombinator(const Container& elements,const CombinatorNamespace::Position length) :
+		template<class Container>
+		FixedSizedSingleSetCombinator(const Container& elements, const CombinatorNamespace::Position length) :
 				FixedSizeCombinator<
 						Combination,
-						CombinatorNamespace::FixedSizeRequest<Container>,
+						CombinatorNamespace::FixedSizeRequest<ContainerWrapper>,
 						ForwardIterator,
 						RandomAccessIterator
-				>(CombinatorNamespace::FixedSizeRequest<Container>(elements, length)) {}
+				>(CombinatorNamespace::FixedSizeRequest<ContainerWrapper>(elements, length)) {}
 };
 
-template<class Container, class Combination = Container>
+template<class Container, class Combination = Container, bool ReferenceContainer = false>
 class Combinator : public FixedSizedSingleSetCombinator<
-		Container,
+		ContainerWrapper<Container, ReferenceContainer>,
 		Combination,
-		CombinatorNamespace::Walker<Container, Combination>,
-		CombinatorNamespace::ComboIterator<Container, Combination>
+		CombinatorNamespace::Walker<ContainerWrapper<Container, ReferenceContainer>, Combination>,
+		CombinatorNamespace::ComboIterator<ContainerWrapper<Container, ReferenceContainer>, Combination>
 > {
 	public:
 		Combinator(const Container& elements, const CombinatorNamespace::Position length) :
 				FixedSizedSingleSetCombinator<
-						Container,
+						ContainerWrapperAlias,
 						Combination,
-						CombinatorNamespace::Walker<Container, Combination>,
-						CombinatorNamespace::ComboIterator<Container, Combination>
-				>(elements, length) {}
+						CombinatorNamespace::Walker<ContainerWrapperAlias, Combination>,
+						CombinatorNamespace::ComboIterator<ContainerWrapperAlias, Combination>
+				>(ContainerWrapperAlias{elements}, length) {}
+	private:
+		typedef ContainerWrapper<Container, ReferenceContainer> ContainerWrapperAlias;
 };
 
-template<class Container, class Combination = Container>
+template<class Container, class Combination = Container, bool ReferenceContainer = false>
 class Permutator : public FixedSizedSingleSetCombinator<
-		Container,
+		ContainerWrapper<Container, ReferenceContainer>,
 		Combination,
-		CombinatorNamespace::PermutationIterator<Container, Combination>,
-		CombinatorNamespace::PermutationIterator<Container, Combination>
+		CombinatorNamespace::PermutationIterator<ContainerWrapper<Container, ReferenceContainer>, Combination>,
+		CombinatorNamespace::PermutationIterator<ContainerWrapper<Container, ReferenceContainer>, Combination>
 > {
 	public:
 		explicit Permutator(const Container& elements):
 				FixedSizedSingleSetCombinator<
-						Container,
+						ContainerWrapperAlias,
 						Combination,
-						CombinatorNamespace::PermutationIterator<Container, Combination>,
-						CombinatorNamespace::PermutationIterator<Container, Combination>
-				>(elements, elements.size()) {}
+						CombinatorNamespace::PermutationIterator<ContainerWrapperAlias, Combination>,
+						CombinatorNamespace::PermutationIterator<ContainerWrapperAlias, Combination>
+				>(ContainerWrapper<Container, ReferenceContainer>{elements}, elements.size()) {}
 		Permutator(const Container& elements, const CombinatorNamespace::Position length):
 				FixedSizedSingleSetCombinator<
-						Container,
+						ContainerWrapperAlias,
 						Combination,
-						CombinatorNamespace::PermutationIterator<Container, Combination>,
-						CombinatorNamespace::PermutationIterator<Container, Combination>
-				>(elements, length) {}
+						CombinatorNamespace::PermutationIterator<ContainerWrapperAlias, Combination>,
+						CombinatorNamespace::PermutationIterator<ContainerWrapperAlias, Combination>
+				>(ContainerWrapperAlias{elements}, length) {}
+	private:
+		typedef ContainerWrapper<Container, ReferenceContainer> ContainerWrapperAlias;
 };
 
-template<class Container, class Combination = Container>
+template<class Container, class Combination = Container, bool ReferenceContainer = false>
 class MultiPermutator : public FixedSizedSingleSetCombinator<
-		Container,
+		ContainerWrapper<Container, ReferenceContainer>,
 		Combination,
-		CombinatorNamespace::MultiPermutationFIterator<Container, Combination>,
-		CombinatorNamespace::MultiPermutationRAIterator<Container, Combination>
+		CombinatorNamespace::MultiPermutationFIterator<ContainerWrapper<Container, ReferenceContainer>, Combination>,
+		CombinatorNamespace::MultiPermutationRAIterator<ContainerWrapper<Container, ReferenceContainer>, Combination>
 > {
 	public:
 		explicit MultiPermutator(const Container& elements):
 				FixedSizedSingleSetCombinator<
-						Container,
+						ContainerWrapperAlias,
 						Combination,
-						CombinatorNamespace::MultiPermutationFIterator<Container, Combination>,
-						CombinatorNamespace::MultiPermutationRAIterator<Container, Combination>
-				>(elements, elements.size()) {}
+						CombinatorNamespace::MultiPermutationFIterator<ContainerWrapperAlias, Combination>,
+						CombinatorNamespace::MultiPermutationRAIterator<ContainerWrapperAlias, Combination>
+				>(ContainerWrapperAlias{elements}, elements.size()) {}
 		MultiPermutator(const Container& elements, const CombinatorNamespace::Position length):
 				FixedSizedSingleSetCombinator<
-						Container,
+						ContainerWrapperAlias,
 						Combination,
-						CombinatorNamespace::MultiPermutationFIterator<Container, Combination>,
-						CombinatorNamespace::MultiPermutationRAIterator<Container, Combination>
-				>(elements, length) {}
+						CombinatorNamespace::MultiPermutationFIterator<ContainerWrapperAlias, Combination>,
+						CombinatorNamespace::MultiPermutationRAIterator<ContainerWrapperAlias, Combination>
+				>(ContainerWrapperAlias{elements}, length) {}
+	private:
+		typedef ContainerWrapper<Container, ReferenceContainer> ContainerWrapperAlias;
 };
 
-template<class Container, class Combination = Container>
+template<class Container, class Combination = Container, bool ReferenceContainer = false>
 class Cartesian : public FixedSizeCombinator<
 		Combination,
-		CombinatorNamespace::MultisetRequest<Container>,
-		CombinatorNamespace::MultisetFIterator<Container, Combination>,
-		CombinatorNamespace::MultisetRAIterator<Container, Combination>
+		CombinatorNamespace::MultisetRequest<ContainerWrapper<Container, ReferenceContainer>>,
+		CombinatorNamespace::MultisetFIterator<ContainerWrapper<Container, ReferenceContainer>, Combination>,
+		CombinatorNamespace::MultisetRAIterator<ContainerWrapper<Container, ReferenceContainer>, Combination>
 > {
 	public:
-		// template<class... Containers>
-		// explicit Cartesian(const Container& container, const Containers&&... containers) : FixedSizeCombinator<
-		// 		Combination,
-		// 		MultisetRequest<Containers...>,
-		// 		MultisetFIterator<Combination, Containers...>,
-		// 		MultisetRAIterator<Combination, Containers...>
-		// >(MultisetRequest<Containers...>(std::forward<Containers>(containers)...)) {}
 		explicit Cartesian(const std::vector<Container>& containers) : FixedSizeCombinator<
 				Combination,
-				CombinatorNamespace::MultisetRequest<Container>,
-				CombinatorNamespace::MultisetFIterator<Container, Combination>,
-				CombinatorNamespace::MultisetRAIterator<Container, Combination>
-		>(CombinatorNamespace::MultisetRequest<Container>{containers}) {}
+				CombinatorNamespace::MultisetRequest<ContainerWrapperAlias>,
+				CombinatorNamespace::MultisetFIterator<ContainerWrapperAlias, Combination>,
+				CombinatorNamespace::MultisetRAIterator<ContainerWrapperAlias, Combination>
+		>(
+				CombinatorNamespace::MultisetRequest<ContainerWrapperAlias>{
+					ContainerWrapperAlias::wrapVector(containers)
+				}
+		) {}
+	private:
+		typedef ContainerWrapper<Container, ReferenceContainer> ContainerWrapperAlias;
 };

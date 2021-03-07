@@ -3,7 +3,7 @@
 #include "../../Position.h"
 
 namespace CombinatorNamespace {
-	class ElementFetcher {
+	class ElementReferenceFetcher {
 		public:
 			template<class Request, typename Element>
 			static Element& get(
@@ -11,7 +11,7 @@ namespace CombinatorNamespace {
 					const Position elementPosition,
 					const Position combinationPosition
 			) { // TODO: override
-				return request.template getElement<Element>(elementPosition, combinationPosition);
+				return request.template getElementReference<Element>(elementPosition, combinationPosition);
 			}
 	};
 }
