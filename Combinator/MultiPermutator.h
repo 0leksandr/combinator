@@ -20,13 +20,6 @@ namespace CombinatorNamespace {
 			MultiPermutationRAIterator<ContainerWrapperAlias, Combination>
 	> {
 		public:
-			explicit MultiPermutator(const Container& elements):
-					FixedSizedSingleSetCombinator<
-							ContainerWrapperAlias,
-							Combination,
-							MultiPermutationFIterator<ContainerWrapperAlias, Combination>,
-							MultiPermutationRAIterator<ContainerWrapperAlias, Combination>
-					>(ContainerWrapperAlias{elements}, elements.size()) {}
 			MultiPermutator(const Container& elements, const Position length):
 					FixedSizedSingleSetCombinator<
 							ContainerWrapperAlias,

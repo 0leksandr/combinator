@@ -164,27 +164,15 @@ void testPermutatorCustomCombination() {
 			nrElementsInCombination
 	));
 }
-template<class Permutator>
-void testPermutatorNoSize(const Permutator& permutations1, const Permutator& permutations2) {
+void testPermutatorNoSize() {
+	const auto elements = std::vector<double>({1, 2, 3, 4});
+	const auto permutations1 = Permutator(elements, 4);
+	const auto permutations2 = Permutator(elements);
 	Assert(permutations1.size() == permutations2.size());
 	for (int c = 0; c < permutations1.size(); ++c) {
 		assertEquals(permutations1[c], permutations2[c]);
 	}
 	testPassed();
-}
-void testPermutatorNoSize() {
-	const auto elements = std::vector<double>({1, 2, 3, 4});
-	testPermutatorNoSize(
-			Permutator(elements, 4),
-			Permutator(elements)
-	);
-}
-void testMultiPermutatorNoSize() {
-	const auto elements = std::vector<double>({1, 2, 3, 4});
-	testPermutatorNoSize(
-			MultiPermutator(elements, 4),
-			MultiPermutator(elements)
-	);
 }
 template<class Combination, class Combinator>
 void testList(
@@ -347,7 +335,6 @@ void tests() {
 	testPermutatorCustomCombination<std::array<double, 2>>();
 	testPermutatorCustomCombination<double*>();
 	testPermutatorNoSize();
-	testMultiPermutatorNoSize();
 
 	#define INPUT1 (std::vector<double>{1, 2, 3, 4}, 2)
 	testList<std::vector<double>>(Combinator INPUT1, 6, true, true);

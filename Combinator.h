@@ -55,14 +55,6 @@ auto MultiPermutator(const Container& elements, const CombinatorNamespace::Posit
 			ReferenceContainer
 	>{elements, length};
 }
-template<class Combination = nullptr_t, bool ReferenceContainer = false, class Container>
-auto MultiPermutator(const Container& elements) {
-	return CombinatorNamespace::MultiPermutator<
-			Container,
-			CombinatorNamespace::ConditionalCombination<Container, Combination>,
-			ReferenceContainer
-	>{elements};
-}
 
 template<class Combination = nullptr_t, bool ReferenceContainer = false, class Container>
 auto Cartesian(const std::vector<Container>& containers) {
