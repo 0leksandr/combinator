@@ -306,7 +306,36 @@ explicit operator std::string() const {
 	Assert(combination2[0]->value == 8);
 	Assert(combination2[1]->value == 9);
 
+//	combination[0]->value = 77;
+//	Assert(permutations[1][1]->value == 77);
+
 	testPassed();
+}
+class TestUnique {
+	public:
+		const int id;
+		TestUnique() : id(unique) {}
+		TestUnique(const TestUnique& other) : id(unique) {}
+	private:
+		inline static int unique = 0;
+};
+void testContainerReferences() {
+	class Test {
+		public:
+			int value;
+			explicit Test(const int value) : value(value) {}
+explicit operator std::string() const {
+	return "value:" + anyToString(value);
+}
+	};
+
+	std::vector<Test> elements{Test{7}, Test{8}, Test{9}};
+
+	Combinator<std::vector<Test>, std::vector<Test*>>{elements, 1}[0][0]->value *= 2;
+	Assert(elements[0].value == 7);
+
+	Combinator<std::vector<Test>, std::vector<Test*>, true>{elements, 1}[0][0]->value *= 2;
+	Assert(elements[0].value == 14);
 }
 void tests() {
 	testCombinatorSameCombination();
@@ -351,6 +380,7 @@ void tests() {
 	testCartesianConstValues();
 
 	testPointers();
+	testContainerReferences();
 }
 
 template<class Combinator, class RandomFunc>

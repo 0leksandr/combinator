@@ -18,14 +18,16 @@ namespace CombinatorNamespace {
 			}
 
 			template<typename Element>
-			/*const*/ Element& getElement(const Position elementPosition, const Position) const { // TODO: override
-				// TODO: hope it's ok
-				return (Element&)elements[elementPosition];
+			Element& getElementReference(const Position elementPosition, const Position) const { // TODO: override
+				return (Element&)this->elements[elementPosition]; // TODO: `return this->elements[elementPosition];` ?
 			}
-			template<typename ElementAddress>
+			template<typename Element>
+			const Element getElementCopy(const Position elementPosition, const Position) const {
+				return this->elements[elementPosition];
+			}
+			template<typename ElementAddress> // TODO: `template<typename Element>`
 			ElementAddress getElementAddress(const Position elementPosition, const Position) const {
-				// TODO: hope it's ok
-				return (ElementAddress)&elements[elementPosition];
+				return ElementAddress(&(this->elements[elementPosition]));
 			}
 	};
 }
