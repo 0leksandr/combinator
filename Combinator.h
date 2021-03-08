@@ -11,6 +11,7 @@
 
 // TODO: Cartesian from variadic list of collections?
 // TODO: make Permutator::begin return some Walker
+// TODO: static combination size => static CombinationWrapper
 
 namespace CombinatorNamespace {
 	template<class Container, class Combination>

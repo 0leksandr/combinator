@@ -14,7 +14,7 @@
 
 namespace CombinatorNamespace {
 	template<typename Combination, class Request>
-	class Converter { // TODO: CombinationInitializer, Translator ?
+	class Converter { // TODO: CombinationInitializer, Translator, CombinationFactory ?
 		public:
 			template<typename Element>
 			static auto createCombinationWrapper(const Position size) {
