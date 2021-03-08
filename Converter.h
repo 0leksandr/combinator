@@ -10,6 +10,8 @@
 #include "Combination/VectorCombination.h"
 #include "Position.h"
 
+#include "my/macro.cpp"
+
 namespace CombinatorNamespace {
 	template<typename Combination, class Request>
 	class Converter { // TODO: CombinationInitializer, Translator ?
@@ -22,15 +24,17 @@ namespace CombinatorNamespace {
 			template<typename Element, size_t Size>
 			[[maybe_unused]] static auto createCombinationWrapper(
 					std::array<Element, Size> *,
-					const Position
+					const Position size
 			) {
+				Assert(size == Size);
 				return new StdArrayCombination<Request, ElementReferenceFetcher, Element, Size>{};
 			}
 			template<typename Element, size_t Size>
 			[[maybe_unused]] static auto createCombinationWrapper(
 					std::array<Element*, Size> *,
-					const Position
+					const Position size
 			) {
+				Assert(size == Size);
 				return new StdArrayCombination<Request, ElementAddressFetcher, Element*, Size>{};
 			}
 
