@@ -14,10 +14,11 @@ namespace CombinatorNamespace {
 			explicit Hunter(const FixedSizeRequest<Container>& request) :
 					CandidateOrderIterator<Container, Combination>(request) {
 				const auto size = OrderIterator<Container, Combination>::size(request);
-				const Position nrGuardians = (Position)sqrt(size) + 1;
+				const Position nrGuardians = std::min((Position)sqrt(size) + 1, size);
 				reactionTime = size / nrGuardians; // TODO: check
 				Walker<Container, Combination> patrol(request);
-				while (patrol.getWalkerIndex() < size - 1) {
+				const auto maxPatrolIndex = std::max(size, Position{2}) - 1;
+				while (patrol.getWalkerIndex() < maxPatrolIndex) {
 					patrol.operator++();
 					if ((patrol.getWalkerIndex() + reactionTime / 2) % reactionTime == 0) {
 						guardians.push_back(patrol);

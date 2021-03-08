@@ -324,6 +324,10 @@ explicit operator std::string() const {
 	Combinator<std::vector<Test*>, true>(elements, 1)[0][0]->value *= 2;
 	Assert(elements[0].value == 14);
 }
+void testSmallContainer() {
+	auto a = Combinator<std::array<int, 1>>(std::vector<int>{1}, 1)[0];
+	assertEquals(a, std::array<int, 1>{1});
+}
 void tests() {
 	testCombinatorSameCombination();
 	testCombinatorCustomCombination<std::vector<double>>();
@@ -367,6 +371,8 @@ void tests() {
 
 	testPointers();
 	testContainerReferences();
+
+	testSmallContainer();
 }
 
 template<class Combinator, class RandomFunc>
