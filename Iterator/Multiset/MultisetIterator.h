@@ -6,16 +6,13 @@
 #include "../../Request/MultisetRequest.h"
 
 namespace CombinatorNamespace {
-	template<class Container, class Combination>
+	template<class Container, class Combination, typename Element = typeof(Container[])>
 	class MultisetIterator :
-			public DereferencedIterator<Combination, MultisetRequest<Container>>,
+			public DereferencedIterator<Combination, MultisetRequest<Container>, Element>,
 			public SizedIterator {
 		public:
 			explicit MultisetIterator(const MultisetRequest<Container>& request) :
-					DereferencedIterator<Combination, MultisetRequest<Container>>(
-							request.containers.size(),
-							request.containers[0][0]
-					),
+					DereferencedIterator<Combination, MultisetRequest<Container>, Element>(request.containers.size()),
 					request(request) {
 				for (int c = 0; c < request.containers.size(); ++c) this->positions[c] = 0;
 			}

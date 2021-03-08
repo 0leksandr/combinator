@@ -6,18 +6,13 @@
 #include "../Position.h"
 
 namespace CombinatorNamespace {
-	template<typename Combination, class Request>
+	template<typename Combination, class Request, typename Element>
 	class DereferencedIterator : public Iterator {
 		public:
-			template<typename Element>
-			DereferencedIterator(
-					const Position combinationSize,
-					const Element& example
-			) :
+			DereferencedIterator(const Position combinationSize) :
 					positions(new Position[combinationSize]),
 					combinationWrapper(Converter<Combination, Request>::template createCombinationWrapper<Element>(
-							combinationSize,
-							example
+							combinationSize
 					)) {}
 			~DereferencedIterator() {
 				delete combinationWrapper;
