@@ -6,7 +6,10 @@ template<class Container, bool ContainerReference>
 class ContainerWrapper {
 	public:
 		explicit ContainerWrapper(const Container& container) : container(container) {}
-		auto& operator[](const size_t i) const {
+		const auto& operator[](const size_t i) const {
+			return this->container[i];
+		}
+		auto& operator[](const size_t i) {
 			return this->container[i];
 		}
 		[[nodiscard]] size_t size() const {
