@@ -9,10 +9,10 @@ namespace CombinatorNamespace {
 		public:
 			const std::vector<Container> containers;
 
-			MultisetRequest(const std::vector<Container>& containers) : containers(containers) {}
+			explicit MultisetRequest(const std::vector<Container>& containers) : containers(containers) {}
 //			template<class T>
 //			MultisetRequest(const T&& containers) : containers(containers) {}
-			Position combinationSize() const {
+			[[nodiscard]] Position combinationSize() const {
 				return containers.size();
 			}
 
@@ -21,7 +21,7 @@ namespace CombinatorNamespace {
 				return (Element&)containers[combinationPosition][elementPosition];
 			}
 			template<typename Element>
-			const Element getElementCopy(const Position elementPosition, const Position combinationPosition) const {
+			Element getElementCopy(const Position elementPosition, const Position combinationPosition) const {
 				return containers[combinationPosition][elementPosition];
 			}
 			template<typename ElementAddress>

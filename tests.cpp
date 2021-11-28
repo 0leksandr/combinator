@@ -328,6 +328,94 @@ void testSmallContainer() {
 	auto a = Combinator<std::array<int, 1>>(std::vector<int>{1}, 1)[0];
 	assertEquals(a, std::array<int, 1>{1});
 }
+void testAliasesAndConvertingToVector() {
+	assertEquals(
+			(std::vector<std::vector<int>>)Combinations(std::vector<int>{1, 2, 3}, 2),
+			std::vector<std::vector<int>>{
+					{1, 2},
+					{1, 3},
+					{2, 3},
+			}
+	);
+	assertEquals(
+			(std::vector<std::vector<int>>)Permutations(std::vector<int>{1, 2, 3}, 2),
+			std::vector<std::vector<int>>{
+					{1, 2},
+					{2, 1},
+					{3, 1},
+					{1, 3},
+					{2, 3},
+					{3, 2},
+			}
+	);
+	assertEquals(
+			(std::vector<std::vector<int>>)Permutations(std::vector<int>{1, 2, 3}),
+			std::vector<std::vector<int>>{
+					{1, 2, 3},
+					{2, 1, 3},
+					{3, 1, 2},
+					{1, 3, 2},
+					{2, 3, 1},
+					{3, 2, 1},
+			}
+	);
+	assertEquals(
+			(std::vector<std::vector<int>>)MultiPermutations(std::vector<int>{1, 2, 3}, 2),
+			std::vector<std::vector<int>>{
+					{1, 1},
+					{2, 1},
+					{3, 1},
+					{1, 2},
+					{2, 2},
+					{3, 2},
+					{1, 3},
+					{2, 3},
+					{3, 3},
+			}
+	);
+	assertEquals(
+			(std::vector<std::vector<int>>)CartesianProducts(std::vector<std::vector<int>>{{1, 2}, {3, 4}}),
+			std::vector<std::vector<int>>{
+					{1, 3},
+					{2, 3},
+					{1, 4},
+					{2, 4},
+			}
+	);
+
+	assertEquals(
+			(std::vector<std::array<int, 2>>)Combinations<std::array<int, 2>>(std::vector<int>{1, 2, 3}, 2),
+			std::vector<std::array<int, 2>>{
+					{1, 2},
+					{1, 3},
+					{2, 3},
+			}
+	);
+	assertEquals(
+			(std::vector<std::vector<int>>)Permutations<std::vector<int>>(std::array<int, 3>{1, 2, 3}, 2),
+			std::vector<std::vector<int>>{
+					{1, 2},
+					{2, 1},
+					{3, 1},
+					{1, 3},
+					{2, 3},
+					{3, 2},
+			}
+	);
+	assertEquals(
+			(std::vector<std::array<int, 3>>)Permutations(std::array<int, 3>{1, 2, 3}),
+			std::vector<std::array<int, 3>>{
+					{1, 2, 3},
+					{2, 1, 3},
+					{3, 1, 2},
+					{1, 3, 2},
+					{2, 3, 1},
+					{3, 2, 1},
+			}
+	);
+
+	testPassed();
+}
 void tests() {
 	testCombinatorSameCombination();
 	testCombinatorCustomCombination<std::vector<double>>();
@@ -373,6 +461,8 @@ void tests() {
 	testContainerReferences();
 
 	testSmallContainer();
+
+	testAliasesAndConvertingToVector();
 }
 
 template<class Combinator, class RandomFunc>

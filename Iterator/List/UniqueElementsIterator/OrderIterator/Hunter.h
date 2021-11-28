@@ -14,7 +14,7 @@ namespace CombinatorNamespace {
 			explicit Hunter(const FixedSizeRequest<Container>& request) :
 					CandidateOrderIterator<Container, Combination>(request) {
 				const auto size = OrderIterator<Container, Combination>::size(request);
-				const Position nrGuardians = std::min((Position)sqrt(size) + 1, size);
+				const Position nrGuardians = Hunter::min((Position)sqrt(size) + 1, size);
 				reactionTime = size / nrGuardians; // TODO: check
 				Walker<Container, Combination> patrol(request);
 				const auto maxPatrolIndex = std::max(size, Position{2}) - 1;
@@ -41,8 +41,11 @@ namespace CombinatorNamespace {
 			Position reactionTime;
 
 			Walker<Container, Combination>* guardian(const Position index) const {
-				const auto guardianIndex = std::min(index / reactionTime, guardians.size() - 1);
+				const auto guardianIndex = Hunter::min(index / reactionTime, guardians.size() - 1);
 				return (Walker<Container, Combination>*)&guardians[guardianIndex];
+			}
+			static Position min(const Position a, const Position b) { // std::min doesn't support `unsigned long long`
+				return (a < b) ? a : b;
 			}
 	};
 }
