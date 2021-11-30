@@ -6,7 +6,7 @@ namespace CombinatorNamespace {
 	template<class Container>
 	class FixedSizeRequest {
 		public:
-			const Container elements;
+			const Container elements; // TODO: private
 			const Position length;
 
 			FixedSizeRequest(
