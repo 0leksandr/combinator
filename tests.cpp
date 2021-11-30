@@ -18,14 +18,8 @@ void assertEquals(const Container& a, const Container& b) {
 template<class Container>
 void assertElementsDiffer(const Container& a, const Container& b) {
 	Assert(a.size() == b.size());
-	bool equal = true;
-	for (int c = 0; c < a.size(); ++c) {
-		if (a[c] != b[c]) {
-			equal = false;
-			break;
-		}
-	}
-	Assert(!equal);
+	for (int c = 0; c < a.size(); ++c) if (a[c] != b[c]) return;
+	Assert(false);
 }
 template<class Combination>
 void assertCombinationsUnique(std::vector<Combination> combinations) {
@@ -194,23 +188,24 @@ void testList(
 	assertCombinationsUnique(combinations);
 	testPassed();
 }
-template<class Container, class Combination>
+template<class Combination, class Cartesian, class Container>
 void testCartesian(
+		const Cartesian& cartesian,
 		const std::vector<Container>& containers,
 		const unsigned expectedNrCombinations
 ) {
-	const auto combinator = Cartesian(containers);
-	Assert(combinator.size() == expectedNrCombinations);
+	Assert(cartesian.size() == expectedNrCombinations);
 	std::vector<Combination> combinations;
-	combinations.reserve(combinator.size());
+	combinations.reserve(cartesian.size());
 	unsigned c(0);
-	for (const auto& combination : combinator) {
-		assertEquals(combination, combinator[c++]);
+	for (const auto& combination : cartesian) {
+		assertEquals(combination, cartesian[c++]);
 		for (int d = 0; d < containers.size(); ++d) assertIn(containers[d], combination[d]);
 		combinations.push_back(combination);
 	}
 	Assert(combinations.size() == expectedNrCombinations);
 	assertCombinationsUnique(combinations);
+	assertEquals(combinations, (std::vector<Combination>)cartesian);
 	testPassed();
 }
 void testCartesianSizeOverflow() {
@@ -382,6 +377,15 @@ void testAliasesAndConvertingToVector() {
 					{2, 4},
 			}
 	);
+	assertEquals(
+			(std::vector<std::vector<int>>) CartesianProducts(std::vector<int>{1, 2}, std::array<int, 2>{3, 4}),
+			std::vector<std::vector<int>>{
+					{1, 3},
+					{2, 3},
+					{1, 4},
+					{2, 4},
+			}
+	);
 
 	assertEquals(
 			(std::vector<std::array<int, 2>>)Combinations<std::array<int, 2>>(std::vector<int>{1, 2, 3}, 2),
@@ -413,6 +417,18 @@ void testAliasesAndConvertingToVector() {
 					{3, 2, 1},
 			}
 	);
+	assertEquals(
+			(std::vector<std::array<int, 2>>) CartesianProducts<std::array<int, 2>>(
+					std::vector<int>{1, 2},
+					std::array<int, 2>{3, 4}
+			),
+			std::vector<std::array<int, 2>>{
+					{1, 3},
+					{2, 3},
+					{1, 4},
+					{2, 4},
+			}
+	);
 
 	testPassed();
 }
@@ -438,21 +454,22 @@ void tests() {
 	testList<COMBINATION >(Permutator INPUT2, 336, false, true);
 	testList<COMBINATION >(MultiPermutator INPUT2, 512, false, false);
 
-	testCartesian<std::vector<int>, std::vector<int>>(
-			std::vector<std::vector<int>>{
-					std::vector<int>{1, 2},
-					std::vector<int>{3, 4},
-			},
-			4
-	);
-	testCartesian<std::vector<int>, std::vector<int>>(
-			std::vector<std::vector<int>>{
-					std::vector<int>{1, 2, 3},
-					std::vector<int>{3, 4, 5},
-					std::vector<int>{5, 6, 7},
-					std::vector<int>{7, 8, 9},
-			},
-			81
+	const auto vectors2by2 = std::vector<std::vector<int>>{
+			std::vector<int>{1, 2},
+			std::vector<int>{3, 4},
+	};
+	testCartesian<std::vector<int>>(Cartesian(vectors2by2), vectors2by2, 4);
+	const auto vecArr3by3 = std::vector<std::array<int, 3>>{
+			std::array<int, 3>{1, 2, 3},
+			std::array<int, 3>{4, 5, 6},
+			std::array<int, 3>{7, 8, 9},
+	};
+	testCartesian<std::array<int, 3>>(CartesianProducts(vecArr3by3), vecArr3by3, 27);
+	testCartesian<std::vector<int>>(Cartesian<std::vector<int>>(vecArr3by3), vecArr3by3, 27);
+	testCartesian<std::vector<int>>(
+			VariadicCartesian(std::vector<int>{1, 2, 3}, std::array<int, 3>{4, 5, 6}, std::vector<int>{7, 8, 9}),
+			vecArr3by3,
+			27
 	);
 	testCartesianSizeOverflow();
 	testCartesianConstValues();

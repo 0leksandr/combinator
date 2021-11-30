@@ -10,7 +10,7 @@ namespace CombinatorNamespace {
 			static Element get(
 					const Request& request,
 					const Position elementPosition,
-					const Position combinationPosition
+					const Position combinationPosition // TODO: containerPosition
 			) {
 				return request.template getElementCopy<Element>(elementPosition, combinationPosition);
 			}
