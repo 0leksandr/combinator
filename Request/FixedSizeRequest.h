@@ -25,9 +25,9 @@ namespace CombinatorNamespace {
 			const Element getElementCopy(const Position elementPosition, const Position) const {
 				return this->elements[elementPosition];
 			}
-			template<typename ElementAddress> // TODO: `template<typename Element>`
-			ElementAddress getElementAddress(const Position elementPosition, const Position) const {
-				return ElementAddress(&(this->elements[elementPosition]));
+			template<typename Element>
+			Element* getElementAddress(const Position elementPosition, const Position) const {
+				return (Element*)(&(this->elements[elementPosition]));
 			}
 	};
 }
