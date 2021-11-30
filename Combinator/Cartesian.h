@@ -29,5 +29,7 @@ namespace CombinatorNamespace {
 							ContainerWrapperAlias::wrapVector(containers)
 					}
 			) {}
+//			template<class... Containers>
+//			Cartesian(Containers... containers)
 	};
 }

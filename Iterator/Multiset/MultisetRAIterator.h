@@ -15,7 +15,7 @@ namespace CombinatorNamespace {
 					MultisetIterator<Container, Combination>(request) {}
 		protected:
 			void go(Position index) override {
-				for (Position c = 0; c < this->request.nrContainers(); c++) {
+				for (Position c = 0; c < this->request.combinationSize(); c++) {
 					const Position nrElements(this->request.containerSize(c));
 					this->positions[c] = index % nrElements;
 					index /= nrElements;

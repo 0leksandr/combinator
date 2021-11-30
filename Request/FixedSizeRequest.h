@@ -13,16 +13,16 @@ namespace CombinatorNamespace {
 					const Container elements,
 					const Position length
 			) : elements(elements), length(length) {}
-			Position combinationSize() const { // TODO: override
+			[[nodiscard]] Position combinationSize() const {
 				return length;
 			}
 
 			template<typename Element>
-			Element& getElementReference(const Position elementPosition, const Position) const { // TODO: override
-				return (Element&)this->elements[elementPosition]; // TODO: `return this->elements[elementPosition];` ?
+			const Element& getElementReference(const Position elementPosition, const Position) const {
+				return (const Element&)this->elements[elementPosition]; // TODO: `return this->elements[elementPosition];` ?
 			}
 			template<typename Element>
-			const Element getElementCopy(const Position elementPosition, const Position) const {
+			Element getElementCopy(const Position elementPosition, const Position) const {
 				return this->elements[elementPosition];
 			}
 			template<typename Element>

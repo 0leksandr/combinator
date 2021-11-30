@@ -14,16 +14,16 @@ namespace CombinatorNamespace {
 			[[nodiscard]] Position combinationSize() const {
 				return containers.size();
 			}
-			[[nodiscard]] Position nrContainers() const {
-				return this->containers.size();
-			}
 			[[nodiscard]] Position containerSize(const Position containerIdx) const {
 				return this->containers[containerIdx].size();
 			}
 
 			template<typename Element>
-			Element& getElementReference(const Position elementPosition, const Position combinationPosition) const {
-				return (Element&)containers[combinationPosition][elementPosition];
+			const Element& getElementReference(
+					const Position elementPosition,
+					const Position combinationPosition
+			) const {
+				return (const Element&)containers[combinationPosition][elementPosition];
 			}
 			template<typename Element>
 			Element getElementCopy(const Position elementPosition, const Position combinationPosition) const {

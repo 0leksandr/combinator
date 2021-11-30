@@ -12,16 +12,16 @@ namespace CombinatorNamespace {
 			public SizedIterator {
 		public:
 			explicit MultisetIterator(const MultisetRequest<Container>& request) :
-					DereferencedIterator<Combination, MultisetRequest<Container>, Element>(request.nrContainers()),
+					DereferencedIterator<Combination, MultisetRequest<Container>, Element>(request.combinationSize()),
 					request(request) {
-				for (int c = 0; c < request.nrContainers(); ++c) this->positions[c] = 0;
+				for (int c = 0; c < request.combinationSize(); ++c) this->positions[c] = 0;
 			}
 			Combination& operator*() const override {
 				return this->combinationWrapper->get(request, this->positions);
 			}
 			static Position size(const MultisetRequest<Container>& request) {
 				Position size = 1;
-				for (int c = 0; c < request.nrContainers(); ++c) {
+				for (int c = 0; c < request.combinationSize(); ++c) {
 					const auto prev = size; // TODO: would it be better (more performant) to declare it outside of the loop?
 					size *= request.containerSize(c);
 					if (prev != 0 && (size / prev != request.containerSize(c))) {

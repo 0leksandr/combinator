@@ -18,7 +18,7 @@ namespace CombinatorNamespace {
 			}
 		private:
 			void increment(const Position position) {
-				if (position == this->request.nrContainers()) return;
+				if (position == this->request.combinationSize()) return;
 				if (++(this->positions[position]) == this->request.containerSize(position)) {
 					this->positions[position] = 0;
 					increment(position + 1);

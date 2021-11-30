@@ -15,6 +15,13 @@
 // TODO: throw out-of-bounds exceptions
 // TODO: "natural" combinations order (sort by first element, then second etc.)
 // TODO: exceptions instead of `Assert`
+// TODO: CombinatorNamespace > anonymous namespace
+
+// Граблі:
+// - не можна зробити загальний інтерфейс для Request'ів, тому що альтернативи:
+//   - `template<typename Element>` має бути в методах, не в класі загалом, тому що тоді треба тягнути Element в
+//     Request, а з ними - і на найвищий рівень
+//   - шаблонний метод не можна зробити віртуальним (`template<> virtual void f()` - помилка) :c
 
 namespace CombinatorNamespace {
 	template<class Container, class Combination>

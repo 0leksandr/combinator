@@ -5,6 +5,7 @@
 #include <random>
 #include <vector>
 #include "Combinator.h"
+#include "Request/VariadicMultisetRequest.h"
 
 #include <my/macro.cpp>
 
@@ -463,6 +464,15 @@ void tests() {
 	testSmallContainer();
 
 	testAliasesAndConvertingToVector();
+
+	const auto a = CombinatorNamespace::VariadicMultisetRequest(
+			std::vector<int>{1, 2, 3},
+			std::array<int, 2>{4, 5}
+	);
+	dump(a.combinationSize());
+	dump(a.containerSize(0));
+	dump(a.containerSize(1));
+	dump(a.getElementCopy<int>(1, 0));
 }
 
 template<class Combinator, class RandomFunc>
