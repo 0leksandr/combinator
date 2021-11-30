@@ -3,16 +3,15 @@
 #include "MultisetIterator.h"
 #include "../Movement/ForwardIterator.h"
 #include "../../Position.h"
-#include "../../Request/MultisetRequest.h"
 
 namespace CombinatorNamespace {
-	template<class Container, class Combination>
+	template<class Combination, class Request, typename Element>
 	class MultisetFIterator :
-			public MultisetIterator<Container, Combination>,
+			public MultisetIterator<Combination, Request, Element>,
 			public ForwardIterator {
 		public:
-			explicit MultisetFIterator(const MultisetRequest<Container>& request) :
-					MultisetIterator<Container, Combination>(request) {}
+			explicit MultisetFIterator(const Request& request) :
+					MultisetIterator<Combination, Request, Element>(request) {}
 			void increment() override {
 				increment(0);
 			}

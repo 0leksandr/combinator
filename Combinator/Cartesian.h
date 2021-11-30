@@ -3,6 +3,7 @@
 #include "../Iterator/Multiset/MultisetFIterator.h"
 #include "../Iterator/Multiset/MultisetRAIterator.h"
 #include "../Request/ContainerWrapper/ContainerWrapper.h"
+#include "../Request/MultisetRequest.h"
 #include "FixedSizeCombinator.h"
 
 namespace CombinatorNamespace {
@@ -10,26 +11,22 @@ namespace CombinatorNamespace {
 			class Container,
 			class Combination,
 			bool ReferenceContainer,
-			class ContainerWrapperAlias = ContainerWrapper<Container, ReferenceContainer>
+			class ContainerWrapperAlias = ContainerWrapper<Container, ReferenceContainer>,
+			typename Element = typeof(ContainerWrapperAlias[]),
+			class Request = MultisetRequest<ContainerWrapperAlias>
 	>
 	class Cartesian : public FixedSizeCombinator<
 			Combination,
-			MultisetRequest<ContainerWrapperAlias>,
-			MultisetFIterator<ContainerWrapperAlias, Combination>,
-			MultisetRAIterator<ContainerWrapperAlias, Combination>
+			Request,
+			MultisetFIterator<Combination, Request, Element>,
+			MultisetRAIterator<Combination, Request, Element>
 	> {
 		public:
 			explicit Cartesian(const std::vector<Container>& containers) : FixedSizeCombinator<
 					Combination,
-					MultisetRequest<ContainerWrapperAlias>,
-					MultisetFIterator<ContainerWrapperAlias, Combination>,
-					MultisetRAIterator<ContainerWrapperAlias, Combination>
-			>(
-					MultisetRequest<ContainerWrapperAlias>{
-							ContainerWrapperAlias::wrapVector(containers)
-					}
-			) {}
-//			template<class... Containers>
-//			Cartesian(Containers... containers)
+					Request,
+					MultisetFIterator<Combination, Request, Element>,
+					MultisetRAIterator<Combination, Request, Element>
+			>(Request(ContainerWrapperAlias::wrapVector(containers))) {}
 	};
 }

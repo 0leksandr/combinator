@@ -465,14 +465,11 @@ void tests() {
 
 	testAliasesAndConvertingToVector();
 
-	const auto a = CombinatorNamespace::VariadicMultisetRequest(
+	dump((std::vector<std::vector<int>>) CartesianProducts(
 			std::vector<int>{1, 2, 3},
+//			std::vector<char>{'a', 'b'},
 			std::array<int, 2>{4, 5}
-	);
-	dump(a.combinationSize());
-	dump(a.containerSize(0));
-	dump(a.containerSize(1));
-	dump(a.getElementCopy<int>(1, 0));
+	));
 }
 
 template<class Combinator, class RandomFunc>

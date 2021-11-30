@@ -87,7 +87,7 @@ namespace CombinatorNamespace {
 		public:
 			explicit VariadicMultisetRequest(Containers... containers) :
 					containers(containers...) { // TODO: std::make_tuple?
-				static_assert(sizeof...(Containers) >= 1);
+				static_assert(sizeof...(Containers) >= 2);
 			}
 
 			[[nodiscard]] Position combinationSize() const {

@@ -3,16 +3,15 @@
 #include "MultisetIterator.h"
 #include "../Movement/RandomAccessIterator.h"
 #include "../../Position.h"
-#include "../../Request/MultisetRequest.h"
 
 namespace CombinatorNamespace {
-	template<class Container, class Combination>
+	template<class Combination, class Request, typename Element>
 	class MultisetRAIterator :
-			public MultisetIterator<Container, Combination>,
+			public MultisetIterator<Combination, Request, Element>,
 			public RandomAccessIterator {
 		public:
-			explicit MultisetRAIterator(const MultisetRequest<Container>& request) :
-					MultisetIterator<Container, Combination>(request) {}
+			explicit MultisetRAIterator(const Request& request) :
+					MultisetIterator<Combination, Request, Element>(request) {}
 		protected:
 			void go(Position index) override {
 				for (Position c = 0; c < this->request.combinationSize(); c++) {

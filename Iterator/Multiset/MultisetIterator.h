@@ -3,23 +3,22 @@
 #include "../DereferencedIterator.h"
 #include "../SizedIterator.h"
 #include "../../Converter.h"
-#include "../../Request/MultisetRequest.h"
 
 namespace CombinatorNamespace {
-	template<class Container, class Combination, typename Element = typeof(Container[])>
+	template<class Combination, class Request, typename Element>
 	class MultisetIterator :
-			public DereferencedIterator<Combination, MultisetRequest<Container>, Element>,
+			public DereferencedIterator<Combination, Request, Element>,
 			public SizedIterator {
 		public:
-			explicit MultisetIterator(const MultisetRequest<Container>& request) :
-					DereferencedIterator<Combination, MultisetRequest<Container>, Element>(request.combinationSize()),
+			explicit MultisetIterator(const Request& request) :
+					DereferencedIterator<Combination, Request, Element>(request.combinationSize()),
 					request(request) {
 				for (int c = 0; c < request.combinationSize(); ++c) this->positions[c] = 0;
 			}
 			Combination& operator*() const override {
 				return this->combinationWrapper->get(request, this->positions);
 			}
-			static Position size(const MultisetRequest<Container>& request) {
+			static Position size(const Request& request) {
 				Position size = 1;
 				for (int c = 0; c < request.combinationSize(); ++c) {
 					const auto prev = size; // TODO: would it be better (more performant) to declare it outside of the loop?
@@ -31,6 +30,6 @@ namespace CombinatorNamespace {
 				return size;
 			}
 		protected:
-			const MultisetRequest<Container>& request;
+			const Request& request;
 	};
 }

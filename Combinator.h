@@ -7,6 +7,7 @@
 #include "Combinator/FixedSizedSingleSetCombinator.h"
 #include "Combinator/MultiPermutator.h"
 #include "Combinator/Permutator.h"
+#include "Combinator/VariadicCartesian.h"
 #include "Position.h"
 
 // TODO: Cartesian from variadic list of collections?
@@ -75,6 +76,15 @@ auto Cartesian(const std::vector<Container>& containers) {
 			ReferenceContainer
 	>{containers};
 }
+template<class Combination = nullptr_t, class Container, class... Containers>
+auto VariadicCartesian(Container container, Containers... containers) {
+	return CombinatorNamespace::VariadicCartesian<
+			Container,
+			CombinatorNamespace::ConditionalCombination<Container, Combination>, // TODO: think about
+			typeof(Container[]),
+			Containers...
+	>{container, containers...};
+}
 
 template<class Combination = nullptr_t, bool ReferenceContainer = false, class Container>
 auto Combinations(const Container& elements, const CombinatorNamespace::Position length) {
@@ -95,4 +105,8 @@ auto MultiPermutations(const Container& elements, const CombinatorNamespace::Pos
 template<class Combination = nullptr_t, bool ReferenceContainer = false, class Container>
 auto CartesianProducts(const std::vector<Container>& containers) {
 	return Cartesian<Combination, ReferenceContainer, Container>(containers);
+}
+template<class Combination = nullptr_t, class Container, class... Containers>
+auto CartesianProducts(Container container, Containers... containers) {
+	return VariadicCartesian<Combination, Container, Containers...>(container, containers...);
 }
