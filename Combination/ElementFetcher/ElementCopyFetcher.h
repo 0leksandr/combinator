@@ -3,10 +3,11 @@
 #include "../../Position.h"
 
 namespace CombinatorNamespace {
+	template<typename Element>
 	class ElementCopyFetcher {
 		public:
-			template<class Request, typename Element>
-			static const Element get(
+			template<class Request>
+			static Element get(
 					const Request& request,
 					const Position elementPosition,
 					const Position combinationPosition

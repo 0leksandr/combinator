@@ -27,7 +27,7 @@ namespace CombinatorNamespace {
 					const Position size
 			) {
 				Assert(size == Size);
-				return new StdArrayCombination<Request, ElementReferenceFetcher, Element, Size>{};
+				return new StdArrayCombination<Request, ElementReferenceFetcher<Element>, Element, Size>{};
 			}
 			template<typename Element, size_t Size>
 			[[maybe_unused]] static auto createCombinationWrapper(
@@ -35,7 +35,7 @@ namespace CombinatorNamespace {
 					const Position size
 			) {
 				Assert(size == Size);
-				return new StdArrayCombination<Request, ElementAddressFetcher, Element*, Size>{};
+				return new StdArrayCombination<Request, ElementAddressFetcher<Element>, Element*, Size>{};
 			}
 
 			template<typename Element>
@@ -43,14 +43,14 @@ namespace CombinatorNamespace {
 					std::vector<Element> *,
 					const Position
 			) {
-				return new VectorCombination<Request, ElementReferenceFetcher, Element>{};
+				return new VectorCombination<Request, ElementReferenceFetcher<Element>, Element>{};
 			}
 			template<typename Element>
 			[[maybe_unused]] static auto createCombinationWrapper(
 					std::vector<Element*> *,
 					const Position
 			) {
-				return new VectorCombination<Request, ElementAddressFetcher, Element*>{};
+				return new VectorCombination<Request, ElementAddressFetcher<Element>, Element*>{};
 			}
 
 			template<typename Element>
@@ -58,14 +58,14 @@ namespace CombinatorNamespace {
 					Element* *,
 					const Position size
 			) {
-				return new ArrayCombination<Request, ElementReferenceFetcher, Element>{size};
+				return new ArrayCombination<Request, ElementReferenceFetcher<Element>, Element>{size};
 			}
 			template<typename Element>
 			[[maybe_unused]] static auto createCombinationWrapper(
 					Element** *,
 					const Position size
 			) {
-				return new ArrayCombination<Request, ElementAddressFetcher, Element*>{size};
+				return new ArrayCombination<Request, ElementAddressFetcher<Element>, Element*>{size};
 			}
 
 			template<typename T>
