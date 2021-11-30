@@ -3,8 +3,6 @@
 #include <vector>
 #include "Combinator/Cartesian.h"
 #include "Combinator/Combinator.h"
-#include "Combinator/FixedSizeCombinator.h"
-#include "Combinator/FixedSizedSingleSetCombinator.h"
 #include "Combinator/MultiPermutator.h"
 #include "Combinator/Permutator.h"
 #include "Combinator/VariadicCartesian.h"
@@ -17,6 +15,7 @@
 // TODO: "natural" combinations order (sort by first element, then second etc.)
 // TODO: exceptions instead of `Assert`
 // TODO: CombinatorNamespace > anonymous namespace
+// TODO: remove `my`
 
 // Граблі:
 // - не можна зробити загальний інтерфейс для Request'ів, тому що альтернативи:
@@ -106,7 +105,11 @@ template<class Combination = nullptr_t, bool ReferenceContainer = false, class C
 auto CartesianProducts(const std::vector<Container>& containers) {
 	return Cartesian<Combination, ReferenceContainer, Container>(containers);
 }
-template<class Combination = nullptr_t, class Container, class... Containers>
-auto CartesianProducts(Container container, Containers... containers) {
-	return VariadicCartesian<Combination, Container, Containers...>(container, containers...);
+template<class Combination = nullptr_t, class Container1, class Container2, class... Containers>
+auto CartesianProducts(Container1 container1, Container2 container2, Containers... containers) {
+	return VariadicCartesian<Combination, Container1, Container2, Containers...>(
+			container1,
+			container2,
+			containers...
+	);
 }
