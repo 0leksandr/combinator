@@ -9,6 +9,13 @@ namespace CombinatorNamespace {
 	namespace {
 		template<unsigned c, class... Containers>
 		struct ContainerSelector {
+			static void checkElementType(const std::tuple<Containers...>& containers) {
+				static_assert(std::is_same_v<
+						typeof(std::get<0>(containers)[666]),
+						typeof(std::get<c-1>(containers)[666])
+				>);
+				ContainerSelector<c - 1, Containers...>::checkElementType(containers);
+			}
 			static Position containerSize(const unsigned containerIdx, const std::tuple<Containers...>& containers) {
 				if (c == containerIdx+1) return std::get<c-1>(containers).size();
 				return ContainerSelector<c - 1, Containers...>::containerSize(containerIdx, containers);
@@ -56,6 +63,7 @@ namespace CombinatorNamespace {
 
 		template<class... Containers>
 		struct ContainerSelector<0, Containers...> {
+			static void checkElementType(const std::tuple<Containers...>&) {}
 			static Position containerSize(const unsigned, const std::tuple<Containers...>&) {
 				assert(false);
 			}
@@ -88,6 +96,7 @@ namespace CombinatorNamespace {
 			explicit VariadicMultisetRequest(Containers... containers) :
 					containers(containers...) { // TODO: std::make_tuple?
 				static_assert(sizeof...(Containers) >= 2);
+				ContainerSelector<sizeof...(Containers) - 1, Containers...>::checkElementType(this->containers);
 			}
 
 			[[nodiscard]] Position combinationSize() const {
