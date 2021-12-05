@@ -296,8 +296,11 @@ explicit operator std::string() const {
 class TestUnique {
 	public:
 		const int id;
-		TestUnique() : id(unique) {}
-		TestUnique(const TestUnique& other) : id(unique) {}
+		TestUnique() : id(++unique) {}
+		TestUnique(const TestUnique& other) : id(++unique) {}
+explicit operator std::string() const {
+	return "id:" + anyToString(this->id);
+}
 	private:
 		inline static int unique = 0;
 };
