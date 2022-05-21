@@ -4,12 +4,10 @@
 #include "../Position.h"
 
 namespace CombinatorNamespace {
-	template<class Container>
-	class MultisetRequest { // TODO: static/dynamic (array/vector)
+	template<class Containers>
+	class MultisetRequest {
 		public:
-			explicit MultisetRequest(const std::vector<Container>& containers) : containers(containers) {}
-//			template<class T>
-//			MultisetRequest(const T&& containers) : containers(containers) {}
+			explicit MultisetRequest(const Containers& containers) : containers(containers) {}
 
 			[[nodiscard]] Position combinationSize() const {
 				return containers.size();
@@ -34,6 +32,6 @@ namespace CombinatorNamespace {
 				return (Element*)&containers[combinationPosition][elementPosition];
 			}
 		private:
-			const std::vector<Container> containers;
+			const Containers containers;
 	};
 }

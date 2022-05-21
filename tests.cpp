@@ -208,6 +208,64 @@ void testCartesian(
 	assertEquals(combinations, (std::vector<Combination>)cartesian);
 	testPassed();
 }
+void testCartesians() {
+	const auto vectors2by3 = std::vector<std::vector<int>>{
+			{1, 2, 3},
+			{4, 5, 6},
+	};
+	testCartesian<std::vector<int>>(Cartesian(vectors2by3), vectors2by3, 9);
+	const auto vecArr4by3 = std::vector<std::array<int, 3>>{
+			{ 1,  2,  3},
+			{ 4,  5,  6},
+			{ 7,  8,  9},
+			{10, 11, 12},
+	};
+	testCartesian<std::vector<int>>(CartesianProducts(vecArr4by3), vecArr4by3, 81);
+	testCartesian<std::vector<int>>(CartesianProducts<std::vector<int>>(vecArr4by3), vecArr4by3, 81);
+	testCartesian<std::array<int, 4>>(CartesianProducts<std::array<int, 4>>(vecArr4by3), vecArr4by3, 81);
+
+	const auto arrVec4byX = std::array<std::vector<int>, 4>{
+			std::vector<int>{1, 2, 3},
+			std::vector<int>{4, 5},
+			std::vector<int>{6},
+			std::vector<int>{7, 8, 9, 10},
+	};
+	CartesianProducts(arrVec4byX);
+	testCartesian<std::array<int, 4>>(CartesianProducts(arrVec4byX), arrVec4byX, 24);
+	testCartesian<std::array<int, 4>>(CartesianProducts<std::array<int, 4>>(arrVec4byX), arrVec4byX, 24);
+	testCartesian<std::vector<int>>(CartesianProducts<std::vector<int>>(arrVec4byX), arrVec4byX, 24);
+
+	testCartesian<std::vector<int>>(
+			CartesianProducts(
+					std::vector<int>  {1, 2, 3},
+					std::array<int, 2>{4, 5},
+					std::vector<int>  {6},
+					std::array<int, 4>{7, 8, 9, 10}
+			),
+			arrVec4byX,
+			24
+	);
+	testCartesian<std::vector<int>>(
+			CartesianProducts<std::vector<int>>(
+					std::vector<int>  {1, 2, 3},
+					std::array<int, 2>{4, 5},
+					std::vector<int>  {6},
+					std::array<int, 4>{7, 8, 9, 10}
+			),
+			arrVec4byX,
+			24
+	);
+	testCartesian<std::array<int, 4>>(
+			CartesianProducts<std::array<int, 4>>(
+					std::vector<int>  {1, 2, 3},
+					std::array<int, 2>{4, 5},
+					std::vector<int>  {6},
+					std::array<int, 4>{7, 8, 9, 10}
+			),
+			arrVec4byX,
+			24
+	);
+}
 void testCartesianSizeOverflow() {
 	const unsigned nrContainers = 100; // 2^100 > 10e30
 	const unsigned nrElementsInContainer = 2;
@@ -222,7 +280,7 @@ void testCartesianSizeOverflow() {
 
 	bool exThrown = false;
 	try {
-		(Cartesian(containers));
+		Cartesian(containers);
 	} catch (std::overflow_error&) {
 		exThrown = true;
 	}
@@ -457,59 +515,7 @@ void tests() {
 	testList<COMBINATION >(Permutator INPUT2, 336, false, true);
 	testList<COMBINATION >(MultiPermutator INPUT2, 512, false, false);
 
-	const auto vectors2by3 = std::vector<std::vector<int>>{
-			{1, 2, 3},
-			{4, 5, 6},
-	};
-	testCartesian<std::vector<int>>(Cartesian(vectors2by3), vectors2by3, 9);
-	const auto vecArr4by3 = std::vector<std::array<int, 3>>{
-			{ 1,  2,  3},
-			{ 4,  5,  6},
-			{ 7,  8,  9},
-			{10, 11, 12},
-	};
-	testCartesian<std::vector<int>>(CartesianProducts(vecArr4by3), vecArr4by3, 81);
-	testCartesian<std::vector<int>>(CartesianProducts<std::vector<int>>(vecArr4by3), vecArr4by3, 81);
-	testCartesian<std::array<int, 4>>(CartesianProducts<std::array<int, 4>>(vecArr4by3), vecArr4by3, 81);
-	testCartesian<std::vector<int>>(
-			CartesianProducts(
-					std::vector<int>  { 1,  2,  3},
-					std::array<int, 3>{ 4,  5,  6},
-					std::vector<int>  { 7,  8,  9},
-					std::array<int, 3>{10, 11, 12}
-			),
-			vecArr4by3,
-			81
-	);
-	testCartesian<std::vector<int>>(
-			CartesianProducts<std::vector<int>>(
-					std::vector<int>  { 1,  2,  3},
-					std::array<int, 3>{ 4,  5,  6},
-					std::vector<int>  { 7,  8,  9},
-					std::array<int, 3>{10, 11, 12}
-			),
-			vecArr4by3,
-			81
-	);
-	testCartesian<std::array<int, 4>>(
-			CartesianProducts<std::array<int, 4>>(
-					std::vector<int>  { 1,  2,  3},
-					std::array<int, 3>{ 4,  5,  6},
-					std::vector<int>  { 7,  8,  9},
-					std::array<int, 3>{10, 11, 12}
-			),
-			vecArr4by3,
-			81
-	);
-	const auto arrVec4byX = std::array<std::vector<int>, 4>{
-		std::vector<int>{1, 2, 3},
-		std::vector<int>{4, 5},
-		std::vector<int>{6},
-		std::vector<int>{7, 8, 9, 10},
-	};
-//	CartesianProducts(arrVec4byX);
-//	testCartesian<std::array<int, 4>>(CartesianProducts(arrVec4byX), arrVec4byX, 24);
-
+	testCartesians();
 	testCartesianSizeOverflow();
 	testCartesianConstValues();
 

@@ -34,32 +34,6 @@ namespace CombinatorNamespace {
 	>::type;
 }
 
-//template<typename T>
-//struct StructT {
-//	typedef T type;
-//};
-//class ElementTypeFetcher {
-//	public:
-//		template<typename T>
-//		static auto get(std::vector<T>) {
-//			return StructT<T>{};
-//		}
-//
-//		template<typename T, size_t Size>
-//		static auto get(std::array<T, Size>) {
-//			return StructT<T>{};
-//		}
-//	private:
-//		template<typename T>
-//		static T* tplToParam() {
-//			return nullptr;
-//		}
-//};
-////template<typename T>
-////auto get_element_type(std::vector<T>) {
-////	return StructT<T>{};
-////}
-
 template<class Combination = nullptr_t, bool ReferenceContainer = false, class Container>
 auto Combinator(const Container& elements, const CombinatorNamespace::Position length) {
 	return CombinatorNamespace::Combinator<
@@ -95,39 +69,27 @@ auto MultiPermutator(const Container& elements, const CombinatorNamespace::Posit
 	>{elements, length};
 }
 
-template<class Combination = nullptr_t, bool ReferenceContainer = false, class Container>
+template<class Combination = nullptr_t, class Container>
 auto Cartesian(const std::vector<Container>& containers) {
 	return CombinatorNamespace::Cartesian<
-			Container,
-//			std::vector<Container>,
-//			CombinatorNamespace::Coalesce<Combination, Container>,
-//			CombinatorNamespace::Coalesce<Combination, std::vector<typeof(Container[])>>,
-//			CombinatorNamespace::Coalesce<Combination, std::vector<decltype(Container::operator[](-1))>>,
-//			CombinatorNamespace::Coalesce<Combination, std::vector<typename std::decay<Container[]>::type>>,
-//			CombinatorNamespace::Coalesce<Combination, std::vector<typename std::remove_extent<Container>::type>>,
+			std::vector<Container>,
 			CombinatorNamespace::Coalesce<
 			        Combination,
 					std::vector<typename CombinatorNamespace::ElementType<Container>::type>
-			>,
-			ReferenceContainer
+			>
 	>{containers};
 }
-template<
-		class Combination = nullptr_t,
-		bool ReferenceContainer = false,
-		class Container,
-		CombinatorNamespace::Position Size
->
+template<class Combination = nullptr_t, class Container, CombinatorNamespace::Position Size>
 auto Cartesian(const std::array<Container, Size>& containers) {
 	return CombinatorNamespace::Cartesian<
-			Container,
+			std::array<Container, Size>,
 			CombinatorNamespace::Coalesce<
 			        Combination,
 					std::array<typename CombinatorNamespace::ElementType<Container>::type, Size>
-			>,
-			ReferenceContainer
+			>
 	>{containers};
 }
+
 template<class Combination = nullptr_t, class Container, class... Containers>
 auto VariadicCartesian(Container container, Containers... containers) {
 	return CombinatorNamespace::VariadicCartesian<
@@ -154,13 +116,9 @@ template<class Combination = nullptr_t, bool ReferenceContainer = false, class C
 auto MultiPermutations(const Container& elements, const CombinatorNamespace::Position length) {
 	return MultiPermutator<Combination, ReferenceContainer, Container>(elements, length);
 }
-template<class Combination = nullptr_t, bool ReferenceContainer = false, class Container>
-auto CartesianProducts(const std::vector<Container>& containers) {
-	return Cartesian<Combination, ReferenceContainer>(containers);
-}
-template<class Combination = nullptr_t, bool ReferenceContainer = false, class Container, size_t Size>
-auto CartesianProducts(const std::array<Container, Size>& containers) {
-	return Cartesian<Combination, ReferenceContainer>(containers);
+template<class Combination = nullptr_t, class Containers>
+auto CartesianProducts(const Containers& containers) {
+	return Cartesian<Combination>(containers);
 }
 template<class Combination = nullptr_t, class Container1, class Container2, class... Containers>
 auto CartesianProducts(Container1 container1, Container2 container2, Containers... containers) {
