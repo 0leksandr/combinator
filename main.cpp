@@ -1,3 +1,5 @@
+#pragma once
+
 #include "tests.cpp"
 
 int main() {
