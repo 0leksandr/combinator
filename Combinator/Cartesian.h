@@ -11,6 +11,7 @@ namespace CombinatorNamespace {
 			class Container,
 			class Combination,
 			bool ReferenceContainer,
+//			class Container = CombinatorNamespace::ElementType
 			class ContainerWrapperAlias = ContainerWrapper<Container, ReferenceContainer>,
 			typename Element = typeof(ContainerWrapperAlias[]),
 			class Request = MultisetRequest<ContainerWrapperAlias>
@@ -27,6 +28,6 @@ namespace CombinatorNamespace {
 					Request,
 					MultisetFIterator<Combination, Request, Element>,
 					MultisetRAIterator<Combination, Request, Element>
-			>(Request(ContainerWrapperAlias::wrapVector(containers))) {}
+			>(Request(ContainerWrapperAlias::wrapContainer(containers))) {}
 	};
 }

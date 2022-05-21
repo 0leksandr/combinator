@@ -188,10 +188,10 @@ void testList(
 	assertCombinationsUnique(combinations);
 	testPassed();
 }
-template<class Combination, class Cartesian, class Container>
+template<class Combination, class Cartesian, class Containers>
 void testCartesian(
 		const Cartesian& cartesian,
-		const std::vector<Container>& containers,
+		const Containers& containers,
 		const unsigned expectedNrCombinations
 ) {
 	Assert(cartesian.size() == expectedNrCombinations);
@@ -457,23 +457,59 @@ void tests() {
 	testList<COMBINATION >(Permutator INPUT2, 336, false, true);
 	testList<COMBINATION >(MultiPermutator INPUT2, 512, false, false);
 
-	const auto vectors2by2 = std::vector<std::vector<int>>{
-			std::vector<int>{1, 2},
-			std::vector<int>{3, 4},
+	const auto vectors2by3 = std::vector<std::vector<int>>{
+			{1, 2, 3},
+			{4, 5, 6},
 	};
-	testCartesian<std::vector<int>>(Cartesian(vectors2by2), vectors2by2, 4);
-	const auto vecArr3by3 = std::vector<std::array<int, 3>>{
-			std::array<int, 3>{1, 2, 3},
-			std::array<int, 3>{4, 5, 6},
-			std::array<int, 3>{7, 8, 9},
+	testCartesian<std::vector<int>>(Cartesian(vectors2by3), vectors2by3, 9);
+	const auto vecArr4by3 = std::vector<std::array<int, 3>>{
+			{ 1,  2,  3},
+			{ 4,  5,  6},
+			{ 7,  8,  9},
+			{10, 11, 12},
 	};
-	testCartesian<std::array<int, 3>>(CartesianProducts(vecArr3by3), vecArr3by3, 27);
-	testCartesian<std::vector<int>>(Cartesian<std::vector<int>>(vecArr3by3), vecArr3by3, 27);
+	testCartesian<std::vector<int>>(CartesianProducts(vecArr4by3), vecArr4by3, 81);
+	testCartesian<std::vector<int>>(CartesianProducts<std::vector<int>>(vecArr4by3), vecArr4by3, 81);
+	testCartesian<std::array<int, 4>>(CartesianProducts<std::array<int, 4>>(vecArr4by3), vecArr4by3, 81);
 	testCartesian<std::vector<int>>(
-			VariadicCartesian(std::vector<int>{1, 2, 3}, std::array<int, 3>{4, 5, 6}, std::vector<int>{7, 8, 9}),
-			vecArr3by3,
-			27
+			CartesianProducts(
+					std::vector<int>  { 1,  2,  3},
+					std::array<int, 3>{ 4,  5,  6},
+					std::vector<int>  { 7,  8,  9},
+					std::array<int, 3>{10, 11, 12}
+			),
+			vecArr4by3,
+			81
 	);
+	testCartesian<std::vector<int>>(
+			CartesianProducts<std::vector<int>>(
+					std::vector<int>  { 1,  2,  3},
+					std::array<int, 3>{ 4,  5,  6},
+					std::vector<int>  { 7,  8,  9},
+					std::array<int, 3>{10, 11, 12}
+			),
+			vecArr4by3,
+			81
+	);
+	testCartesian<std::array<int, 4>>(
+			CartesianProducts<std::array<int, 4>>(
+					std::vector<int>  { 1,  2,  3},
+					std::array<int, 3>{ 4,  5,  6},
+					std::vector<int>  { 7,  8,  9},
+					std::array<int, 3>{10, 11, 12}
+			),
+			vecArr4by3,
+			81
+	);
+	const auto arrVec4byX = std::array<std::vector<int>, 4>{
+		std::vector<int>{1, 2, 3},
+		std::vector<int>{4, 5},
+		std::vector<int>{6},
+		std::vector<int>{7, 8, 9, 10},
+	};
+//	CartesianProducts(arrVec4byX);
+//	testCartesian<std::array<int, 4>>(CartesianProducts(arrVec4byX), arrVec4byX, 24);
+
 	testCartesianSizeOverflow();
 	testCartesianConstValues();
 

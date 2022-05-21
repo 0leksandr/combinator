@@ -5,7 +5,7 @@
 
 namespace CombinatorNamespace {
 	template<class Container>
-	class MultisetRequest {
+	class MultisetRequest { // TODO: static/dynamic (array/vector)
 		public:
 			explicit MultisetRequest(const std::vector<Container>& containers) : containers(containers) {}
 //			template<class T>
