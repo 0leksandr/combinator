@@ -10,7 +10,8 @@ namespace CombinatorNamespace {
 	class VariadicMultisetRequest {
 		public:
 			explicit VariadicMultisetRequest(Containers... containers) :
-					containers(containers...) { // TODO: std::make_tuple?
+					containers(containers...)
+			{
 				static_assert(sizeof...(Containers) >= 2);
 				ContainerSelector<sizeof...(Containers) - 1, true>::checkElementType(this->containers);
 			}
